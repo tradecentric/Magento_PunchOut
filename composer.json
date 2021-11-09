@@ -1,0 +1,29 @@
+{
+    "name": "punchout2go/module-punchout",
+    "description": "N/A",
+    "type": "magento2-module",
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
+    "config": {
+        "sort-packages": true
+    },
+    "version": "1.0.0",
+    "require": {
+        "php": "~7.3.0||~7.4.0",
+        "ext-openssl": "*"
+    },
+    "suggest": {
+
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Punchout2Go\\Punchout\\": ""
+        }
+    }
+}
+

@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="punchout2go" translate="label" sortOrder="1000">
+            <label>PunchOut2Go</label>
+        </tab>
+        <section id="punchout2go_punchout" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Punchout</label>
+            <tab>punchout2go</tab>
+            <resource>Punchout2Go_Punchout::config_punchout</resource>
+            <group id="system" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>System</label>
+                <field id="api_key" translate="label comment" type="obscure" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>API Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+                <field id="logging" translate="label comment" type="select" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Logging</label>
+                    <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
+                </field>
+            </group>
+            <group id="defaults" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Defaults</label>
+                <field id="classification" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Default Classification</label>
+                    <comment><![CDATA[This should represent the broadest classification of your store. It will be used as the default classification if a product classification cannot be determined.
+                                <br/><a href="https://www.unspsc.org/search-code" target="_new">Search UNSPSC numbers.</a>]]></comment>
+                </field>
+                <field id="uom" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Default Unit of Measure (UOM)</label>
+                    <comment>This is your default unit of measure for an item sale, such as EA (Each).</comment>
+                </field>
+            </group>
+            <group id="security" translate="label" type="text" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Security</label>
+                <field id="punchout_active" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>PunchOut Active</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Allow PunchOut at the selected scope.</comment>
+                </field>
+                <field id="punchout_encrypt" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>PunchOut Encrypt</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Receive encrypted PunchOut (PunchOut Encryption Key must be defined).</comment>
+                </field>
+                <field id="punchout_encryption_key" translate="label comment" type="obscure" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>PunchOut Encryption Key</label>
+                    <comment>Private key for decrypting the PunchOut request payload (PunchOut Encrypt must be enabled).</comment>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+                <field id="punchout_validate_session" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>PunchOut Validate Session</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Validate session via a callback to the PunchOut2Go Gateway (PunchOut Validate Session URL must be defined).</comment>
+                </field>
+                <field id="punchout_validate_session_url" translate="label comment" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>PunchOut Validate Session URL</label>
+                    <comment>PunchOut2Go URL for validating the session (PunchOut Validate Session must be enabled).</comment>
+                </field>
+            </group>
+            <group id="site" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Site Behaviors</label>
+                <field id="punchout_only" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>PunchOut Only</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Require a PunchOut session to be active to view any site content.</comment>
+                </field>
+                <field id="punchout_only_url" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Punchout Only Url</label>
+                    <comment>CMS path to drop non-PunchOut session access.</comment>
+                </field>
+            </group>
+            <group id="session" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Session Behaviors</label>
+                <field id="type" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Session Type</label>
+                    <source_model>Punchout2Go\Punchout\Model\System\Config\Source\Login</source_model>
+                    <comment><![CDATA[Controls session login behaviors.<br/>
+                                    <b>Anonymous</b> gives the user a "PunchOut session" but they are not actually logged in as a specific customer account.<br/>
+                                    <b>Login</b> authenticates the user as a particular customer account.]]></comment>
+                </field>
+                <field id="start_redirect_new" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Start Page New Session</label>
+                    <comment>Default : store view home page.</comment>
+                </field>
+                <field id="js_reload_sections" translate="label comment" type="text" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Reload sections (after clean)</label>
+                    <comment>Sections (no spaces) ie.. customer,cart</comment>
+                </field>
+            </group>
+            <group id="customer" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Customer Behaviors</label>
+                <field id="auto_create_user" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Auto-Create User</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="alt_login_id" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Alternate Login ID</label>
+                </field>
+                <field id="address_to_cart" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Attach ShipTo to Cart</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="preinsert_customer_attribute_map" translate="label" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="0">
+                    <label>Map New Customer Values</label>
+                    <frontend_model>Punchout2Go\Punchout\Block\Adminhtml\Form\Field\Keyvalue</frontend_model>
+                    <backend_model>Punchout2Go\Punchout\Model\System\Config\Backend\Keyvalue</backend_model>
+                </field>
+            </group>
+            <group id="display" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Display Settings</label>
+                <field id="return_link_enabled" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enable Return Link</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="return_link_label" translate="label" type="text" sortOrder="21" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Return Link Label</label>
+                </field>
+                <field id="transfer_button_label" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Transfer Button Label</label>
+                </field>
+                <field id="transfer_button_help" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Transfer Button "Help"</label>
+                </field>
+                <field id="transfer_button_css_class" translate="label" type="text" sortOrder="41" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Transfer Button CSS Class</label>
+                </field>
+            </group>
+            <group id="order" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Order Settings</label>
+                <field id="include_shipping" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Include Shipping</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="include_tax" translate="label" type="select" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Include Tax</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="include_discount" translate="label" type="select" sortOrder="16" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Include Discount</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="separate_customized_skus" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Separate Customized Skus</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Enable separation of items customized with sku based options</comment>
+                </field>
+                <field id="disallow_edit_cart" translate="label" type="select" sortOrder="17" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Disallow Edit Cart</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="classification_field" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Classification Attribute</label>
+                </field>
+                <field id="uom_field" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Unit of Measure Attribute (UOM)</label>
+                </field>
+                <field id="data_cart_return_map" translate="label" sortOrder="55" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="0">
+                    <label>Cart Data Return Map</label>
+                    <frontend_model>Punchout2Go\Punchout\Block\Adminhtml\Form\Field\Keyvalue</frontend_model>
+                    <backend_model>Punchout2Go\Punchout\Model\System\Config\Backend\Keyvalue</backend_model>
+                </field>
+                <field id="data_item_return_map" translate="label" sortOrder="56" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="0">
+                    <label>Item Data Return Map</label>
+                    <frontend_model>Punchout2Go\Punchout\Block\Adminhtml\Form\Field\Keyvalue</frontend_model>
+                    <backend_model>Punchout2Go\Punchout\Model\System\Config\Backend\Keyvalue</backend_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

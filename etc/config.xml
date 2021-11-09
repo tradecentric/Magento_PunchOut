@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <punchout2go_punchout>
+            <display>
+                <transfer_button_label>Transfer Cart</transfer_button_label>
+            </display>
+            <security>
+                <punchout_active>1</punchout_active>
+                <punchout_encrypt>0</punchout_encrypt>
+                <punchout_encryption_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <punchout_validate_session>0</punchout_validate_session>
+                <punchout_validate_session_url>https://connect.punchout2go.com/gateway/link/session/id/{pos}</punchout_validate_session_url>
+            </security>
+            <session>
+                <start_redirect_new>/</start_redirect_new>
+                <punchout_only>1</punchout_only>
+                <type>login</type>
+                <js_session_clean>1</js_session_clean>
+                <js_reload_sections>customer,punchout-session,cart</js_reload_sections>
+                <required_elements>https://connect.punchout2go.com/jslib/lib/basic/basic.js,https://connect.punchout2go.com/jslib/0.0.1/po2go_mage.js?r=1.1,https://connect.punchout2go.com/jslib/lib/js/base64.min.js</required_elements>
+            </session>
+            <customer>
+                <auto_create_user>1</auto_create_user>
+                <preinsert_customer_attribute_map>{}</preinsert_customer_attribute_map>
+            </customer>
+            <order>
+                <classification_field>classification</classification_field>
+                <uom_field>unit_of_measure</uom_field>
+                <default_language>en</default_language>
+                <data_cart_return_map>{}</data_cart_return_map>
+                <data_item_return_map>{}</data_item_return_map>
+            </order>
+            <system>
+                <api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <logging>0</logging>
+            </system>
+        </punchout2go_punchout>
+    </default>
+</config>

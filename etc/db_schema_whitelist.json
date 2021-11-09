@@ -1,0 +1,21 @@
+{
+    "punchout_quote": {
+        "column": {
+            "entity_id": true,
+            "quote_id": true,
+            "punchout_quote_id": true,
+            "created_at": true,
+            "updated_at": true,
+            "params": true,
+            "return_url": true
+        },
+        "index": {
+            "PUNCHOUT_QUOTE_QUOTE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "PUNCHOUT_QUOTE_QUOTE_ID_QUOTE_ENTITY_ID": true,
+            "PUNCHOUT_QUOTE_PUNCHOUT_QUOTE_ID": true
+        }
+    }
+}
