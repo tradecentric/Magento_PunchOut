@@ -22,10 +22,22 @@ class Name implements DataExtractorInterface
             return $result;
         }
         $bodyData = $params['body']['data'];
-        if (isset($bodyData['UserFirstName']) && isset($bodyData['UserLastName'])) {
+        if ($this->isNotEmpty('UserFirstName', $bodyData)
+            && $this->isNotEmpty('UserLastName', $bodyData)
+        ) {
             $result['firstname'] = trim($bodyData['UserFirstName']);
             $result['lastname'] = trim($bodyData['UserLastName']);
         }
         return $result;
+    }
+
+    /**
+     * @param string $fieldId
+     * @param array $data
+     * @return bool
+     */
+    protected function isNotEmpty(string $fieldId, array $data): bool
+    {
+        return isset($data[$fieldId]) && $data[$fieldId] !== "";
     }
 }
