@@ -3,8 +3,9 @@ define([
     'Punchout2Go_Punchout/js/model/save-address-data',
     'Punchout2Go_Punchout/js/model/get-punchout-data',
     'Punchout2Go_Punchout/js/model/punchout-checkout',
+    'Punchout2Go_Punchout/js/model/destroy-session',
     'Magento_Ui/js/modal/alert'
-], function($, addressDataSaver, punchoutDataHandler, punchoutCheckout, alert) {
+], function($, addressDataSaver, punchoutDataHandler, punchoutCheckout, destroySession, alert) {
     'use strict'
 
     /**
@@ -17,6 +18,8 @@ define([
                 .then(punchoutDataHandler)
                 .then(function(punchoutData) {
                     return punchoutCheckout.run(config.checkoutConfig, punchoutData);
+                }).then(function() {
+                    destroySession();
                 })
                 .done(function() {
                     $("body").trigger('processStop');

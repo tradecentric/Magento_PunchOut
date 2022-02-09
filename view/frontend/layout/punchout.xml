@@ -5,9 +5,9 @@
         <css src="https://connect.punchout2go.com/jslib/lib/basic/basic.css" src_type="url" />
     </head>
     <body>
-       <!-- <referenceBlock name="header.links">
+        <referenceBlock name="header.links">
             <block class="Magento\Framework\View\Element\Template" name="punchout-close" template="Punchout2Go_Punchout::punchout_close.phtml" after="-"/>
-        </referenceBlock>-->
+        </referenceBlock>
         <referenceContainer name="footer">
             <block class="Magento\Framework\View\Element\Template" name="punchout.session.js" template="Punchout2Go_Punchout::js/punchout_config.phtml"/>
         </referenceContainer>

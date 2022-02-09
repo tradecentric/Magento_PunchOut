@@ -28,12 +28,4 @@
         </data>
     </route>
 
-    <!-- Managing totals information -->
-    <route url="/V1/guest-carts/:cartId/set-totals-information" method="POST">
-        <service class="Punchout2Go\Punchout\Api\TotalsInformationManagementInterface" method="save"/>
-        <resources>
-            <resource ref="Magento_Cart::manage" />
-        </resources>
-    </route>
-
 </routes>

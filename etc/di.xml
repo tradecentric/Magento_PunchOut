@@ -321,4 +321,16 @@
         </arguments>
     </type>
 
+    <virtualType name="accountManagement" type="Magento\Customer\Model\AccountManagement">
+        <arguments>
+            <argument name="authorization" xsi:type="object">Punchout2Go\Punchout\Model\DummyAuthorization</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Punchout2Go\Punchout\Model\PunchoutSessionCollector\CustomerHandler\CustomerService">
+        <arguments>
+            <argument name="accountManagement" xsi:type="object">accountManagement</argument>
+        </arguments>
+    </type>
+
 </config>
