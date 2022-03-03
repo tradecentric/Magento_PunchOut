@@ -20,9 +20,7 @@ class Country implements DataExtractorInterface
         $countryId = $data['body']['shipping']['data']['country_id'] ?? '';
         $countryId = strlen($countryId) ? trim($countryId) : 'US';
         return [
-            'address' => [
-                'country_id' => $countryId
-            ]
+            'country_id' => $countryId
         ];
     }
 }

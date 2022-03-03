@@ -21,7 +21,8 @@ class AddressData implements DataExtractorInterface
         'street' => 'shipping_street',
         'city' => 'shipping_city',
         'postcode' => 'shipping_zip',
-        'telephone' => 'shipping_phone'
+        'telephone' => 'shipping_phone',
+        'region' => 'shipping_state'
     ];
 
     /**
@@ -35,8 +36,6 @@ class AddressData implements DataExtractorInterface
         foreach ($this->mapping as $targetField => $valueField) {
             $result[$targetField] = isset($addressData[$valueField]) ? trim($addressData[$valueField]) : '';
         }
-        return [
-            'address' => $result
-        ];
+        return $result;
     }
 }

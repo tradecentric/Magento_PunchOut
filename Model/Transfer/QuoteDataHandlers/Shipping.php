@@ -60,7 +60,7 @@ class Shipping implements QuoteDataHandlerInterface
              'shipping' => (string) $shippingAddress->getShippingAmount(),
              'shipping_method' => $shippingAddress->getShippingDescription(),
              'shipping_code' => $shippingAddress->getShippingMethod(),
-             'addresses' => $this->getAddresses($cart->getAllAddresses())
+             'addresses' => $this->getAddresses([$shippingAddress])
          ];
     }
 
