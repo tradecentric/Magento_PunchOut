@@ -16,7 +16,8 @@
                     "punchoutConfig": <?php echo $block->getPunchoutConfig() ?>,
                     "magentoVersion": "<?php echo $block->getMagentoVersion() ?>",
                     "elementsUrl": <?php echo $block->getPunchoutElementsUrl() ?>
-                }
+                },
+                "closeSessionUrl": "<?php echo $block->getUrl('punchout/session/closePost') ?>"
             }
         }
     }

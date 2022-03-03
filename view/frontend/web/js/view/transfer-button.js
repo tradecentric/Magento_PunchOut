@@ -1,11 +1,12 @@
 define([
     'jquery',
     'Punchout2Go_Punchout/js/model/save-address-data',
+    'Punchout2Go_Punchout/js/model/close-session',
     'Punchout2Go_Punchout/js/model/get-punchout-data',
     'Punchout2Go_Punchout/js/model/punchout-checkout',
     'Punchout2Go_Punchout/js/model/destroy-session',
     'Magento_Ui/js/modal/alert'
-], function($, addressDataSaver, punchoutDataHandler, punchoutCheckout, destroySession, alert) {
+], function($, addressDataSaver, closeSession, punchoutDataHandler, punchoutCheckout, destroySession, alert) {
     'use strict'
 
     /**
@@ -18,7 +19,9 @@ define([
                 .then(punchoutDataHandler)
                 .then(function(punchoutData) {
                     return punchoutCheckout.run(config.checkoutConfig, punchoutData);
-                }).then(function() {
+                })
+                .then(closeSession(config.closeSessionUrl))
+                .then(function() {
                     destroySession();
                 })
                 .done(function() {

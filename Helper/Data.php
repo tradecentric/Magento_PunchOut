@@ -168,7 +168,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getReturnLinkLabel($store = null)
     {
-        $value = (string) $this->scopeConfig->isSetFlag(
+        $value = (string) $this->scopeConfig->getValue(
             static::XML_PATH_RETURN_LINK_LABEL,
             ScopeInterface::SCOPE_STORE,
             $store
