@@ -1,0 +1,88 @@
+<?php
+/** @var \Punchout2go\Punchout\Block\Transfer $this */
+/** @var $cartObj \Punchout2go\Punchout\Cart */
+$cartObj = $block->getPunchoutCart();
+/** @ var \Punchout2go\Punchout\Model\Session $punchoutSession */
+$punchoutSessionId = $cartObj->getPunchoutSessionId();
+$punchoutReturnUrl = $cartObj->getPunchoutReturnUrl();
+$apiKey = $block->getHelper()->getConfig('punchout2go_punchout/system/api_key');
+/** @var \Magento\Checkout\Model\Cart $mageCart */
+$mageCart = $block->getMageCart();
+$quote = $mageCart->getQuote();
+?>
+<script src="https://connect.punchout2go.com/jslib/0.0.1/po2go_mage.js?r=1.1" type="text/javascript"></script>
+<script>
+    // initiate the object and set the session id.
+    jQuery(function() {
+        POSession = new Po2go({
+            'account': "<?= /* @noEscape */ $apiKey ?>",
+            'session_id':"<?= /* @noEscape */ $punchoutSessionId; ?>",
+            'return_url':"<?= /* @noEscape */ $punchoutReturnUrl; ?>"
+        });
+        POSession.init();
+    });
+</script>
+<!-- cart totals -->
+<script type="text/javascript">
+    jQuery(function () {
+        // enable "edit" mode so people can use cXML edit function
+        POSession.cart.edit_mode = 1;
+        // add the "totals". the "total" is the only required
+        // value. everything else can be empty or excluded.
+        <?php
+        $cartData = $cartObj->getData();
+        foreach ($cartData as $key => $value) {
+            /* @noEscape */ echo "\t\tPOSession.cart.{$key} = ";
+            if (is_array($value)) {
+                /* @noEscape */ echo json_encode($value) .";\n";
+            } else {
+                /* @noEscape */ echo "\"{$value}\";\n";
+            }
+
+        }
+        ?>
+        POSession.cart.module_version = "<?= $block->escapeHtml($block->getHelper()->getModuleVersion()); ?>";
+        POSession.cart.magento_version = "<?= $block->escapeHtml($block->getHelper()->getMagentoVersion()); ?>";
+    });
+</script>
+<!-- loop through your items and add each to the object -->
+<?php
+/**
+ * @var  $k
+ * @var \Punchout2go\Punchout\Cart\Item $item
+ */
+foreach ($cartObj->getItems() as $k => $item) { ?>
+    <script>
+        jQuery(function() {
+            POSession.addItemToCart(<?= /* @noEscape */ $item->toJson(); ?>);
+        });
+    </script>
+<?php } ?>
+<table cellspacing="0" cellpadding="0" border="0" width="100%" height="80%">
+    <tr>
+        <td align="center" valign="middle">
+            <?php if ($block->getHelper()->getConfig('punchout2go_punchout/system/debug_transfer')) { ?>
+                <a href="javascript:POSession.transferCart()">Transfer</a>
+                <!-- with everything set, the last thing to do is send it -->
+                <script>
+                    jQuery(function () {
+                        // just call the transfer function, no click required.
+                        POSession.debug();
+                    });
+                </script>
+            <?php } else { ?>
+                <script>
+                    jQuery(function () {
+                        jQuery.cookie('section_data_ids','{}');
+                        POSession.transferCart();
+                    });
+                </script>
+            <?php } ?>
+            <br>
+        </td>
+    </tr>
+</table>
+<script>
+    localStorage.clear();
+    sessionStorage.clear();
+</script>

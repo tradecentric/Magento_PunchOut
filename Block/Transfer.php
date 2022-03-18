@@ -1,87 +1,108 @@
 <?php
-declare(strict_types=1);
-
-namespace Punchout2Go\Punchout\Block;
-
-use Magento\Framework\View\Element\Template;
-
 /**
- * Class Transfer
- * @package Punchout2Go\Punchout\Block
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
-class Transfer extends \Magento\Framework\View\Element\Template
+
+namespace Punchout2go\Punchout\Block;
+
+use Magento\Checkout\Model\Cart as MageCart;
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\View\Element\Template\Context as TemplateContext;
+use Punchout2go\Punchout\Cart as PUNCart;
+use Punchout2go\Punchout\Helper\Data;
+use Punchout2go\Punchout\Model\Session as PUNSession;
+
+class Transfer extends Template
 {
-    /**
-     * @var \Punchout2Go\Punchout\Model\Session
-     */
+
+    /** @var \Punchout2go\Punchout\Cart */
+    protected $punchoutCart;
+    /** @var \Punchout2go\Punchout\Model\Session */
     protected $punchoutSession;
-
-    /**
-     * @var \Punchout2Go\Punchout\Helper\Transfer
-     */
-    protected $transferHelper;
-
-    /**
-     * @var \Punchout2Go\Punchout\Helper\Session
-     */
-    protected $sessionHelper;
-
-    /**
-     * @var \Magento\Framework\Serialize\Serializer\Json
-     */
-    protected $jsonSerializer;
+    /** @var \Magento\Checkout\Model\Cart */
+    protected $mageCart;
+    /** @var \Punchout2go\Punchout\Helper\Data */
+    protected $helper;
 
     /**
      * Transfer constructor.
-     * @param Template\Context $context
-     * @param \Punchout2Go\Punchout\Helper\Session $sessionHelper
-     * @param \Punchout2Go\Punchout\Helper\Transfer $transferHelper
-     * @param \Magento\Framework\Serialize\Serializer\Json $jsonSerializer
-     * @param \Punchout2Go\Punchout\Model\Session $punchoutSession
-     * @param array $data
+     *
+     * @param \Magento\Framework\View\Element\Template\Context $context
+     * @param \Punchout2go\Punchout\Cart                       $punchoutCart
+     * @param \Punchout2go\Punchout\Model\Session              $punchoutSession
+     * @param \Magento\Checkout\Model\Cart                     $mageCart
+     * @param \Punchout2go\Punchout\Helper\Data                $helper
+     * @param array                                            $data
      */
     public function __construct(
-        Template\Context $context,
-        \Punchout2Go\Punchout\Helper\Session $sessionHelper,
-        \Punchout2Go\Punchout\Helper\Transfer $transferHelper,
-        \Magento\Framework\Serialize\Serializer\Json $jsonSerializer,
-        \Punchout2Go\Punchout\Model\Session $punchoutSession,
+        TemplateContext $context,
+        PUNCart $punchoutCart,
+        PUNSession $punchoutSession,
+        MageCart $mCart,
+        Data $helper,
         array $data = []
     ) {
-        $this->transferHelper = $transferHelper;
-        $this->sessionHelper = $sessionHelper;
-        $this->jsonSerializer = $jsonSerializer;
+        $this->helper = $helper;
+        $this->punchoutCart = $punchoutCart;
         $this->punchoutSession = $punchoutSession;
+        $this->mageCart = $mCart;
         parent::__construct($context, $data);
     }
 
     /**
-     * @return bool|string
+     * @return \Punchout2go\Punchout\Helper\Data
      */
-    public function getPunchoutConfig()
+    public function getHelper()
     {
-        return $this->jsonSerializer->serialize([
-            'account' => $this->transferHelper->getApiKey(),
-            'session_id' => $this->punchoutSession->getPunchoutSessionId(),
-            'return_url' => $this->punchoutSession->getReturnUrl()
-        ]);
+        return $this->helper;
     }
 
     /**
-     * @return string
+     * @return \Magento\Checkout\Model\Cart
      */
-    public function getMagentoVersion()
+    public function getMageCart()
     {
-        return $this->transferHelper->getMagentoVersion();
+        return $this->mageCart;
     }
 
     /**
-     * @return bool|string
+     * @param \Magento\Checkout\Model\Cart $mage_cart
      */
-    public function getPunchoutElementsUrl()
+    public function setMageCart(MageCart $mage_cart)
     {
-        return $this->jsonSerializer->serialize(
-            array_map([$this, 'escapeUrl'], $this->sessionHelper->getPunchoutRequiredElementsUrl())
-        );
+        $this->mageCart = $mage_cart;
+    }
+
+    /**
+     * @return \Punchout2go\Punchout\Cart
+     */
+    public function getPunchoutCart()
+    {
+        return $this->punchoutCart;
+    }
+
+    /**
+     * @param \Punchout2go\Punchout\Cart $punchout_cart
+     */
+    public function setPunchoutCart(PUNCart $punchout_cart)
+    {
+        $this->punchoutCart = $punchout_cart;
+    }
+
+    /**
+     * @return \Punchout2go\Punchout\Model\Session
+     */
+    public function getPunchoutSession()
+    {
+        return $this->punchoutSession;
+    }
+
+    /**
+     * @param \Punchout2go\Punchout\Model\Session $punchout_session
+     */
+    public function setPunchoutSession(\Punchout2go\Punchout\Model\Session $punchout_session)
+    {
+        $this->punchoutSession = $punchout_session;
     }
 }

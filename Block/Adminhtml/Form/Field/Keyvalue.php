@@ -1,14 +1,32 @@
 <?php
-declare(strict_types=1);
 
-namespace Punchout2Go\Punchout\Block\Adminhtml\Form\Field;
+namespace Punchout2go\Punchout\Block\Adminhtml\Form\Field;
 
-/**
- * Class Keyvalue
- * @package Punchout2Go\Punchout\Block\Adminhtml\Form\Field
- */
 class Keyvalue extends \Magento\Config\Block\System\Config\Form\Field\FieldArray\AbstractFieldArray
 {
+    /**
+     * @var Customergroup
+     */
+    protected $_groupRenderer;
+
+    /**
+     * Retrieve group column renderer
+     *
+     * @return Customergroup
+    protected function _getGroupRenderer()
+    {
+        if (!$this->_groupRenderer) {
+            $this->_groupRenderer = $this->getLayout()->createBlock(
+                'Magento\CatalogInventory\Block\Adminhtml\Form\Field\Customergroup',
+                '',
+                ['data' => ['is_render_to_js_template' => true]]
+            );
+            $this->_groupRenderer->setClass('customer_group_select');
+        }
+        return $this->_groupRenderer;
+    }
+     */
+
     /**
      * Prepare to render
      *
@@ -16,6 +34,10 @@ class Keyvalue extends \Magento\Config\Block\System\Config\Form\Field\FieldArray
      */
     protected function _prepareToRender()
     {
+        /*$this->addColumn(
+            'customer_group_id',
+            ['label' => __('Customer Group'), 'renderer' => $this->_getGroupRenderer()]
+        );*/
         $this->addColumn('source', ['label' => __('Source'),'width' => 200]);
         $this->addColumn('destination', ['label' => __('Destination'),'width' => 200]);
         $this->_addAfter = false;
@@ -31,6 +53,11 @@ class Keyvalue extends \Magento\Config\Block\System\Config\Form\Field\FieldArray
     protected function _prepareArrayRow(\Magento\Framework\DataObject $row)
     {
         $optionExtraAttr = [];
-        $row->setData('option_extra_attrs', $optionExtraAttr);
+        /*$optionExtraAttr['option_' . $this->_getGroupRenderer()->calcOptionHash($row->getData('customer_group_id'))] =
+            'selected="selected"';*/
+        $row->setData(
+            'option_extra_attrs',
+            $optionExtraAttr
+        );
     }
 }
