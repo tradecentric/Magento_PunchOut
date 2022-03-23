@@ -1,31 +1,9 @@
 <?xml version="1.0"?>
-<!--
-/**
- * Copyright © 2015 Magento. All rights reserved.
- * See COPYING.txt for license details.
- */
--->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Customer:etc/sections.xsd">
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Customer:etc/sections.xsd">
     <action name="punchout/session/start">
         <section name="start"/>
-        <section name="cart"/>
-    </action>
-    <action name="punchout/session/data">
-    </action>
-    <action name="punchout/session/clean">
         <section name="customer"/>
-        <section name="cart"/>
-    </action>
-    <action name="punchout/session/close">
-        <section name="customer"/>
-        <section name="cart"/>
-    </action>
-    <action name="punchout/session/transfer">
-        <section name="transfer"/>
-        <section name="cart"/>
-    </action>
-    <action name="checkout/cart/index">
         <section name="cart"/>
     </action>
 </config>

@@ -1,14 +1,337 @@
+<?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <type name="Magento\Checkout\Api\TotalsInformationManagementInterface">
-        <plugin name="checkoutCartPunchOutTotal" type="Punchout2go\Punchout\Plugin\Checkout\TotalPlugin" sortOrder="1" />
+    <preference for="Punchout2Go\Punchout\Api\LoggerInterface" type="Punchout2Go\Punchout\Logger\Handler" />
+    <preference for="Punchout2Go\Punchout\Api\RequestParamsValidationResultInterface"
+                type="Punchout2Go\Punchout\Model\Request\Validate\ValidationResult" />
+    <preference for="Punchout2Go\Punchout\Api\RequestParamsValidatorInterface"
+                type="Punchout2Go\Punchout\Model\Request\Validate\RemoteValidationHandler" />
+    <preference for="Punchout2Go\Punchout\Api\RequestParamsHandlerInterface" type="Punchout2Go\Punchout\Model\RequestParamsHandler" />
+    <preference for="Punchout2Go\Punchout\Api\SessionInterface" type="Punchout2Go\Punchout\Model\Session" />
+    <preference for="Punchout2Go\Punchout\Model\CustomerHandler\Extractors\ExtractorInterface"
+                type="Punchout2Go\Punchout\Model\CustomerHandler\CustomerDataExtractor" />
+    <preference for="Punchout2Go\Punchout\Api\SessionContainerInterface"
+                type="Punchout2Go\Punchout\Model\PunchoutSessionCollector\SessionContainer" />
+    <preference for="Punchout2Go\Punchout\Api\QuoteContextInterface" type="Punchout2Go\Punchout\Model\Transfer\QuoteContext" />
+    <preference for="Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Items\OptionsContainerInterface"
+                type="Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Items\OptionsContainer" />
+    <preference for="Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\OptionRelatedDataInterface"
+                type="Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\ProductOptionFields"/>
+    <preference for="Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\ProductRelatedDataHandlerInterface"
+                type="Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\ProductRelatedData"/>
+    <preference for="Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\QuoteItemRelatedDataHandlerInterface"
+                type="Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\QuoteRelatedData"/>
+    <preference for="Punchout2Go\Punchout\Api\Data\PunchoutQuoteInterface" type="Punchout2Go\Punchout\Model\PunchoutQuote"/>
+    <preference for="Punchout2Go\Punchout\Api\PunchoutQuoteRepositoryInterface" type="Punchout2Go\Punchout\Model\PunchoutQuoteRepository"/>
+    <preference for="Punchout2Go\Punchout\Api\PunchoutQuoteTransferInterface" type="Punchout2Go\Punchout\Model\PunchoutQuoteTransfer"/>
+    <preference for="Punchout2Go\Punchout\Api\TransferCartDataInterface" type="Punchout2Go\Punchout\Model\Transfer\QuoteTransferData"/>
+    <preference for="Punchout2Go\Punchout\Api\CartDataInterface" type="Punchout2Go\Punchout\Model\Transfer\CartData"/>
+    <preference for="Punchout2Go\Punchout\Api\TotalsInformationManagementInterface"
+                type="Punchout2Go\Punchout\Model\TotalsInformationManagement"/>
+    <preference for="Punchout2Go\Punchout\Api\GuestTotalsInformationManagementInterface"
+                type="Punchout2Go\Punchout\Model\GuestTotalsInformationManagement"/>
+
+    <virtualType name="PunchoutLogger" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="name" xsi:type="string">punchoutLogger</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="system" xsi:type="object">PunchoutHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PunchoutHandler" type="Magento\Framework\Logger\Handler\Base">
+        <arguments>
+            <argument name="fileName" xsi:type="string">/var/log/punchout2go_punchout_debug.log</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Punchout2Go\Punchout\Model\Transfer\QuoteTransferData">
+        <arguments>
+            <argument name="cartHandler" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataPool</argument>
+            <argument name="cartItemsHandler" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Items</argument>
+        </arguments>
     </type>
 
-    <type name="Magento\Customer\Model\EmailNotificationInterface">
-        <plugin name="punch2go_customer_notification_plugin" type="Punchout2go\Punchout\Plugin\NewCustomerNotificationPlugin"/>
+    <type name="Punchout2Go\Punchout\Api\LoggerInterface">
+        <arguments>
+            <argument name="logger" xsi:type="object">PunchoutLogger</argument>
+        </arguments>
     </type>
 
-    <type name="Punchout2go\Punchout\Controller\Session\Start">
-        <plugin name="punch2go_customer_notification_check_plugin" type="Punchout2go\Punchout\Plugin\SessionStartControllerPlugin"/>
+    <virtualType name="PunchoutSessionStorage" type="Magento\Framework\Session\Storage">
+        <arguments>
+            <argument name="namespace" xsi:type="string">punchout_session</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Punchout2Go\Punchout\Api\SessionInterface">
+        <arguments>
+            <argument name="sessionCollector" xsi:type="object">Punchout2Go\Punchout\Model\PunchoutSessionCollector\Proxy</argument>
+            <argument name="storage" xsi:type="object">PunchoutSessionStorage</argument>
+        </arguments>
+    </type>
+
+    <type name="Punchout2Go\Punchout\Model\Request\HandlePool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="encrypted" xsi:type="object">Punchout2Go\Punchout\Model\Request\Handle\EncryptedHandler</item>
+                <item name="json" xsi:type="object">Punchout2Go\Punchout\Model\Request\Handle\JsonHandler</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Punchout2Go\Punchout\Model\RequestParamsHandler">
+        <arguments>
+            <argument name="paramsHandler" xsi:type="object">Punchout2Go\Punchout\Model\Request\HandlePool</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="customerExtractorPool" type="Punchout2Go\Punchout\Model\DataExtractorPool">
+        <arguments>
+            <argument name="extractorPool" xsi:type="array">
+                <item name="basic" xsi:type="object">Punchout2Go\Punchout\Model\PunchoutSessionCollector\CustomerHandler\DataExtractors\BasicParams</item>
+                <item name="default" xsi:type="object">Punchout2Go\Punchout\Model\PunchoutSessionCollector\CustomerHandler\DataExtractors\DefaultParams</item>
+                <item name="names" xsi:type="object">Punchout2Go\Punchout\Model\PunchoutSessionCollector\CustomerHandler\DataExtractors\Name</item>
+                <item name="custom_params" xsi:type="object">Punchout2Go\Punchout\Model\PunchoutSessionCollector\CustomerHandler\DataExtractors\CustomParams</item>
+             </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Punchout2Go\Punchout\Model\PunchoutSessionCollector\CustomerHandler">
+        <arguments>
+            <argument name="customerDataExtractor" xsi:type="object">customerExtractorPool</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="quoteExtractorPool" type="Punchout2Go\Punchout\Model\DataExtractorPool">
+        <arguments>
+            <argument name="extractorPool" xsi:type="array">
+                <item name="items" xsi:type="object">Punchout2Go\Punchout\Model\PunchoutSessionCollector\QuoteHandler\DataExtractors\ItemData</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Punchout2Go\Punchout\Model\PunchoutSessionCollector\QuoteHandler">
+        <arguments>
+            <argument name="dataExtractor" xsi:type="object">quoteExtractorPool</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="quoteAddressExtractorPool" type="Punchout2Go\Punchout\Model\DataExtractorPool">
+        <arguments>
+            <argument name="extractorPool" xsi:type="array">
+                <item name="address" xsi:type="object">Punchout2Go\Punchout\Model\PunchoutSessionCollector\QuoteAddressHandler\DataExtractors\AddressData</item>
+                <item name="country" xsi:type="object">Punchout2Go\Punchout\Model\PunchoutSessionCollector\QuoteAddressHandler\DataExtractors\Country</item>
+                <item name="name" xsi:type="object">Punchout2Go\Punchout\Model\PunchoutSessionCollector\QuoteAddressHandler\DataExtractors\Name</item>
+                <item name="region" xsi:type="object">Punchout2Go\Punchout\Model\PunchoutSessionCollector\QuoteAddressHandler\DataExtractors\Region</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Punchout2Go\Punchout\Model\PunchoutSessionCollector\QuoteAddressHandler">
+        <arguments>
+            <argument name="dataExtractor" xsi:type="object">quoteAddressExtractorPool</argument>
+        </arguments>
+    </type>
+
+    <type name="Punchout2Go\Punchout\Model\PunchoutSessionCollector">
+        <arguments>
+            <argument name="collectHandlers" xsi:type="array">
+                <item name="customer" xsi:type="object">Punchout2Go\Punchout\Model\PunchoutSessionCollector\CustomerHandler</item>
+                <item name="quote" xsi:type="object">Punchout2Go\Punchout\Model\PunchoutSessionCollector\QuoteHandler</item>
+                <item name="quoteAddress" xsi:type="object">Punchout2Go\Punchout\Model\PunchoutSessionCollector\QuoteAddressHandler</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Checkout\Controller\Onepage">
+        <plugin name="punchout_restrict_checkout_cart" type="Punchout2Go\Punchout\Plugin\RestrictCheckoutPlugin"/>
+    </type>
+
+    <type name="Punchout2Go\Punchout\Model\Transfer\QuoteDataPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="discount" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Discount</item>
+                <item name="shipping" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Shipping</item>
+                <item name="mode" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Mode</item>
+                <item name="tax" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Tax</item>
+                <item name="totals" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Totals</item>
+                <item name="custom_fields" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\CustomFields</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Items\ItemTypeFactory">
+        <arguments>
+            <argument name="resolvers" xsi:type="array">
+                <item name="default" xsi:type="string">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData</item>
+                <item name="with_options" xsi:type="string">Punchout2Go\Punchout\Model\Transfer\QuoteItemOptionsTransferData</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData">
+        <arguments>
+            <argument name="quoteItemRelated" xsi:type="object">productNoOptionsQuoteData</argument>
+            <argument name="productItemRelated" xsi:type="object">productNoOptionsProductData</argument>
+            <argument name="dataResolver" xsi:type="object">defaultProductDataResolver</argument>
+        </arguments>
+    </type>
+
+    <type name="Punchout2Go\Punchout\Model\Transfer\QuoteItemOptionsTransferData">
+        <arguments>
+            <argument name="itemDataResolver" xsi:type="object">optionsProductDataResolver</argument>
+            <argument name="optionDataResolver" xsi:type="object">optionsDataResolver</argument>
+         </arguments>
+    </type>
+    <virtualType name="productNoOptionsQuoteData" type="Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\QuoteRelatedData">
+        <arguments>
+            <argument name="mapping" xsi:type="array">
+                <item name="quantity" xsi:type="string">qty</item>
+                <item name="supplierid" xsi:type="string">sku</item>
+                <item name="language" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Language</item>
+                <item name="supplierauxid" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\SupplierId</item>
+                <item name="custom_fields" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\QuoteCustomFields</item>
+                <item name="configuration" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Configuration</item>
+                <item name="description" xsi:type="string">name</item>
+                <item name="unitprice" xsi:type="string">price</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="productNoOptionsProductData" type="Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\ProductRelatedData">
+        <arguments>
+            <argument name="mapping" xsi:type="array">
+                <item name="manufacturer" xsi:type="string">manufacturer</item>
+                <item name="manufacturer_id" xsi:type="string">sku</item>
+                <item name="custom_fields" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\ProductCustomFields</item>
+                <item name="categories" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Categories</item>
+                <item name="classification" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Classification</item>
+                <item name="uom" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\UnitOfMeasure</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="productRelatedDataForOptions" type="Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\ProductRelatedData">
+        <arguments>
+            <argument name="mapping" xsi:type="array">
+                <item name="unitprice" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\ProductFinalPrice</item>
+                <item name="manufacturer" xsi:type="string">manufacturer</item>
+                <item name="manufacturer_id" xsi:type="string">sku</item>
+                <item name="custom_fields" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\ProductCustomFields</item>
+                <item name="categories" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Categories</item>
+                <item name="classification" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Classification</item>
+                <item name="uom" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\UnitOfMeasure</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="optionQuoteRelatedDataForOptions" type="Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\QuoteRelatedData">
+        <arguments>
+            <argument name="mapping" xsi:type="array">
+                <item name="language" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Language</item>
+                <item name="quantity" xsi:type="string">qty</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="optionProductRelatedDataForOptions" type="Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\ProductRelatedData">
+        <arguments>
+            <argument name="mapping" xsi:type="array">
+                <item name="manufacturer" xsi:type="string">manufacturer</item>
+                <item name="manufacturer_id" xsi:type="string">sku</item>
+                <item name="categories" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Categories</item>
+                <item name="classification" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Classification</item>
+                <item name="uom" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\UnitOfMeasure</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="defaultProductDataResolver" type="Punchout2Go\Punchout\Model\Transfer\ItemDataResolver">
+        <arguments>
+            <argument name="objectMappings" xsi:type="array">
+                <item name="Magento\Quote\Api\Data\CartItemInterface" xsi:type="string">productNoOptionsQuoteData</item>
+                <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="string">productNoOptionsProductData</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="optionsProductDataResolver" type="Punchout2Go\Punchout\Model\Transfer\ItemDataResolver">
+        <arguments>
+            <argument name="objectMappings" xsi:type="array">
+                <item name="Magento\Quote\Api\Data\CartItemInterface" xsi:type="string">productNoOptionsQuoteData</item>
+                <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="string">productRelatedDataForOptions</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="optionsDataResolver" type="Punchout2Go\Punchout\Model\Transfer\ItemDataResolver">
+        <arguments>
+            <argument name="objectMappings" xsi:type="array">
+                <item name="Magento\Quote\Api\Data\CartItemInterface" xsi:type="string">optionQuoteRelatedDataForOptions</item>
+                <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="string">optionProductRelatedDataForOptions</item>
+                <item name="Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Items\OptionsContainerInterface"
+                      xsi:type="string">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\OptionRelatedDataInterface</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Punchout2Go\Punchout\Model\Transfer\CustomFields\ProductPartResolver">
+        <arguments>
+            <argument name="partObjects" xsi:type="array">
+                <item name="literal" xsi:type="string">Punchout2Go\Punchout\Model\Transfer\CustomFields\Parts\Literal</item>
+                <item name="product" xsi:type="string">Punchout2Go\Punchout\Model\Transfer\CustomFields\Parts\Product</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Punchout2Go\Punchout\Model\Transfer\CustomFields\CartItemPartResolver">
+        <arguments>
+            <argument name="partObjects" xsi:type="array">
+                 <item name="option" xsi:type="string">Punchout2Go\Punchout\Model\Transfer\CustomFields\Parts\Option</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Punchout2Go\Punchout\Model\Transfer\CustomFields\ProductPartResolver">
+        <arguments>
+            <argument name="partObjects" xsi:type="array">
+                <item name="literal" xsi:type="string">Punchout2Go\Punchout\Model\Transfer\CustomFields\Parts\Literal</item>
+                <!-- <item name="option" xsi:type="string">Punchout2Go\Punchout\Model\Transfer\CustomFields\Parts\Option</item>-->
+                <item name="product" xsi:type="string">Punchout2Go\Punchout\Model\Transfer\CustomFields\Parts\Product</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Shipping\AddressMapper">
+        <arguments>
+            <argument name="addressMap" xsi:type="array">
+                <item name="firstname" xsi:type="string">firstname</item>
+                <item name="middlename" xsi:type="string">middlename</item>
+                <item name="lastname" xsi:type="string">lastname</item>
+                <item name="suffix" xsi:type="string">suffix</item>
+                <item name="company" xsi:type="string">company</item>
+                <item name="street" xsi:type="string">street</item>
+                <item name="city" xsi:type="string">city</item>
+                <item name="region" xsi:type="string">region</item>
+                <item name="postcode" xsi:type="string">postcode</item>
+                <item name="country_id" xsi:type="string">country_id</item>
+                <item name="telephone" xsi:type="string">telephone</item>
+                <item name="fax" xsi:type="string">fax</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <virtualType name="accountManagement" type="Magento\Customer\Model\AccountManagement">
+        <arguments>
+            <argument name="authorization" xsi:type="object">Punchout2Go\Punchout\Model\DummyAuthorization</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Punchout2Go\Punchout\Model\PunchoutSessionCollector\CustomerHandler\CustomerService">
+        <arguments>
+            <argument name="accountManagement" xsi:type="object">accountManagement</argument>
+        </arguments>
     </type>
 
 </config>

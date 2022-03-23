@@ -1,12 +1,26 @@
-<a class="action primary checkout <?= $block->escapeHtml($block->getTransferButtonCSS()) ?>"
-   href="<?= /* @noEscape */ $block->getTransferUrl(); ?>" id="po2go-transfer">
-    <span><?= $block->escapeHtml($block->getTransferLabel()); ?></span>
-</a>
-<?php
-$help = $block->getTransferHelp();
-if ($help) {
-    ?>
+<?php /** @var \Punchout2Go\Punchout\Helper\Transfer $helper */ ?>
+<?php $helper = $this->helper(\Punchout2Go\Punchout\Helper\Transfer::class) ?>
+<button class="action primary checkout <?= $block->escapeHtml($helper->getButtonCss()) ?>" id="po2go-transfer">
+    <span><?= $block->escapeHtml($helper->getButtonLabel()); ?></span>
+</button>
+<?php if ($help = $helper->getButtonHelp()): ?>
     <br /><small><?= $block->escapeHtml($help) ?></small>
-    <?php
-}
-?>
+<?php endif; ?>
+<div id="transfer-container"></div>
+<script type="text/x-magento-init">
+    {
+        "#po2go-transfer": {
+            "Punchout2Go_Punchout/js/view/transfer-button": {
+                "elementId": "#po2go-transfer",
+                "checkoutConfig": {
+                    "punchoutConfig": <?php echo $block->getPunchoutConfig() ?>,
+                    "magentoVersion": "<?php echo $block->getMagentoVersion() ?>",
+                    "elementsUrl": <?php echo $block->getPunchoutElementsUrl() ?>
+                },
+                "closeSessionUrl": "<?php echo $block->getUrl('punchout/session/closePost') ?>"
+            }
+        }
+    }
+</script>
+
+

@@ -1,10 +1,19 @@
-<?php
-/** @var \Punchout2go\Punchout\Block\Session\Close $block */
-if ($block->getDisplayReturnLinkEnabled()) {
-    ?>
-    <li class="punchout-close">
-        <a <?= /* @noEscape */ $block->getLinkAttributes() ?>>
-            <?= $block->escapeHtml($block->getLabel()); ?>
+<?php /** @var \Punchout2Go\Punchout\Helper\Data $helper */?>
+<?php $helper = $this->helper(\Punchout2Go\Punchout\Helper\Data::class) ?>
+
+<?php if ($helper->isReturnEnabled()): ?>
+    <li id="po2go-close">
+        <a <?php echo /* @noEscape */ $block->getLinkAttributes() ?>>
+            <?php echo $block->escapeHtml($helper->getReturnLinkLabel()); ?>
         </a>
     </li>
-<?php } ?>
+    <script type="text/x-magento-init">
+    {
+        "#po2go-close": {
+            "Punchout2Go_Punchout/js/view/close-button": {
+                "redirectUrl": "<?php echo $block->getUrl('punchout/session/close') ?>"
+            }
+        }
+    }
+</script>
+<?php endif; ?>

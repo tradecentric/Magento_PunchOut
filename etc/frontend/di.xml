@@ -1,17 +1,27 @@
+<?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <type name="Punchout2go\Punchout\Model\Session">
-         <arguments>
-            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session</argument>
-        </arguments>
-    </type>
-    <!--<preference for="Magento\Catalog\Block\Adminhtml\Product\Edit\Tabs" type="Namespace\Spareparts\Block\Adminhtml\Product\Edit\Tabs" />-->
-    <!--
-    <type name="Magento\Framework\Logger\Monolog">
+
+    <type name="Magento\Customer\CustomerData\SectionPoolInterface">
         <arguments>
-            <argument name="handlers"  xsi:type="array">
-                <item name="punchout" xsi:type="object">Punchout2go\Punchout\Logger\Handler\Debug</item>
+            <argument name="sectionSourceMap" xsi:type="array">
+                <item name="punchout-session" xsi:type="string">Punchout2Go\Punchout\CustomerData\PunchoutQuoteId</item>
             </argument>
         </arguments>
     </type>
-    -->
+
+    <type name="Magento\Checkout\Controller\Cart">
+        <plugin name="punchout_restrict_only_punchout" type="Punchout2Go\Punchout\Plugin\RestrictOnlyPunchoutPlugin"/>
+    </type>
+
+    <type name="Punchout2Go\Punchout\Model\AccessValidator">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="basic" xsi:type="object">Punchout2Go\Punchout\Model\AccessValidator\Basic</item>
+                <item name="punchout-session-start" xsi:type="object">Punchout2Go\Punchout\Model\AccessValidator\SessionStart</item>
+                <item name="forward" xsi:type="object">Punchout2Go\Punchout\Model\AccessValidator\Forward</item>
+                <item name="punchout-redirect" xsi:type="object">Punchout2Go\Punchout\Model\AccessValidator\PunchoutRedirect</item>
+            </argument>
+        </arguments>
+    </type>
+
 </config>

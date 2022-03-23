@@ -1,10 +1,5 @@
 <?xml version="1.0"?>
-<!--
-/**
- * Copyright © 2015 Magento. All rights reserved.
- * See COPYING.txt for license details.
- */
--->
+
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
         <punchout2go_punchout>
@@ -14,59 +9,33 @@
             <security>
                 <punchout_active>1</punchout_active>
                 <punchout_encrypt>0</punchout_encrypt>
-                <punchout_encryption_key></punchout_encryption_key>
+                <punchout_encryption_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
                 <punchout_validate_session>0</punchout_validate_session>
                 <punchout_validate_session_url>https://connect.punchout2go.com/gateway/link/session/id/{pos}</punchout_validate_session_url>
             </security>
             <session>
+                <start_redirect_new>/</start_redirect_new>
                 <punchout_only>1</punchout_only>
-                <load_posdelay>0</load_posdelay>
-                <selected_item_ignore>AAA</selected_item_ignore>
                 <type>login</type>
-                <js_clear_localdata>1</js_clear_localdata>
                 <js_session_clean>1</js_session_clean>
-                <js_reload_sections>customer</js_reload_sections>
+                <js_reload_sections>customer,punchout-session,cart</js_reload_sections>
+                <required_elements>https://connect.punchout2go.com/jslib/lib/basic/basic.js,https://connect.punchout2go.com/jslib/0.0.1/po2go_mage.js?r=1.1,https://connect.punchout2go.com/jslib/lib/js/base64.min.js</required_elements>
             </session>
+            <customer>
+                <auto_create_user>1</auto_create_user>
+                <preinsert_customer_attribute_map>{}</preinsert_customer_attribute_map>
+            </customer>
             <order>
                 <classification_field>classification</classification_field>
                 <uom_field>unit_of_measure</uom_field>
+                <default_language>en</default_language>
+                <data_cart_return_map>{}</data_cart_return_map>
+                <data_item_return_map>{}</data_item_return_map>
             </order>
-            <site>
-                <allow_frames>1</allow_frames>
-                <allow_po2go_frame_ancestors>1</allow_po2go_frame_ancestors>
-                <frame_ancestors />
-                <po2go_frame_ancestors>https://portal.punchout2go.com https://qa-portal.punchout2go.com https://dev-portal.punchout2go.com</po2go_frame_ancestors>
-            </site>
-            <customer>
-                <auto_create_user>1</auto_create_user>
-            </customer>
             <system>
-                <logging>1</logging>
+                <api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <logging>0</logging>
             </system>
         </punchout2go_punchout>
-        <!-- DEFAULTS
-        <checkout>
-            <options>
-                <onepage_checkout_enabled>1</onepage_checkout_enabled>
-                <guest_checkout>1</guest_checkout>
-            </options>
-            <cart>
-                <delete_quote_after>30</delete_quote_after>
-                <redirect_to_cart>0</redirect_to_cart>
-            </cart>
-            <cart_link>
-                <use_qty>1</use_qty>
-            </cart_link>
-            <sidebar>
-                <display>1</display>
-                <count>5</count>
-            </sidebar>
-            <payment_failed>
-                <identity>general</identity>
-                <receiver>general</receiver>
-                <template>checkout_payment_failed_template</template>
-            </payment_failed>
-        </checkout>
-        -->
     </default>
 </config>

@@ -1,19 +1,19 @@
 <?php
-/**
- * Copyright © 2015 Magento. All rights reserved.
- * See COPYING.txt for license details.
- */
+declare(strict_types=1);
 
 /**
  * Used in creating options for Yes|No config value selection
  */
+namespace Punchout2Go\Punchout\Model\System\Config\Source;
 
-namespace Punchout2go\Punchout\Model\System\Config\Source;
-
-use Magento\Framework\Option\ArrayInterface;
-
-class Login implements ArrayInterface
+/**
+ * Class Login
+ * @package Punchout2Go\Punchout\Model\System\Config\Source
+ */
+class Login implements \Magento\Framework\Data\OptionSourceInterface
 {
+    const LOGIN_ANONYMOUS = 'anonymous';
+    const LOGIN_LOGGED_IN = 'login';
     /**
      * Options getter
      *
@@ -22,8 +22,8 @@ class Login implements ArrayInterface
     public function toOptionArray()
     {
         return [
-            ['value' => 'anonymous', 'label' => __('Anonymous')],
-            ['value' => 'login', 'label' => __('Login')],
+            ['value' => static::LOGIN_ANONYMOUS, 'label' => __('Anonymous')],
+            ['value' => static::LOGIN_LOGGED_IN, 'label' => __('Login')],
         ];
     }
 }

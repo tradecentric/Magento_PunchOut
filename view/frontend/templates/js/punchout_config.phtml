@@ -1,14 +1,25 @@
-<?php
-    /** @var \Punchout2go\Punchout\Block\Session $this */
-
-$helper = $this->getHelper();
-
-?>
+<?php $helper = $this->helper(\Punchout2Go\Punchout\Helper\Session::class) ?>
+<script>
+    window.reloadParam = "<?php echo $helper->getFirstLoadParam()?>";
+</script>
 <script type="text/x-magento-init">
     {
         "*" :
             {
-                "punchout" : <?php echo $this->getConfigJson(); ?>
+                "Punchout2Go_Punchout/js/view/punchout-component" : {
+                    "jsReloadSections" : "<?php echo $helper->getJsReloadSections(); ?>"
+                }
+            }
+    }
+</script>
+
+<script type="text/x-magento-init">
+    {
+        "*" :
+            {
+                "Punchout2Go_Punchout/js/view/redirect-component" : {
+                    "redirectUrl": "<?php echo $block->escapeUrl($helper->getPunchoutRedirectUrl()); ?>"
+                 }
             }
     }
 </script>

@@ -1,30 +1,15 @@
 <?xml version="1.0"?>
-<!--
-/**
- * Copyright © 2015 Magento. All rights reserved.
- * See COPYING.txt for license details.
- */
--->
+
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
-        <script src="https://connect.punchout2go.com/jslib/lib/basic/basic.js" src_type="url"/>
         <css src="https://connect.punchout2go.com/jslib/lib/basic/basic.css" src_type="url" />
-       <css src="Punchout2go_Punchout::punchout_style.css"/>
-       <!--<script src="https://connect.punchout2go.com/jslib/0.0.3/po2go.js?r=2" src_type="url"/>-->
-       <!--<link src="Punchout2go_Punchout::punchout_script.js"/>-->
-       <!--<link src="//connect.punchout2go.com/jslib/0.0.1/punchout2go.js?r=2" />-->
     </head>
     <body>
-        <!-- Return To Procurement System Link -->
         <referenceBlock name="header.links">
-            <block class="Punchout2go\Punchout\Block\Session\Close" name="punchout-close"
-                template="punchout_close.phtml" after="-">
-            </block>
+            <block class="Magento\Framework\View\Element\Template" name="punchout-close" template="Punchout2Go_Punchout::punchout_close.phtml" after="-"/>
         </referenceBlock>
-        <!-- JS includes in footer -->
         <referenceContainer name="footer">
-            <block class="Punchout2go\Punchout\Block\Session" name="punchout.session.js" template="Punchout2go_Punchout::js/punchout_config.phtml">
-            </block>
+            <block class="Magento\Framework\View\Element\Template" name="punchout.session.js" template="Punchout2Go_Punchout::js/punchout_config.phtml"/>
         </referenceContainer>
     </body>
 </page>

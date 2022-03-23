@@ -1,38 +1,13 @@
 <?xml version="1.0"?>
-<!--
-/**
- * Copyright © 2015 Magento. All rights reserved.
- * See COPYING.txt for license details.
- */
--->
-<!--<layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_layout.xsd">
-    <remove name="checkout.cart.methods.onepage.bottom"/>
-    <remove name="checkout.cart.shortcut.buttons" />
-    <referenceContainer name="checkout.cart.methods">-->
-        <!--<block class="Magento\Checkout\Block\Onepage\Link" name="checkout.cart.methods.onepage.bottom" template="onepage/link.phtml" />-->
-    <!--</referenceContainer>
-</layout>-->
 
-<page layout="1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
-<body>
-    <!--<referenceContainer name="checkout.cart.methods">
-        <block class="Punchout2go\Punchout\Block\Transferbutton"
-               name="transferbutton" template="transferbutton.phtml" />
-    </referenceContainer>-->
-    <referenceBlock name="checkout.cart.methods.onepage.bottom" remove="true" />
-    <referenceBlock name="checkout.cart.shortcut.buttons" remove="true" />
-    <referenceBlock name="checkout.cart.methods.multishipping" remove="true" />
-    <!--<remove name="checkout.cart.shortcut.buttons" />-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="checkout.cart.methods.onepage.bottom" remove="true" />
+        <referenceBlock name="checkout.cart.shortcut.buttons" remove="true" />
+        <referenceBlock name="checkout.cart.methods.multishipping" remove="true" />
 
-    <referenceContainer name="checkout.cart.methods">
-        <block class="Punchout2go\Punchout\Block\Transferbutton"
-               name="checkout.cart.methods.transferbutton" template="transferbutton.phtml" />
-    </referenceContainer>
-</body>
-
-<!--<referenceContainer name="checkout.cart.methods">
-    <block class="Punchout2go\Punchout\Block\Transferbutton"
-           name="punchout2go_punchout_transferbutton" template="transferbutton.phtml" />
-</referenceContainer>-->
+        <referenceContainer name="checkout.cart.methods">
+            <block class="Punchout2Go\Punchout\Block\Transfer" name="checkout.cart.methods.transferbutton" template="Punchout2Go_Punchout::transferbutton.phtml" />
+        </referenceContainer>
+    </body>
 </page>
