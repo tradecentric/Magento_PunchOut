@@ -9,9 +9,9 @@
     "config": {
         "sort-packages": true
     },
-    "version": "3.0.0",
+    "version": "3.0.1",
     "require": {
-        "php": "~7.3.0||~7.4.0",
+        "php": "~7.3.0||~7.4.0||^8.0",
         "ext-openssl": "*"
     },
     "suggest": {
