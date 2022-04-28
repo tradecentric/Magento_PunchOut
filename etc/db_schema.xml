@@ -13,8 +13,6 @@
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="entity_id"/>
         </constraint>
-        <constraint xsi:type="foreign" referenceId="PUNCHOUT_QUOTE_QUOTE_ID_QUOTE_QUOTE_ID" table="punchout_quote" column="quote_id"
-                    referenceTable="quote" referenceColumn="entity_id" onDelete="CASCADE"/>
         <index referenceId="QUOTE_ID" indexType="btree">
             <column name="quote_id"/>
         </index>
