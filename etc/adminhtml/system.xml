@@ -167,6 +167,13 @@
                     <backend_model>Punchout2Go\Punchout\Model\System\Config\Backend\Keyvalue</backend_model>
                 </field>
             </group>
+            <group id="current_version" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Version</label>
+                <field id="version" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Current Version</label>
+                    <frontend_model>Punchout2Go\Punchout\Block\Forms\Config\Version</frontend_model>
+                </field>
+            </group>
         </section>
     </system>
 </config>
