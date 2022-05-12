@@ -3,7 +3,7 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
         <tab id="punchout2go" translate="label" sortOrder="1000">
-            <label>PunchOut2Go</label>
+            <label>TradeCentric</label>
         </tab>
         <section id="punchout2go_punchout" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
             <label>Punchout</label>
@@ -52,11 +52,11 @@
                 <field id="punchout_validate_session" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>PunchOut Validate Session</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Validate session via a callback to the PunchOut2Go Gateway (PunchOut Validate Session URL must be defined).</comment>
+                    <comment>Validate session via a callback to the TradeCentric Gateway (PunchOut Validate Session URL must be defined).</comment>
                 </field>
                 <field id="punchout_validate_session_url" translate="label comment" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>PunchOut Validate Session URL</label>
-                    <comment>PunchOut2Go URL for validating the session (PunchOut Validate Session must be enabled).</comment>
+                    <comment>TradeCentric URL for validating the session (PunchOut Validate Session must be enabled).</comment>
                 </field>
             </group>
             <group id="site" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
