@@ -1,0 +1,19 @@
+TradeCentric - PunchOut
+===========
+### 3.0.4 (2022-05-24)
+* Updated branding
+* Updated endpoints preset to tradecentic.com instead of punchout2go (config.xml)
+* Updated package name for composer representing TradeCentric brand name
+
+### 3.0.3 (2022-05-10)
+* Added displaying version in the admin
+
+### 3.0.2 (2022-04-09)
+* Added support for Magento 2.3.7-p3
+
+### 3.0.1 (2021-12-03)
+* Fixed an error with "First Name is a required value" upon initiating of the punchout session
+
+### 3.0.0 (2021-05-21)
+
+* Initial release
