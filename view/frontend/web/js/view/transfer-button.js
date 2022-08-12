@@ -20,10 +20,10 @@ define([
                 .then(function(punchoutData) {
                     return punchoutCheckout.run(config.checkoutConfig, punchoutData);
                 })
-                .then(closeSession(config.closeSessionUrl))
-                .then(function() {
-                    destroySession();
+                .then(function () {
+                    closeSession(config.closeSessionUrl);
                 })
+                .then(destroySession)
                 .done(function() {
                     $("body").trigger('processStop');
                 })
