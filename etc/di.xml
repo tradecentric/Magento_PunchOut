@@ -7,11 +7,8 @@
                 type="Punchout2Go\Punchout\Model\Request\Validate\RemoteValidationHandler" />
     <preference for="Punchout2Go\Punchout\Api\RequestParamsHandlerInterface" type="Punchout2Go\Punchout\Model\RequestParamsHandler" />
     <preference for="Punchout2Go\Punchout\Api\SessionInterface" type="Punchout2Go\Punchout\Model\Session" />
-    <preference for="Punchout2Go\Punchout\Model\CustomerHandler\Extractors\ExtractorInterface"
-                type="Punchout2Go\Punchout\Model\CustomerHandler\CustomerDataExtractor" />
     <preference for="Punchout2Go\Punchout\Api\SessionContainerInterface"
                 type="Punchout2Go\Punchout\Model\PunchoutSessionCollector\SessionContainer" />
-    <preference for="Punchout2Go\Punchout\Api\QuoteContextInterface" type="Punchout2Go\Punchout\Model\Transfer\QuoteContext" />
     <preference for="Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Items\OptionsContainerInterface"
                 type="Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Items\OptionsContainer" />
     <preference for="Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\OptionRelatedDataInterface"
@@ -331,6 +328,18 @@
     <type name="Punchout2Go\Punchout\Model\PunchoutSessionCollector\CustomerHandler\CustomerService">
         <arguments>
             <argument name="accountManagement" xsi:type="object">accountManagement</argument>
+        </arguments>
+    </type>
+
+    <type name="Punchout2Go\Punchout\Observer\LayoutObserver">
+        <arguments>
+            <argument name="session" xsi:type="object">Punchout2Go\Punchout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+
+    <type name="Punchout2Go\Punchout\Plugin\RestrictCheckoutPlugin">
+        <arguments>
+            <argument name="session" xsi:type="object">Punchout2Go\Punchout\Model\Session\Proxy</argument>
         </arguments>
     </type>
 

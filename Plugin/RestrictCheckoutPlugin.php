@@ -22,7 +22,7 @@ class RestrictCheckoutPlugin
     protected $dataHelper;
 
     /**
-     * @var \Punchout2Go\Punchout\Model\Session\Proxy
+     * @var \Punchout2Go\Punchout\Model\Session
      */
     protected $session;
 
@@ -30,12 +30,12 @@ class RestrictCheckoutPlugin
      * RestrictCheckoutPlugin constructor.
      * @param ResultFactory $resultFactory
      * @param \Punchout2Go\Punchout\Helper\Data $dataHelper
-     * @param \Punchout2Go\Punchout\Model\Session\Proxy $session
+     * @param \Punchout2Go\Punchout\Model\Session $session
      */
     public function __construct(
         \Magento\Framework\Controller\ResultFactory $resultFactory,
         \Punchout2Go\Punchout\Helper\Data $dataHelper,
-        \Punchout2Go\Punchout\Model\Session\Proxy $session
+        \Punchout2Go\Punchout\Model\Session $session
     ) {
         $this->resultFactory = $resultFactory;
         $this->dataHelper = $dataHelper;

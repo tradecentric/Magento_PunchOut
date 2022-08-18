@@ -35,7 +35,7 @@ class DataExtractorPool implements DataExtractorInterface
         foreach ($this->extractorPool as $extractor) {
             if (!($extractor instanceof DataExtractorInterface)) {
                 throw new LocalizedException(__(
-                    'Class should be instance of Punchout2Go\Punchout\Model\CustomerHandler\ExtractorInterface'
+                    'Class should be instance of Punchout2Go\Punchout\Model\DataExtractorInterface'
                 ));
             }
             $result = array_merge($result, $extractor->extract($data));

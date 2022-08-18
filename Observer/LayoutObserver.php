@@ -18,21 +18,20 @@ class LayoutObserver implements ObserverInterface
     protected $helper;
 
     /**
-     * @var \Punchout2Go\Punchout\Model\Session\Proxy
+     * @var \Punchout2Go\Punchout\Model\Session
      */
-    protected $sessionProxy;
+    protected $session;
 
     /**
-     * LayoutObserver constructor.
-     * @param \Punchout2go\Punchout\Helper\Data $dataHelper
-     * @param \Punchout2Go\Punchout\Model\Session\Proxy $sessionProxy
+     * @param \Punchout2Go\Punchout\Helper\Data $dataHelper
+     * @param \Punchout2Go\Punchout\Model\Session $session
      */
     public function __construct(
         \Punchout2Go\Punchout\Helper\Data $dataHelper,
-        \Punchout2Go\Punchout\Model\Session\Proxy $sessionProxy
+        \Punchout2Go\Punchout\Model\Session $session
     ) {
         $this->helper = $dataHelper;
-        $this->sessionProxy = $sessionProxy;
+        $this->session = $session;
     }
 
     /**
@@ -45,7 +44,7 @@ class LayoutObserver implements ObserverInterface
         if ($isActive) {
             $layout->getUpdate()->addHandle('punchout');
         }
-        if ($observer->getFullActionName() == 'checkout_cart_index' & $isActive && $this->sessionProxy->isValid()) {
+        if ($observer->getFullActionName() == 'checkout_cart_index' & $isActive && $this->session->isValid()) {
             $layout->getUpdate()->addHandle('punchout_checkout_cart_index');
         }
     }
