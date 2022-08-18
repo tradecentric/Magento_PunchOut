@@ -1,7 +1,15 @@
 TradeCentric - PunchOut
 ===========
+### 3.0.6 (2022-08-18)
+* Fix for Magento Marketplace Compatibility:
+** File : /usr/share/eqp/PhpCodeSnifferTool/tmp/work/Observer/LayoutObserver.phpProxies and interceptors MUST never be explicitly requested in constructors. - fixed.
+** File :/usr/share/eqp/PhpCodeSnifferTool/tmp/work/Plugin/RestrictCheckoutPlugin.phpProxies and interceptors MUST never be explicitly requested in constructors. - fixed.
+** File : /usr/share/eqp/PhpCodeSnifferTool/tmp/work/Observer/LayoutObserver.phpProxies and interceptors MUST never be explicitly requested in constructors. - fixed.
+** File :/usr/share/eqp/PhpCodeSnifferTool/tmp/work/Plugin/RestrictCheckoutPlugin.phpProxies and interceptors MUST never be explicitly requested in constructors. - fixed.
+
 ### 3.0.5 (2022-08-12)
 * Refactored JavaScript
+
 ### 3.0.4 (2022-05-24)
 * Updated branding
 * Updated endpoints preset to tradecentic.com instead of punchout2go (config.xml)
