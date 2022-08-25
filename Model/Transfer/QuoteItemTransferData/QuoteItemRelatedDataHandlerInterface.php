@@ -13,8 +13,8 @@ interface QuoteItemRelatedDataHandlerInterface
 {
     /**
      * @param CartItemInterface $cartItem
-     * @param null $storeId
+     * @param $storeId
      * @return array
      */
-    public function handle(CartItemInterface $cartItem, $storeId = null): array;
+    public function handle(CartItemInterface $cartItem, $storeId): array;
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Punchout2Go\Punchout\Api;
 
 use Magento\Quote\Api\Data\CartItemInterface;
+use Punchout2Go\Punchout\Api\Data\ItemTransferDtoInterface;
 
 /**
  * Interface PunchoutTransferDataInterface
@@ -11,5 +12,15 @@ use Magento\Quote\Api\Data\CartItemInterface;
  */
 interface TransferCartItemDataInterface
 {
-    public function getData(CartItemInterface $cartItem, $storeId = null): array;
+    /**
+     * @param ItemTransferDtoInterface $dto
+     * @return bool
+     */
+    public function supports(ItemTransferDtoInterface $dto): bool;
+
+    /**
+     * @param ItemTransferDtoInterface $dto
+     * @return array
+     */
+    public function getData(ItemTransferDtoInterface $dto): array;
 }

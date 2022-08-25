@@ -31,10 +31,10 @@ class Configuration implements QuoteItemRelatedDataHandlerInterface
 
     /**
      * @param CartItemInterface $product
-     * @param null $storeId
+     * @param $storeId
      * @return array
      */
-    public function handle(CartItemInterface $product, $storeId = null): array
+    public function handle(CartItemInterface $product, $storeId): array
     {
         if ($product->getProductType() !== Configurable::TYPE_CODE) {
             return [];

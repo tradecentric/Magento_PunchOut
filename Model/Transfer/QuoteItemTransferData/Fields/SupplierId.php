@@ -30,10 +30,10 @@ class SupplierId implements QuoteItemRelatedDataHandlerInterface
 
     /**
      * @param CartItemInterface $cartItem
-     * @param null $storeId
-     * @return string
+     * @param $storeId
+     * @return array
      */
-    public function handle(CartItemInterface $cartItem, $storeId = null): array
+    public function handle(CartItemInterface $cartItem, $storeId): array
     {
         return [
             'supplierauxid' => $this->helper->getLineId((int) $cartItem->getQuoteId(), (int) $cartItem->getItemId())

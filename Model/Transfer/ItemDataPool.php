@@ -9,28 +9,19 @@ use Magento\Framework\Exception\LocalizedException;
  * Class ItemDataResolver
  * @package Punchout2Go\Punchout\Model\Transfer
  */
-class ItemDataResolver
+class ItemDataPool
 {
-    /**
-     * @var \Magento\Framework\ObjectManagerInterface
-     */
-    protected $objectManager;
-
     /**
      * @var array
      */
     protected $objectMappings = [];
 
     /**
-     * ItemDataResolver constructor.
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager
+     * ItemDataPool constructor.
      * @param array $objectMappings
      */
-    public function __construct(
-        \Magento\Framework\ObjectManagerInterface $objectManager,
-        array $objectMappings = []
-    ) {
-        $this->objectManager = $objectManager;
+    public function __construct(array $objectMappings = [])
+    {
         $this->objectMappings = $objectMappings;
     }
 
@@ -40,12 +31,13 @@ class ItemDataResolver
      * @return mixed
      * @throws LocalizedException
      */
-    public function resolve($object, array $data = [])
+    public function get($object, array $data = [])
     {
         foreach ($this->objectMappings as $type => $handler) {
-            if ($object instanceof $type) {
-                return $this->objectManager->create($handler, $data);
+            if (!($object instanceof $type)) {
+                continue;
             }
+            return $handler;
         }
         throw new LocalizedException(__('Item data resolver not found'));
     }

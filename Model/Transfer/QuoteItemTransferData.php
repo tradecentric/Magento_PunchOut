@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace Punchout2Go\Punchout\Model\Transfer;
 
 use Magento\Quote\Api\Data\CartItemInterface;
+use Punchout2Go\Punchout\Api\Data\ItemTransferDtoInterface;
 use Punchout2Go\Punchout\Api\TransferCartItemDataInterface;
-use Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\ProductRelatedDataHandlerInterface;
-use Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\QuoteItemRelatedDataHandlerInterface;
+use Magento\Catalog\Api\ProductRepositoryInterface;
 
 /**
  * Class QuoteItemTransferData
@@ -30,35 +30,46 @@ class QuoteItemTransferData implements TransferCartItemDataInterface
      * @param ItemDataResolver $dataResolver
      */
     public function __construct(
-        \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
-        ItemDataResolver $dataResolver
+        ProductRepositoryInterface $productRepository,
+        ItemDataPool $dataResolver
     ) {
         $this->dataResolver = $dataResolver;
         $this->productRepository = $productRepository;
     }
 
     /**
-     * @return array
+     * @param ItemTransferDtoInterface $dto
+     * @return bool
      */
-    public function getData(CartItemInterface $cartItem, $storeId = null): array
+    public function supports(ItemTransferDtoInterface $dto): bool
+    {
+        return true;
+    }
+
+    /**
+     * @param ItemTransferDtoInterface $dto
+     * @return array
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getData(ItemTransferDtoInterface $dto): array
     {
         $result = [];
-        $data = [$cartItem, $this->getProduct($cartItem)];
+        $data = [$dto->getItem(), $this->getProduct($dto)];
         foreach ($data as $object) {
-            $resolver = $this->dataResolver->resolve($object);
-            $result = array_merge($result, $resolver->handle($object, $storeId));
+            $resolver = $this->dataResolver->get($object);
+            $result = array_merge($result, $resolver->handle($object, $dto->getStoreId()));
         }
         return [$result];
     }
 
     /**
-     * @param CartItemInterface $cartItem
-     * @param null $storeId
+     * @param ItemTransferDtoInterface $dto
      * @return \Magento\Catalog\Api\Data\ProductInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    protected function getProduct(CartItemInterface $cartItem, $storeId = null)
+    protected function getProduct(ItemTransferDtoInterface $dto)
     {
-        return $this->productRepository->getById($cartItem->getProductId(), false, $storeId);
+        return $this->productRepository->getById($dto->getItem()->getProductId(), false, $dto->getStoreId());
     }
 }

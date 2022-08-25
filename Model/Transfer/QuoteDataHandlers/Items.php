@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers;
 
 use Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlerInterface;
+use Punchout2Go\Punchout\Api\Data\ItemTransferDtoInterfaceFactory;
 
 /**
  * Class Items
@@ -11,28 +12,27 @@ use Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlerInterface;
  */
 class Items implements QuoteDataHandlerInterface
 {
-
     /**
      * @var \Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferDataFactory
      */
-    protected $itemTypeFactory;
+    protected $itemTypePool;
 
     /**
-     * @var \Punchout2Go\Punchout\Helper\Transfer
+     * @var ItemTransferDtoInterfaceFactory
      */
-    protected $itemTypeResolver;
+    protected $dtoInterfaceFactory;
 
     /**
      * Items constructor.
-     * @param Items\ItemTypeFactory $itemTypeFactory
-     * @param Items\ItemTypeResolver $itemTypeResolver
+     * @param Items\ItemTypePool $itemTypePool
+     * @param ItemTransferDtoInterfaceFactory $dtoInterfaceFactory
      */
     public function __construct(
-        Items\ItemTypeFactory $itemTypeFactory,
-        Items\ItemTypeResolver $itemTypeResolver
+        Items\ItemTypePool $itemTypePool,
+        ItemTransferDtoInterfaceFactory $dtoInterfaceFactory
     ) {
-        $this->itemTypeFactory = $itemTypeFactory;
-        $this->itemTypeResolver = $itemTypeResolver;
+        $this->itemTypePool = $itemTypePool;
+        $this->dtoInterfaceFactory = $dtoInterfaceFactory;
     }
 
     /**
@@ -43,8 +43,9 @@ class Items implements QuoteDataHandlerInterface
     {
         $result = [];
         foreach ($cart->getAllVisibleItems() as $item) {
-            $itemType = $this->itemTypeFactory->create($this->itemTypeResolver->resolve($item), $item);
-            $result = array_merge($result, $itemType->getData($item, $cart->getStoreId()));
+            $dto = $this->dtoInterfaceFactory->create(['item' => $item, 'storeId' => $cart->getStoreId()]);
+            $itemType = $this->itemTypePool->get($dto);
+            $result = array_merge($result, $itemType->getData($dto));
         }
         return $result;
     }

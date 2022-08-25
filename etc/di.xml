@@ -26,6 +26,8 @@
                 type="Punchout2Go\Punchout\Model\TotalsInformationManagement"/>
     <preference for="Punchout2Go\Punchout\Api\GuestTotalsInformationManagementInterface"
                 type="Punchout2Go\Punchout\Model\GuestTotalsInformationManagement"/>
+    <preference for="Punchout2Go\Punchout\Api\Data\ItemTransferDtoInterface"
+                type="Punchout2Go\Punchout\Model\Transfer\ItemTransferDto"/>
 
     <virtualType name="PunchoutLogger" type="Magento\Framework\Logger\Monolog">
         <arguments>
@@ -158,11 +160,11 @@
         </arguments>
     </type>
 
-    <type name="Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Items\ItemTypeFactory">
+    <type name="Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Items\ItemTypePool">
         <arguments>
             <argument name="resolvers" xsi:type="array">
-                <item name="default" xsi:type="string">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData</item>
-                <item name="with_options" xsi:type="string">Punchout2Go\Punchout\Model\Transfer\QuoteItemOptionsTransferData</item>
+                <item name="10" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData</item>
+                <item name="5" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemOptionsTransferData</item>
             </argument>
         </arguments>
     </type>
@@ -190,11 +192,18 @@
                 <item name="supplierauxid" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\SupplierId</item>
                 <item name="custom_fields" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\QuoteCustomFields</item>
                 <item name="configuration" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Configuration</item>
+                <item name="child_items" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\BundleItems</item>
                 <item name="description" xsi:type="string">name</item>
                 <item name="unitprice" xsi:type="string">price</item>
             </argument>
         </arguments>
     </virtualType>
+
+    <type name="Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\BundleItems">
+        <arguments>
+            <argument name="itemTypePool" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Items\ItemTypePool\Proxy</argument>
+        </arguments>
+    </type>
 
     <virtualType name="productNoOptionsProductData" type="Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\ProductRelatedData">
         <arguments>
@@ -244,31 +253,31 @@
         </arguments>
     </virtualType>
 
-    <virtualType name="defaultProductDataResolver" type="Punchout2Go\Punchout\Model\Transfer\ItemDataResolver">
+    <virtualType name="defaultProductDataResolver" type="Punchout2Go\Punchout\Model\Transfer\ItemDataPool">
         <arguments>
             <argument name="objectMappings" xsi:type="array">
-                <item name="Magento\Quote\Api\Data\CartItemInterface" xsi:type="string">productNoOptionsQuoteData</item>
-                <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="string">productNoOptionsProductData</item>
+                <item name="Magento\Quote\Api\Data\CartItemInterface" xsi:type="object">productNoOptionsQuoteData</item>
+                <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="object">productNoOptionsProductData</item>
             </argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="optionsProductDataResolver" type="Punchout2Go\Punchout\Model\Transfer\ItemDataResolver">
+    <virtualType name="optionsProductDataResolver" type="Punchout2Go\Punchout\Model\Transfer\ItemDataPool">
         <arguments>
             <argument name="objectMappings" xsi:type="array">
-                <item name="Magento\Quote\Api\Data\CartItemInterface" xsi:type="string">productNoOptionsQuoteData</item>
-                <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="string">productRelatedDataForOptions</item>
+                <item name="Magento\Quote\Api\Data\CartItemInterface" xsi:type="object">productNoOptionsQuoteData</item>
+                <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="object">productRelatedDataForOptions</item>
             </argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="optionsDataResolver" type="Punchout2Go\Punchout\Model\Transfer\ItemDataResolver">
+    <virtualType name="optionsDataResolver" type="Punchout2Go\Punchout\Model\Transfer\ItemDataPool">
         <arguments>
             <argument name="objectMappings" xsi:type="array">
-                <item name="Magento\Quote\Api\Data\CartItemInterface" xsi:type="string">optionQuoteRelatedDataForOptions</item>
-                <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="string">optionProductRelatedDataForOptions</item>
+                <item name="Magento\Quote\Api\Data\CartItemInterface" xsi:type="object">optionQuoteRelatedDataForOptions</item>
+                <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="object">optionProductRelatedDataForOptions</item>
                 <item name="Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Items\OptionsContainerInterface"
-                      xsi:type="string">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\OptionRelatedDataInterface</item>
+                      xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\OptionRelatedDataInterface</item>
             </argument>
         </arguments>
     </virtualType>

@@ -48,7 +48,7 @@ class QuoteCustomFields implements QuoteItemRelatedDataHandlerInterface
      * @param null $storeId
      * @return array
      */
-    public function handle(CartItemInterface $product, $storeId = null): array
+    public function handle(CartItemInterface $product, $storeId): array
     {
         $result = [];
         $fields = $this->helper->getCartItemMap();
