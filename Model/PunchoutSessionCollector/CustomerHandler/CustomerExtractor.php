@@ -70,8 +70,9 @@ class CustomerExtractor
      */
     public function extract(
         $formCode,
-        $customerData,
-        array $attributeValues = []
+        $requestData,
+        array $attributeValues = [],
+        array $additionalAttributes = []
     ) {
         $customerForm = $this->formFactory->create(
             CustomerMetadataInterface::ENTITY_TYPE_CUSTOMER,
@@ -79,7 +80,10 @@ class CustomerExtractor
             $attributeValues
         );
         $customerForm->setInvisibleIgnored(false);
-        $customerData = $customerForm->compactData($customerData);
+        $customerData = $customerForm->compactData($requestData);
+        foreach ($additionalAttributes as $attributeCode) {
+            $customerData[$attributeCode] = isset($requestData[$attributeCode]) ? $requestData[$attributeCode] : false;
+        }
         $allowedAttributes = $customerForm->getAllowedAttributes();
         $isGroupIdEmpty = !isset($allowedAttributes['group_id']);
 

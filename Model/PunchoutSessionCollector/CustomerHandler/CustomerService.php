@@ -83,18 +83,11 @@ class CustomerService
      */
     public function createCustomer(array $params)
     {
-        $this->eventManager->dispatch('punchout_new_customer_before_save', [
-            'customer_params' => $params
-        ]);
-
         $customerEntity = $this->createCustomerEntity($params);
-        $customer = $this->accountManagement->createAccount($customerEntity);
-
-        $this->eventManager->dispatch('punchout_new_customer_after_save', [
-            'customer' => $customer
+        $this->eventManager->dispatch('punchout_new_customer_before_create', [
+            'customer_params' => $params, 'customer' => $customerEntity
         ]);
-
-        return $customer;
+        return $this->accountManagement->createAccount($customerEntity);
     }
 
     /**
@@ -129,7 +122,9 @@ class CustomerService
     {
         $customer = $this->customerExtractor->extract(
             'customer_account_create',
-            $params
+            $params,
+            [],
+            ['extension_attributes']
         );
         $customer->setCreatedAt((new \DateTime())->getTimestamp());
         if (!isset($params['default_group'])) {
