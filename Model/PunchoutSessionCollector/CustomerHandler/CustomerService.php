@@ -106,9 +106,15 @@ class CustomerService
                 foreach ($value as $attribute) {
                     $customer->setCustomAttribute($attribute['attribute_code'], $attribute['value']);
                 }
-            } else {
-                $customer->setData($key, $value);
+                return;
             }
+            if ($key == 'extension_attributes') {
+                foreach ($value as $code => $attribute) {
+                    $customer->getExtensionAttributes()->setData($code, $attribute);
+                }
+                return;
+            }
+            $customer->setData($key, $value);
         });
         $this->customerRepository->save($customer);
     }
