@@ -352,4 +352,12 @@
         </arguments>
     </type>
 
+    <virtualType name="Punchout2Go\Punchout\Block\Forms\Config\Version" type="TradeCentric\Version\Block\Forms\Config\Version">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item name="module_name" xsi:type="string">Punchout2Go_Punchout</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
 </config>
