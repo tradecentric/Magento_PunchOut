@@ -1,5 +1,14 @@
 TradeCentric - PunchOut
 ===========
+### 3.0.9 (2022-09-21)
+* Fix for compatibility issue with Magento B2B module (for when users' session is re-established)
+
+### 3.0.8 (2022-09-07)
+* Added support for Magento B2B module
+
+### 3.0.7 (2022-08-25)
+* Added support for Bundled Products
+
 ### 3.0.6 (2022-08-18)
 * Fix for Magento Marketplace Compatibility:
 ** File : /usr/share/eqp/PhpCodeSnifferTool/tmp/work/Observer/LayoutObserver.phpProxies and interceptors MUST never be explicitly requested in constructors. - fixed.
