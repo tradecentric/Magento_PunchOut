@@ -28,6 +28,7 @@ class Transfer extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_CART_MAP = 'punchout2go_punchout/order/data_cart_return_map';
     const XML_PATH_DISALLOW_EDIT = 'punchout2go_punchout/order/disallow_edit_cart';
     const XML_PATH_DEFAULT_LANGUAGE = 'punchout2go_punchout/order/default_language';
+    const XML_PATH_DEBUG_TRANSFER = 'punchout2go_punchout/system/debug_transfer';
 
     /**
      * @var \Magento\Framework\Serialize\Serializer\Json
@@ -270,6 +271,19 @@ class Transfer extends \Magento\Framework\App\Helper\AbstractHelper
     {
         return $this->scopeConfig->getValue(
             static::XML_PATH_DEFAULT_LANGUAGE,
+            ScopeInterface::SCOPE_STORE,
+            $store
+        );
+    }
+
+    /**
+     * @param null $store
+     * @return mixed
+     */
+    public function getIsDebug($store = null)
+    {
+        return $this->scopeConfig->isSetFlag(
+            static::XML_PATH_DEBUG_TRANSFER,
             ScopeInterface::SCOPE_STORE,
             $store
         );

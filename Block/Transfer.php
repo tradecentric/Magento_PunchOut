@@ -84,4 +84,12 @@ class Transfer extends \Magento\Framework\View\Element\Template
             array_map([$this, 'escapeUrl'], $this->sessionHelper->getPunchoutRequiredElementsUrl())
         );
     }
+
+    /**
+     * @return bool
+     */
+    public function getIsDebug()
+    {
+        return (int) $this->transferHelper->getIsDebug();
+    }
 }

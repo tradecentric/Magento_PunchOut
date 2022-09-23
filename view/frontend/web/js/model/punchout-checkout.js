@@ -47,7 +47,7 @@ define([
          * @param session
          * @param checkoutData
          */
-        runSession: function (session, checkoutData) {
+        prepareSession: function (session, checkoutData) {
             let data = this.prepareCartData(checkoutData);
             //add cart data
             _.each(data.cart_data, function(value, key) {
@@ -59,8 +59,6 @@ define([
             _.each(data.items_data, function(value) {
                 session.addItemToCart(value);
             });
-            //transfer cart
-            session.transferCart();
         },
 
         /**
@@ -115,6 +113,15 @@ define([
 
         /**
          *
+         * @param session
+         */
+        transferCart: function(cart)
+        {
+            cart.transferCart();
+        },
+
+        /**
+         *
          * @param config
          * @param checkoutData
          * @returns {*}
@@ -122,8 +129,8 @@ define([
         run: function(config, checkoutData) {
             let deferred = $.Deferred();
             this.getSession(config).then(function(session) {
-                this.runSession(session, checkoutData);
-                return deferred.resolve();
+                this.prepareSession(session, checkoutData);
+                return deferred.resolve(session);
             }.bind(this)).fail(function (error) {
                 deferred.reject(error);
             });
