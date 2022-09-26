@@ -1,5 +1,8 @@
 TradeCentric - PunchOut
 ===========
+### 3.0.10 (2022-09-26)
+* Added debug mode for transfer cart data
+
 ### 3.0.9 (2022-09-21)
 * Fix for compatibility issue with Magento B2B module (for when users' session is re-established)
 
