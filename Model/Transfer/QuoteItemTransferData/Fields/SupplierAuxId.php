@@ -11,7 +11,7 @@ use Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\QuoteItemRelatedDa
  * Class Classification
  * @package Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData
  */
-class SupplierId implements QuoteItemRelatedDataHandlerInterface
+class SupplierAuxId implements QuoteItemRelatedDataHandlerInterface
 {
     /**
      * @var \Punchout2Go\Punchout\Helper\Data

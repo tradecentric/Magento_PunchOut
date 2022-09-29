@@ -82,7 +82,7 @@ class CustomerExtractor
         $customerForm->setInvisibleIgnored(false);
         $customerData = $customerForm->compactData($requestData);
         foreach ($additionalAttributes as $attributeCode) {
-            $customerData[$attributeCode] = isset($requestData[$attributeCode]) ? $requestData[$attributeCode] : false;
+            $customerData[$attributeCode] = $requestData[$attributeCode] ?? null;
         }
         $allowedAttributes = $customerForm->getAllowedAttributes();
         $isGroupIdEmpty = !isset($allowedAttributes['group_id']);
