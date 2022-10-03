@@ -29,7 +29,7 @@ class AddressMapper
      */
     public function getAddressData(\Magento\Quote\Api\Data\AddressInterface $address)
     {
-        $result = [];
+        $result = $address->getData();
         foreach ($this->addressMap as $destination => $field) {
             if (is_object($field) && ($field instanceof AddressFieldInterface)) {
                 $result[$destination] = $field->handle($address);

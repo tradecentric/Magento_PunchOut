@@ -48,7 +48,7 @@ class Shipping implements QuoteDataHandlerInterface
      */
     public function handle(\Magento\Quote\Api\Data\CartInterface $cart): array
     {
-        if (!$this->helper->isIncludeShipping()/* || !$this->defaultHelper->isAddressToCart()*/) {
+        if (!$this->helper->isIncludeShipping($cart->getStoreId())/* || !$this->defaultHelper->isAddressToCart()*/) {
             return [];
         }
         $totals = $cart->getTotals();
@@ -60,7 +60,7 @@ class Shipping implements QuoteDataHandlerInterface
              'shipping' => (string) $shippingAddress->getShippingAmount(),
              'shipping_method' => $shippingAddress->getShippingDescription(),
              'shipping_code' => $shippingAddress->getShippingMethod(),
-             'addresses' => $this->getAddresses([$shippingAddress])
+             'addresses' => $this->getAddresses($cart->getAllAddresses())
          ];
     }
 

@@ -311,20 +311,7 @@
 
     <type name="Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Shipping\AddressMapper">
         <arguments>
-            <argument name="addressMap" xsi:type="array">
-                <item name="firstname" xsi:type="string">firstname</item>
-                <item name="middlename" xsi:type="string">middlename</item>
-                <item name="lastname" xsi:type="string">lastname</item>
-                <item name="suffix" xsi:type="string">suffix</item>
-                <item name="company" xsi:type="string">company</item>
-                <item name="street" xsi:type="string">street</item>
-                <item name="city" xsi:type="string">city</item>
-                <item name="region" xsi:type="string">region</item>
-                <item name="postcode" xsi:type="string">postcode</item>
-                <item name="country_id" xsi:type="string">country_id</item>
-                <item name="telephone" xsi:type="string">telephone</item>
-                <item name="fax" xsi:type="string">fax</item>
-            </argument>
+            <argument name="addressMap" xsi:type="array"></argument>
         </arguments>
     </type>
 
