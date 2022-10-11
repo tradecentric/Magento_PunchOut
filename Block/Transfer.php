@@ -68,14 +68,6 @@ class Transfer extends \Magento\Framework\View\Element\Template
     }
 
     /**
-     * @return string
-     */
-    public function getMagentoVersion()
-    {
-        return $this->transferHelper->getMagentoVersion();
-    }
-
-    /**
      * @return bool|string
      */
     public function getPunchoutElementsUrl()

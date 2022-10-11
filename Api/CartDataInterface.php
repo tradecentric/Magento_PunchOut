@@ -94,4 +94,14 @@ interface CartDataInterface
      */
     public function getDiscountTitle(): ?string;
 
+    /**
+     * @return string|null
+     */
+    public function getMagentoVersion(): ?string;
+
+    /**
+     * @return string|null
+     */
+    public function getPunchoutExtension(): ?string;
+
 }

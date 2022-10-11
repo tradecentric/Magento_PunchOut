@@ -36,23 +36,14 @@ class Transfer extends \Magento\Framework\App\Helper\AbstractHelper
     protected $jsonSerializer;
 
     /**
-     * @var \Magento\Framework\App\ProductMetadataInterface
-     */
-    protected $metadata;
-
-    /**
-     * Transfer constructor.
      * @param \Magento\Framework\Serialize\Serializer\Json $jsonSerializer
-     * @param \Magento\Framework\App\ProductMetadataInterface $metadata
      * @param Context $context
      */
     public function __construct(
         \Magento\Framework\Serialize\Serializer\Json $jsonSerializer,
-        \Magento\Framework\App\ProductMetadataInterface $metadata,
         Context $context
     ) {
         $this->jsonSerializer = $jsonSerializer;
-        $this->metadata = $metadata;
         parent::__construct($context);
     }
 
@@ -287,13 +278,5 @@ class Transfer extends \Magento\Framework\App\Helper\AbstractHelper
             ScopeInterface::SCOPE_STORE,
             $store
         );
-    }
-
-    /**
-     * @return string
-     */
-    public function getMagentoVersion(): string
-    {
-        return $this->metadata->getVersion();
     }
 }

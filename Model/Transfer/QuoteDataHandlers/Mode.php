@@ -33,7 +33,7 @@ class Mode implements QuoteDataHandlerInterface
     public function handle(\Magento\Quote\Api\Data\CartInterface $cart): array
     {
         return [
-            'edit_mode' => $this->helper->isDisallowEditCart() ? SessionEditStatus::NOT_EDITABLE : SessionEditStatus::EDITABLE
+            'edit_mode' => $this->helper->isDisallowEditCart($cart->getStoreId()) ? SessionEditStatus::NOT_EDITABLE : SessionEditStatus::EDITABLE
         ];
     }
 }

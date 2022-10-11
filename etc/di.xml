@@ -150,6 +150,7 @@
     <type name="Punchout2Go\Punchout\Model\Transfer\QuoteDataPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <item name="version" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Version</item>
                 <item name="discount" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Discount</item>
                 <item name="shipping" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Shipping</item>
                 <item name="mode" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Mode</item>
@@ -341,10 +342,14 @@
 
     <virtualType name="Punchout2Go\Punchout\Block\Forms\Config\Version" type="TradeCentric\Version\Block\Forms\Config\Version">
         <arguments>
-            <argument name="data" xsi:type="array">
-                <item name="module_name" xsi:type="string">Punchout2Go_Punchout</item>
-            </argument>
+            <argument name="helper" xsi:type="object">Punchout2Go\Punchout\Helper\Module</argument>
         </arguments>
     </virtualType>
+
+    <type name="Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Version">
+        <arguments>
+            <argument name="helper" xsi:type="object">Punchout2Go\Punchout\Helper\Module</argument>
+        </arguments>
+    </type>
 
 </config>

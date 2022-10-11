@@ -36,7 +36,6 @@ define([
             require(config.elementsUrl, function() {
                 checkout = new Po2go(config.punchoutConfig);
                 checkout.init();
-                checkout.cart.magento_version = config.magentoVersion;
                 deferred.resolve(checkout);
             });
             return deferred.promise();

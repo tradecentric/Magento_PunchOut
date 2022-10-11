@@ -143,4 +143,20 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
     {
         return $this->getData('discount_title');
     }
+
+    /**
+     * @return string|null
+     */
+    public function getMagentoVersion(): ?string
+    {
+       return $this->getData('magento_version');
+    }
+
+    /**
+     * @return string
+     */
+    public function getPunchoutExtension(): ?string
+    {
+        return $this->getData('punchout_extension');
+    }
 }
