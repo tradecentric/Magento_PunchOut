@@ -1,8 +1,24 @@
 & when (@media-common = true) {
+    .modals-wrapper{
+        .modal-popup{
+            &.confirm{
+                .modal-inner-wrap{
+                    max-width: 680px;
+                }
+            }
+        }
+    }
     .punchout-debug-window{
         max-width: 100%;
         overflow-y: auto;
-        width: 600px;
+        width: 100%;
         word-break: break-all;
+        max-height: ~"calc(100vh - 200px)";
+        & > div{
+            &:nth-child(2),
+            &:nth-child(3){
+                display: none;
+            }
+        }
     }
 }
