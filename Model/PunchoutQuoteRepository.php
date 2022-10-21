@@ -58,7 +58,7 @@ class PunchoutQuoteRepository implements PunchoutQuoteRepositoryInterface
      * @return PunchoutQuoteInterface
      * @throws NoSuchEntityException
      */
-    public function get($itemId): PunchoutQuoteInterface
+    public function get($int $entityId): PunchoutQuoteInterface
     {
         if (isset($this->instances[$itemId])) {
             return $this->instances[$itemId];
@@ -161,7 +161,7 @@ class PunchoutQuoteRepository implements PunchoutQuoteRepositoryInterface
      * @throws CouldNotDeleteException
      * @throws NoSuchEntityException
      */
-    public function deleteById($itemId) : bool
+    public function deleteById(int $entityId) : bool
     {
         $item = $this->get($itemId);
         return $this->delete($item);
