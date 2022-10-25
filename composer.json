@@ -12,7 +12,7 @@
     "version": "3.1.0-beta",
     "require": {
         "php": "~7.3.0||~7.4.0||^8.0",
-        "tradecentric/module-version": "~3.0.1",
+        "tradecentric/module-version": "3.0.1-beta",
         "ext-openssl": "*"
     },
     "suggest": {
