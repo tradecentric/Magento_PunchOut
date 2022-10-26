@@ -54,11 +54,11 @@ class PunchoutQuoteRepository implements PunchoutQuoteRepositoryInterface
     }
 
     /**
-     * @param int $itemId
+     * @param int $entityId
      * @return PunchoutQuoteInterface
      * @throws NoSuchEntityException
      */
-    public function get($int $entityId): PunchoutQuoteInterface
+    public function get(int $entityId): PunchoutQuoteInterface
     {
         if (isset($this->instances[$itemId])) {
             return $this->instances[$itemId];
