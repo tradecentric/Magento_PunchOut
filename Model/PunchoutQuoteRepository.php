@@ -60,19 +60,19 @@ class PunchoutQuoteRepository implements PunchoutQuoteRepositoryInterface
      */
     public function get(int $entityId): PunchoutQuoteInterface
     {
-        if (isset($this->instances[$itemId])) {
-            return $this->instances[$itemId];
+        if (isset($this->instances[$entityId])) {
+            return $this->instances[$entityId];
         }
-        /** @var \Punchout2Go\Punchout\Api\Data\PunchoutQuoteInterface $item */
-        $item = $this->factory->create();
-        $this->resource->load($item, $itemId);
-        if (!$item->getId()) {
-            throw NoSuchEntityException::singleField('id', $itemId);
+        /** @var \Punchout2Go\Punchout\Api\Data\PunchoutQuoteInterface $entity */
+        $entity = $this->factory->create();
+        $this->resource->load($entity, $entityId);
+        if (!$entity->getId()) {
+            throw NoSuchEntityException::singleField('id', $entityId);
         }
-        $this->instances[$itemId] = $item;
-        $this->instancesQId[$item->getQuoteId()] = $item;
-        $this->instancesPId[$item->getPunchoutSessionId()] = $item;
-        return $item;
+        $this->instances[$entityId] = $entity;
+        $this->instancesQId[$entity->getQuoteId()] = $entity;
+        $this->instancesPId[$entity->getPunchoutSessionId()] = $entity;
+        return $entity;
     }
 
     /**
@@ -85,16 +85,16 @@ class PunchoutQuoteRepository implements PunchoutQuoteRepositoryInterface
         if (isset($this->instancesQId[$quoteId])) {
             return $this->instances[$quoteId];
         }
-        /** @var \Punchout2Go\Punchout\Api\Data\PunchoutQuoteInterface $item */
-        $item = $this->factory->create();
-        $this->resource->load($item, $quoteId, PunchoutQuoteInterface::QUOTE_ID);
-        if (!$item->getId()) {
+        /** @var \Punchout2Go\Punchout\Api\Data\PunchoutQuoteInterface $entity */
+        $entity = $this->factory->create();
+        $this->resource->load($entity, $quoteId, PunchoutQuoteInterface::QUOTE_ID);
+        if (!$entity->getId()) {
             throw NoSuchEntityException::singleField(PunchoutQuoteInterface::QUOTE_ID, $quoteId);
         }
-        $this->instances[$item->getId()] = $item;
-        $this->instancesQId[$item->getQuoteId()] = $item;
-        $this->instancesPId[$item->getPunchoutSessionId()] = $item;
-        return $item;
+        $this->instances[$entity->getId()] = $entity;
+        $this->instancesQId[$entity->getQuoteId()] = $entity;
+        $this->instancesPId[$entity->getPunchoutSessionId()] = $entity;
+        return $entity;
     }
 
     /**
@@ -107,16 +107,16 @@ class PunchoutQuoteRepository implements PunchoutQuoteRepositoryInterface
         if (isset($this->instancesPId[$punchoutId])) {
             return $this->instancesPId[$punchoutId];
         }
-        /** @var \Punchout2Go\Punchout\Api\Data\PunchoutQuoteInterface $item */
-        $item = $this->factory->create();
-        $this->resource->load($item, $punchoutId, PunchoutQuoteInterface::PUNCHOUT_QUOTE_ID);
-        if (!$item->getId()) {
+        /** @var \Punchout2Go\Punchout\Api\Data\PunchoutQuoteInterface $entity */
+        $entity = $this->factory->create();
+        $this->resource->load($entity, $punchoutId, PunchoutQuoteInterface::PUNCHOUT_QUOTE_ID);
+        if (!$entity->getId()) {
             throw NoSuchEntityException::singleField(PunchoutQuoteInterface::PUNCHOUT_QUOTE_ID, $punchoutId);
         }
-        $this->instances[$item->getId()] = $item;
-        $this->instancesQId[$item->getQuoteId()] = $item;
-        $this->instancesPId[$item->getPunchoutSessionId()] = $item;
-        return $item;
+        $this->instances[$entity->getId()] = $entity;
+        $this->instancesQId[$entity->getQuoteId()] = $entity;
+        $this->instancesPId[$entity->getPunchoutSessionId()] = $entity;
+        return $entity;
     }
 
     /**
@@ -126,8 +126,10 @@ class PunchoutQuoteRepository implements PunchoutQuoteRepositoryInterface
      */
     public function save(PunchoutQuoteInterface $punchoutQuote) : PunchoutQuoteInterface
     {
-        unset($this->instances[$punchoutQuote->getId()]);
         $this->resource->save($punchoutQuote);
+        $this->instances[$punchoutQuote->getId()] = $punchoutQuote;
+        $this->instancesQId[$punchoutQuote->getQuoteId()] = $punchoutQuote;
+        $this->instancesPId[$punchoutQuote->getPunchoutSessionId()] = $punchoutQuote;
         return $punchoutQuote;
     }
 
@@ -137,17 +139,19 @@ class PunchoutQuoteRepository implements PunchoutQuoteRepositoryInterface
      */
     public function delete(PunchoutQuoteInterface $punchoutQuote) : bool
     {
-        $itemId = $punchoutQuote->getId();
+        $entityId = $punchoutQuote->getId();
         try {
-            unset($this->instances[$itemId]);
-            unset($this->instancesQId[$punchoutQuote->getQuoteId()]);
-            unset($this->instancesPId[$punchoutQuote->getPunchoutSessionId()]);
+            unset(
+                $this->instances[$entityId],
+                $this->instancesQId[$punchoutQuote->getQuoteId()],
+                $this->instancesPId[$punchoutQuote->getPunchoutSessionId()]
+            );
             $this->resource->delete($punchoutQuote);
         } catch (\Exception $e) {
             throw new CouldNotDeleteException(
                 __(
-                    'Cannot delete Order Item with id %1',
-                    $itemId
+                    'Cannot delete punchout quote with id %1',
+                    $entityId
                 ),
                 $e
             );
@@ -156,14 +160,14 @@ class PunchoutQuoteRepository implements PunchoutQuoteRepositoryInterface
     }
 
     /**
-     * @param int $itemId
+     * @param int $entityId
      * @return bool
      * @throws CouldNotDeleteException
      * @throws NoSuchEntityException
      */
     public function deleteById(int $entityId) : bool
     {
-        $item = $this->get($itemId);
-        return $this->delete($item);
+        $entity = $this->get($entityId);
+        return $this->delete($entity);
     }
 }

@@ -19,6 +19,9 @@ class Close extends Action implements HttpGetActionInterface
      */
     protected $punchoutSession;
 
+    /**
+     * @var \Punchout2Go\Punchout\Api\LoggerInterface
+     */
     protected $logger;
 
     /**

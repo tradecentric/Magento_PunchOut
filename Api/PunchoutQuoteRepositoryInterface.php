@@ -15,7 +15,7 @@ interface PunchoutQuoteRepositoryInterface
      * @param int $entityId
      * @return PunchoutQuoteInterface
      */
-    public function get(int $entityId) : PunchoutQuoteInterface;
+    public function get(int $entityId): PunchoutQuoteInterface;
 
     /**
      * @param int $quoteId
