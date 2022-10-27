@@ -25,7 +25,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_RETURN_LINK = 'punchout2go_punchout/display/return_link_enabled';
     const XML_PATH_RETURN_LINK_LABEL = 'punchout2go_punchout/display/return_link_label';
     const XML_PATH_IS_PUNCHOUT_ACTIVE = 'punchout2go_punchout/security/punchout_active';
-
+    const XML_PATH_DEBUG_PAGE = 'punchout2go_punchout/system/debug_page';
+    
     const DEFAULT_FIRSTNAME = 'Punchout User';
     const DEFAULT_LASTNAME = 'No Last Name';
 
@@ -290,5 +291,18 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $source = isset($data['source']) ? trim($data['source']) : '';
         $dest = isset($data['destination']) ? trim($data['destination']) : '';
         return [$source, $dest];
+    }
+
+    /**
+     * @param null $store
+     * @return bool
+     */
+    public function isEnabledDebugPage($store = null)
+    {
+        return $this->scopeConfig->isSetFlag(
+            static::XML_PATH_DEBUG_PAGE,
+            ScopeInterface::SCOPE_STORE,
+            $store
+        );
     }
 }
