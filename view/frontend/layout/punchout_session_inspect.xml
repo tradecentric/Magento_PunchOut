@@ -5,7 +5,6 @@
         <referenceContainer name="content">
             <block class="Punchout2Go\Punchout\Block\Inspect" name="punchout.inspect"
                    template="Punchout2Go_Punchout::inspect.phtml" cacheable="false"
-                   ifconfig="punchout2go_punchout/system/debug_page"
             />
         </referenceContainer>
     </body>

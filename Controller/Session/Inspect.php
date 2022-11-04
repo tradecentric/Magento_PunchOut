@@ -7,7 +7,7 @@ use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\Controller\ResultFactory;
-use Punchout2Go\Punchout\Helper\Data;
+use Magento\Customer\Model\Session;
 
 /**
  * Inspect page
@@ -15,17 +15,18 @@ use Punchout2Go\Punchout\Helper\Data;
 class Inspect extends Action implements HttpGetActionInterface
 {
     /**
-     * @var Data
+     * @var Session
      */
-    private $helper;
+    private $session;
 
     /**
+     * Inspect constructor.
      * @param Context $context
-     * @param Data $helper
+     * @param Session $session
      */
-    public function __construct(Context $context, Data $helper)
+    public function __construct(Context $context, Session $session)
     {
-        $this->helper = $helper;
+        $this->session = $session;
         parent::__construct($context);
     }
 
@@ -34,7 +35,7 @@ class Inspect extends Action implements HttpGetActionInterface
      */
     public function execute()
     {
-        if (!$this->helper->isEnabledDebugPage()) {
+        if (!$this->session->isLoggedIn()) {
             $resultForward = $this->resultFactory->create(ResultFactory::TYPE_FORWARD);
             return $resultForward->forward('noroute');
         }
