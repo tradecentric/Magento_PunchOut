@@ -151,6 +151,7 @@
         <arguments>
             <argument name="handlers" xsi:type="array">
                 <item name="version" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Version</item>
+                <item name="version_extension" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\VersionExtension</item>
                 <item name="discount" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Discount</item>
                 <item name="shipping" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Shipping</item>
                 <item name="mode" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Mode</item>
