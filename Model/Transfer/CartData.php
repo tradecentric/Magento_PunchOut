@@ -159,4 +159,12 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
     {
         return $this->getData('punchout_extension');
     }
+
+    /**
+     * @return string|null
+     */
+    public function getVersionExtension(): ?string
+    {
+        return $this->getData('version_extension');
+    }
 }

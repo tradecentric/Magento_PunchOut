@@ -104,4 +104,8 @@ interface CartDataInterface
      */
     public function getPunchoutExtension(): ?string;
 
+    /**
+     * @return string|null
+     */
+    public function getVersionExtension(): ?string;
 }
