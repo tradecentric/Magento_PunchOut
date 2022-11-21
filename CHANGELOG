@@ -1,5 +1,10 @@
 TradeCentric - PunchOut
 ===========
+### 3.1.0 (2022-11-21)
+* UI improvement for Debug Feature
+* Magento version and TradeCentric Extension version present on return cart
+* Inspect cart feature added
+
 ### 3.0.10 (2022-09-26)
 * Added debug mode for transfer cart data
 
