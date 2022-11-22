@@ -189,6 +189,7 @@
         <arguments>
             <argument name="mapping" xsi:type="array">
                 <item name="quantity" xsi:type="string">qty</item>
+                <item name="currency" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Currency</item>
                 <item name="language" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Language</item>
                 <item name="supplierauxid" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\SupplierAuxId</item>
                 <item name="custom_fields" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\QuoteCustomFields</item>
