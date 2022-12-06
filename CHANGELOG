@@ -1,5 +1,8 @@
 TradeCentric - PunchOut
 ===========
+### 3.1.1 (2022-12-06)
+* Added multi-currency support for cart items (transfer cart)
+
 ### 3.1.0 (2022-11-21)
 * UI improvement for Debug Feature
 * Magento version and TradeCentric Extension version present on return cart
