@@ -24,6 +24,7 @@
             <customer>
                 <auto_create_user>1</auto_create_user>
                 <preinsert_customer_attribute_map>{}</preinsert_customer_attribute_map>
+                <address_to_cart>1</address_to_cart>
             </customer>
             <order>
                 <classification_field>classification</classification_field>
@@ -31,10 +32,12 @@
                 <default_language>en</default_language>
                 <data_cart_return_map>{}</data_cart_return_map>
                 <data_item_return_map>{}</data_item_return_map>
+                <include_shipping>1</include_shipping>
+                <include_tax>1</include_tax>
             </order>
             <system>
                 <api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
-                <logging>0</logging>
+                <logging>1</logging>
             </system>
         </punchout2go_punchout>
     </default>
