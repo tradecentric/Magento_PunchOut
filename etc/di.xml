@@ -28,6 +28,8 @@
                 type="Punchout2Go\Punchout\Model\GuestTotalsInformationManagement"/>
     <preference for="Punchout2Go\Punchout\Api\Data\ItemTransferDtoInterface"
                 type="Punchout2Go\Punchout\Model\Transfer\ItemTransferDto"/>
+    <preference for="Punchout2Go\Punchout\Api\ProductProviderInterface"
+                type="Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\ProductProvider"/>
 
     <virtualType name="PunchoutLogger" type="Magento\Framework\Logger\Monolog">
         <arguments>
@@ -351,6 +353,14 @@
     <type name="Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Version">
         <arguments>
             <argument name="helper" xsi:type="object">Punchout2Go\Punchout\Helper\Module</argument>
+        </arguments>
+    </type>
+
+    <type name="Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\ProductProvider">
+        <arguments>
+            <argument name="productByTypeProviders" xsi:type="array">
+                <item name="configurable" xsi:type="string">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\ProductProvider\Configurable</item>
+            </argument>
         </arguments>
     </type>
 
