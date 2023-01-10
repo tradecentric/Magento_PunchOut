@@ -197,7 +197,6 @@
                 <item name="custom_fields" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\QuoteCustomFields</item>
                 <item name="configuration" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Configuration</item>
                 <item name="child_items" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\BundleItems</item>
-                <item name="description" xsi:type="string">name</item>
                 <item name="unitprice" xsi:type="string">price</item>
             </argument>
         </arguments>
@@ -215,6 +214,7 @@
                 <item name="manufacturer" xsi:type="string">manufacturer</item>
                 <item name="manufacturer_id" xsi:type="string">sku</item>
                 <item name="supplierid" xsi:type="string">sku</item>
+                <item name="description" xsi:type="string">name</item>
                 <item name="custom_fields" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\ProductCustomFields</item>
                 <item name="categories" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Categories</item>
                 <item name="classification" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Classification</item>
@@ -229,6 +229,7 @@
                 <item name="unitprice" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\ProductFinalPrice</item>
                 <item name="manufacturer" xsi:type="string">manufacturer</item>
                 <item name="manufacturer_id" xsi:type="string">sku</item>
+                <item name="description" xsi:type="string">name</item>
                 <item name="custom_fields" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\ProductCustomFields</item>
                 <item name="categories" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Categories</item>
                 <item name="classification" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Classification</item>
