@@ -1,5 +1,8 @@
 TradeCentric - PunchOut
 ===========
+### 3.1.2 (2023-01-27)
+* Added support for transfer custom product attributes for child products with transfer cart.
+
 ### 3.1.1 (2022-12-06)
 * Added multi-currency support for cart items (transfer cart)
 
