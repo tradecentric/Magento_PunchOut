@@ -39,7 +39,13 @@ class ProductConfiguration implements ConfigurationInterface
             return $attribute;
         }, $product->getTypeInstance()->getConfigurableAttributesAsArray($product));
         foreach ($this->configuration->getOptions($item) as $option) {
-            $option['attribute_code'] = $this->getAttributeCodeForOption($attributes, $option['option_value']);
+            if (!isset($option['option_value'])) {
+                continue;
+            }
+            $option['attribute_code'] = $this->getAttributeCodeForOption(
+                $attributes,
+                $option['option_value']
+            );
             $result[] = $option;
         }
         return $result;
