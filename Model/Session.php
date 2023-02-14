@@ -23,6 +23,7 @@ use Punchout2Go\Punchout\Api\PunchoutQuoteRepositoryInterface;
 use Punchout2Go\Punchout\Api\SessionContainerInterface;
 use Punchout2Go\Punchout\Api\SessionContainerInterfaceFactory;
 use Punchout2Go\Punchout\Api\SessionInterface;
+use Punchout2Go\Punchout\Model\System\Config\Source\Login;
 
 /**
  * Class Session
@@ -251,8 +252,9 @@ class Session extends SessionManager implements SessionInterface
     protected function sessionPostStart(SessionContainerInterface $container)
     {
         $this->eventManager->dispatch('punchout_session_ready', ['session' => $container]);
-        $this->loginCustomer($container->getCustomer());
-
+        if ($this->helper->getCustomerSessionType() == Login::LOGIN_LOGGED_IN) {
+            $this->loginCustomer($container->getCustomer());
+        }
     }
 
     /**

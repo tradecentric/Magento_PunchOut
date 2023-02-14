@@ -43,8 +43,8 @@ class GuestTotalsInformationManagement implements \Punchout2Go\Punchout\Api\Gues
     ): string {
         /** @var $quoteIdMask \Magento\Quote\Model\QuoteIdMask */
         $quoteIdMask = $this->quoteIdMaskFactory->create()->load($cartId, 'masked_id');
-        $this->totalsInformationManagement->calculate(
-            $quoteIdMask->getQuoteId(),
+        $this->totalsInformationManagement->save(
+            (int) $quoteIdMask->getQuoteId(),
             $addressInformation
         );
         return $cartId;
