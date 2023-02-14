@@ -58,7 +58,7 @@ class PunchoutQuoteTransfer implements PunchoutQuoteTransferInterface
             $quote = $this->quoteRepository->get($punchoutQuote->getQuoteId());
 
             return $this->transferFactory->create([
-                'cart' => $quote,
+                'cart' => $quote->collectTotals(),
                 'data' =>  [
                     'cart' => [
                         'punchout_session_id' => $punchoutQuote->getPunchoutSessionId(),

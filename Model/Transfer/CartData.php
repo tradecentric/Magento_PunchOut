@@ -13,7 +13,7 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
      */
     public function getPunchoutSessionId(): string
     {
-        return $this->getData('punchout_session_id');
+        return (string) $this->getData('punchout_session_id');
     }
 
     /**
@@ -21,7 +21,7 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
      */
     public function getPunchoutReturnUrl(): string
     {
-        return $this->getData('punchout_return_url');
+        return (string) $this->getData('punchout_return_url');
     }
 
     /**
@@ -29,7 +29,7 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
      */
     public function getShipping(): ?string
     {
-        return $this->getData('shipping');
+        return (string) $this->getData('shipping');
     }
 
     /**
@@ -37,7 +37,7 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
      */
     public function getShippingMethod(): ?string
     {
-        return $this->getData('shipping_method');
+        return (string) $this->getData('shipping_method');
     }
 
     /**
@@ -45,7 +45,7 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
      */
     public function getShippingCode(): ?string
     {
-        return $this->getData('shipping_code');
+        return (string) $this->getData('shipping_code');
     }
 
     /**
@@ -53,7 +53,7 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
      */
     public function getAddresses(): ?array
     {
-        return $this->getData('addresses');
+        return (array) $this->getData('addresses');
     }
 
     /**
@@ -61,7 +61,7 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
      */
     public function getTax(): ?float
     {
-        return $this->getData('tax');
+        return (float) $this->getData('tax');
     }
 
     /**
@@ -69,7 +69,7 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
      */
     public function getTaxDescription(): ?string
     {
-        return $this->getData('tax_description');
+        return (string) $this->getData('tax_description');
     }
 
     /**
@@ -77,7 +77,7 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
      */
     public function getType(): string
     {
-        return $this->getData('type');
+        return (string) $this->getData('type');
     }
 
     /**
@@ -85,7 +85,7 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
      */
     public function getTotal(): string
     {
-        return $this->getData('total');
+        return (string) $this->getData('total');
     }
 
     /**
@@ -93,7 +93,7 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
      */
     public function getGrandTotal(): string
     {
-        return $this->getData('grand_total');
+        return (string) $this->getData('grand_total');
     }
 
     /**
@@ -101,7 +101,7 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
      */
     public function getCurrency(): string
     {
-        return $this->getData('currency');
+        return (string) $this->getData('currency');
     }
 
     /**
@@ -109,7 +109,7 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
      */
     public function getCurrencyRate(): float
     {
-        return $this->getData('currency_rate');
+        return (float) $this->getData('currency_rate');
     }
 
     /**
@@ -117,7 +117,7 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
      */
     public function getCustomFields(): array
     {
-        return $this->getData('custom_fields');
+        return (array) $this->getData('custom_fields');
     }
 
     /**
@@ -125,7 +125,7 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
      */
     public function getEditMode(): ?int
     {
-        return $this->getData('edit_mode');
+        return (int) $this->getData('edit_mode');
     }
 
     /**
@@ -133,7 +133,7 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
      */
     public function getDiscount(): ?string
     {
-        return $this->getData('discount');
+        return (string) $this->getData('discount');
     }
 
     /**
@@ -141,7 +141,7 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
      */
     public function getDiscountTitle(): ?string
     {
-        return $this->getData('discount_title');
+        return (string) $this->getData('discount_title');
     }
 
     /**
@@ -149,7 +149,7 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
      */
     public function getMagentoVersion(): ?string
     {
-       return $this->getData('magento_version');
+       return (string) $this->getData('magento_version');
     }
 
     /**
@@ -157,7 +157,7 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
      */
     public function getPunchoutExtension(): ?string
     {
-        return $this->getData('punchout_extension');
+        return (string) $this->getData('punchout_extension');
     }
 
     /**
@@ -165,6 +165,6 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
      */
     public function getVersionExtension(): ?string
     {
-        return $this->getData('version_extension');
+        return (string) $this->getData('version_extension');
     }
 }
