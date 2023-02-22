@@ -197,6 +197,7 @@
                 <item name="custom_fields" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\QuoteCustomFields</item>
                 <item name="configuration" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Configuration</item>
                 <item name="child_items" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\BundleItems</item>
+                <item name="options" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Options</item>
                 <item name="unitprice" xsi:type="string">price</item>
             </argument>
         </arguments>
