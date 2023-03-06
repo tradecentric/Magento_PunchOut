@@ -1,5 +1,10 @@
 TradeCentric - PunchOut
 ===========
+### 3.1.3 (2023-03-06)
+* Added support for Anonymous session and Guest checkout
+* For transfer cart option 2 digits after the decimal sent in all monetary fields
+* Product's Custom Options supported to come along in the JSON Return Cart
+
 ### 3.1.2 (2023-01-27)
 * Added support for transfer custom product attributes for child products with transfer cart.
 
