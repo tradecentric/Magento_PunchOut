@@ -18,6 +18,7 @@ class Session extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_START_URL = 'punchout2go_punchout/session/start_redirect_new';
     const XML_PATH_IS_PUNCHOUT_ONLY = 'punchout2go_punchout/site/punchout_only';
     const XML_PATH_IS_PUNCHOUT_ONLY_URL = 'punchout2go_punchout/site/punchout_only_url';
+    const XML_PATH_EXCLUDE_POS_ID_IN_REDIRECT = 'punchout2go_punchout/session/exclude_posid_redirect';
 
     /**
      * @param null $store
@@ -64,11 +65,11 @@ class Session extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * @param null $store
-     * @return string
+     * @return bool
      */
     public function isPunchoutOnly($store = null)
     {
-        return (string) $this->scopeConfig->isSetFlag(
+        return $this->scopeConfig->isSetFlag(
             static::XML_PATH_IS_PUNCHOUT_ONLY,
             ScopeInterface::SCOPE_STORE,
             $store
@@ -103,5 +104,18 @@ class Session extends \Magento\Framework\App\Helper\AbstractHelper
     public function getFirstLoadParam()
     {
         return static::FIRST_LOAD;
+    }
+
+    /**
+     * @param null $store
+     * @return bool
+     */
+    public function isIncludePosidInRedirect($store = null)
+    {
+        return !$this->scopeConfig->isSetFlag(
+            static::XML_PATH_EXCLUDE_POS_ID_IN_REDIRECT,
+            ScopeInterface::SCOPE_STORE,
+            $store
+        );
     }
 }

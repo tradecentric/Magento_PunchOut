@@ -89,6 +89,11 @@
                     <label>Reload sections (after clean)</label>
                     <comment>Sections (no spaces) ie.. customer,cart</comment>
                 </field>
+                <field id="exclude_posid_redirect" translate="label comment" type="select" sortOrder="42" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Exclude POSID in Redirect</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Do not include the POSID in the redirect URL.</comment>
+                </field>
             </group>
             <group id="customer" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                 <label>Customer Behaviors</label>

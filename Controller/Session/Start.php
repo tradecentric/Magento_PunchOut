@@ -98,11 +98,24 @@ class Start extends Action implements HttpPost, CsrfAwareActionInterface
         } else {
             $this->messageManager->addErrorMessage(__('Invalid punchout request.'));
         }
+
         return $this->resultFactory->create(ResultFactory::TYPE_REDIRECT)
             ->setPath(
                 $this->sessionHelper->getSessionStartupUrl(),
-                ['_query' => [$this->sessionHelper->getFirstLoadParam() => 1]]
+                ['_query' => $this->getRedirectQueryParams()]
             );
+    }
+
+    /**
+     * @return int[]
+     */
+    private function getRedirectQueryParams()
+    {
+        $queryParams = [$this->sessionHelper->getFirstLoadParam() => 1];
+        if ($this->sessionHelper->isIncludePosidInRedirect()) {
+            $queryParams['posid'] = $this->session->getPunchoutSessionId();
+        }
+        return $queryParams;
     }
 
     /**
