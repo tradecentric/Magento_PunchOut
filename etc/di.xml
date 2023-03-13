@@ -306,16 +306,6 @@
         </arguments>
     </type>
 
-    <type name="Punchout2Go\Punchout\Model\Transfer\CustomFields\ProductPartResolver">
-        <arguments>
-            <argument name="partObjects" xsi:type="array">
-                <item name="literal" xsi:type="string">Punchout2Go\Punchout\Model\Transfer\CustomFields\Parts\Literal</item>
-                <!-- <item name="option" xsi:type="string">Punchout2Go\Punchout\Model\Transfer\CustomFields\Parts\Option</item>-->
-                <item name="product" xsi:type="string">Punchout2Go\Punchout\Model\Transfer\CustomFields\Parts\Product</item>
-            </argument>
-        </arguments>
-    </type>
-
     <type name="Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Shipping\AddressMapper">
         <arguments>
             <argument name="addressMap" xsi:type="array"></argument>
@@ -362,6 +352,15 @@
         <arguments>
             <argument name="productByTypeProviders" xsi:type="array">
                 <item name="configurable" xsi:type="string">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\ProductProvider\Configurable</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Punchout2Go\Punchout\Model\Transfer\CustomFields\QuotePartResolver">
+        <arguments>
+            <argument name="partObjects" xsi:type="array">
+                <item name="literal" xsi:type="string">Punchout2Go\Punchout\Model\Transfer\CustomFields\Parts\QuoteLiteral</item>
+                <item name="store" xsi:type="string">Punchout2Go\Punchout\Model\Transfer\CustomFields\Parts\QuoteStore</item>
             </argument>
         </arguments>
     </type>

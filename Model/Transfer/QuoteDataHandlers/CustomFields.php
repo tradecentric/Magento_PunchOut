@@ -5,6 +5,7 @@ namespace Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers;
 
 use Magento\Quote\Api\Data\CartInterface;
 use Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlerInterface;
+use Punchout2Go\Punchout\Model\Transfer\CustomFields\QuotePartResolver;
 
 /**
  * Class Discount
@@ -23,21 +24,28 @@ class CustomFields implements QuoteDataHandlerInterface
     protected $defaultHelper;
 
     /**
-     * CustomFields constructor.
+     * @var QuotePartResolver
+     */
+    protected $partResolver;
+
+    /**
      * @param \Punchout2Go\Punchout\Helper\Transfer $transferHelper
      * @param \Punchout2Go\Punchout\Helper\Data $data
+     * @param QuotePartResolver $partResolver
      */
     public function __construct(
         \Punchout2Go\Punchout\Helper\Transfer $transferHelper,
-        \Punchout2Go\Punchout\Helper\Data $data
+        \Punchout2Go\Punchout\Helper\Data $data,
+        QuotePartResolver $partResolver
     ) {
         $this->helper = $transferHelper;
         $this->defaultHelper = $data;
+        $this->partResolver = $partResolver;
     }
 
     /**
-     * @param \Magento\Quote\Api\Data\CartInterface $cart
-     * @return array
+     * @param CartInterface $cart
+     * @return array[]
      */
     public function handle(CartInterface $cart): array
     {
@@ -62,8 +70,9 @@ class CustomFields implements QuoteDataHandlerInterface
         if (preg_match('/^([^:]+):([^:]+)$/', $path, $s)) {
             $part = $s[1];
             $path = $s[2];
-            if ($part == 'literal') {
-                return $path;
+            $handler = $this->partResolver->resolve($part);
+            if ($handler) {
+                return $handler->handle($cart, $path);
             }
         }
         return $cart->getData($path);
