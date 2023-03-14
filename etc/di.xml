@@ -216,6 +216,7 @@
                 <item name="manufacturer_id" xsi:type="string">sku</item>
                 <item name="supplierid" xsi:type="string">sku</item>
                 <item name="description" xsi:type="string">name</item>
+                <item name="fixed_product_tax" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\FixedProductTax</item>
                 <item name="custom_fields" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\ProductCustomFields</item>
                 <item name="categories" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Categories</item>
                 <item name="classification" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Classification</item>
