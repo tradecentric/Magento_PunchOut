@@ -13,7 +13,7 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Exception\AuthenticationException;
 use Magento\Framework\Exception\LocalizedException;
 use Punchout2Go\Punchout\Api\RequestParamsHandlerInterface;
-use Punchout2Go\Punchout\Helper\Session as SessionHelper;
+use Punchout2Go\Punchout\Api\StartUpUrlProviderInterface;
 
 /**
  * Class Start
@@ -37,29 +37,29 @@ class Start extends Action implements HttpPost, CsrfAwareActionInterface
     protected $requestParamsHandler;
 
     /**
-     * @var SessionHelper
+     * @var StartUpUrlProviderInterface
      */
-    protected $sessionHelper;
+    protected $startUpUrlProvider;
 
     /**
      * Start constructor.
      * @param \Punchout2Go\Punchout\Api\LoggerInterface $logger
      * @param \Punchout2Go\Punchout\Api\SessionInterface $session
      * @param RequestParamsHandlerInterface $requestParamsHandler
-     * @param SessionHelper $sessionHelper
+     * @param StartUpUrlProviderInterface $startUpUrlProvider
      * @param Context $context
      */
     public function __construct(
         \Punchout2Go\Punchout\Api\LoggerInterface $logger,
         \Punchout2Go\Punchout\Api\SessionInterface $session,
         \Punchout2Go\Punchout\Api\RequestParamsHandlerInterface $requestParamsHandler,
-        SessionHelper $sessionHelper,
+        StartUpUrlProviderInterface $startUpUrlProvider,
         Context $context
     ) {
         $this->logger = $logger;
         $this->session = $session;
         $this->requestParamsHandler = $requestParamsHandler;
-        $this->sessionHelper = $sessionHelper;
+        $this->startUpUrlProvider = $startUpUrlProvider;
         parent::__construct($context);
     }
 
@@ -100,22 +100,7 @@ class Start extends Action implements HttpPost, CsrfAwareActionInterface
         }
 
         return $this->resultFactory->create(ResultFactory::TYPE_REDIRECT)
-            ->setPath(
-                $this->sessionHelper->getSessionStartupUrl(),
-                ['_query' => $this->getRedirectQueryParams()]
-            );
-    }
-
-    /**
-     * @return int[]
-     */
-    private function getRedirectQueryParams()
-    {
-        $queryParams = [$this->sessionHelper->getFirstLoadParam() => 1];
-        if ($this->sessionHelper->isIncludePosidInRedirect()) {
-            $queryParams['posid'] = $this->session->getPunchoutSessionId();
-        }
-        return $queryParams;
+            ->setUrl($this->startUpUrlProvider->getUrl($this->session));
     }
 
     /**
