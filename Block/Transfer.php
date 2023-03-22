@@ -78,10 +78,18 @@ class Transfer extends \Magento\Framework\View\Element\Template
     }
 
     /**
-     * @return bool
+     * @return int
      */
     public function getIsDebug()
     {
         return (int) $this->transferHelper->getIsDebug();
+    }
+
+    /**
+     * @return int
+     */
+    public function getIsJsLogging()
+    {
+        return (int) $this->transferHelper->getIsJsLogging();
     }
 }

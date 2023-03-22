@@ -14,11 +14,21 @@ define([
      * transfer punchout data
      */
     return function(config) {
+        function log(string, data) {
+            if (config.js_logging) {
+                console.log(string,data);
+            }
+        }
         $(config.elementId).click(function() {
             $("body").trigger('processStart');
+            log("Save address data");
             return addressDataSaver()
-                .then(punchoutDataHandler)
+                .then(function() {
+                    log("Load punchout data");
+                    return punchoutDataHandler();
+                })
                 .then(function(punchoutData) {
+                    log("Run punchout checkout session");
                     return punchoutCheckout.run(config.checkoutConfig, punchoutData);
                 })
                 .then(function(session) {
@@ -33,12 +43,17 @@ define([
                     return deferred.promise();
                 })
                 .then(function(session) {
-                    punchoutCheckout.transferCart(session);
+                    log("Run transfer cart");
+                    return punchoutCheckout.transferCart(session);
                 })
                 .then(function () {
-                    closeSession(config.closeSessionUrl);
+                    log("Close punchout session");
+                    return closeSession(config.closeSessionUrl);
                 })
-                .then(destroySession)
+                .then(function() {
+                    log("Destroy punchout session");
+                    return destroySession();
+                })
                 .done(function() {
                     $("body").trigger('processStop');
                 })

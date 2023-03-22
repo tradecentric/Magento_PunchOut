@@ -17,6 +17,7 @@
                     "punchoutConfig": <?php echo $block->getPunchoutConfig() ?>,
                     "elementsUrl": <?php echo $block->getPunchoutElementsUrl() ?>
                 },
+                "js_logging": <?php echo $block->getIsJsLogging() ?>,
                 "closeSessionUrl": "<?php echo $block->getUrl('punchout/session/closePost') ?>"
             }
         }
