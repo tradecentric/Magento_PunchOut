@@ -167,4 +167,12 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
     {
         return (string) $this->getData('version_extension');
     }
+
+    /**
+     * @return string|null
+     */
+    public function getFixedProductTax(): ?string
+    {
+        return (string) $this->getData('fixed_product_tax');
+    }
 }

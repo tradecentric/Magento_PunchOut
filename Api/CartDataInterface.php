@@ -108,4 +108,9 @@ interface CartDataInterface
      * @return string|null
      */
     public function getVersionExtension(): ?string;
+
+    /**
+     * @return string|null
+     */
+    public function getFixedProductTax(): ?string;
 }

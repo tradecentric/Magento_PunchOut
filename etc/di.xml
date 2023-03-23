@@ -154,6 +154,7 @@
             <argument name="handlers" xsi:type="array">
                 <item name="version" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Version</item>
                 <item name="version_extension" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\VersionExtension</item>
+                <item name="fixed_product_tax" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\FixedProductTax</item>
                 <item name="discount" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Discount</item>
                 <item name="shipping" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Shipping</item>
                 <item name="mode" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteDataHandlers\Mode</item>
@@ -191,6 +192,8 @@
         <arguments>
             <argument name="mapping" xsi:type="array">
                 <item name="quantity" xsi:type="string">qty</item>
+                <item name="unitprice_excl_tax" xsi:type="string">price</item>
+                <item name="unitprice" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\UnitPrice</item>
                 <item name="currency" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Currency</item>
                 <item name="language" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Language</item>
                 <item name="supplierauxid" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\SupplierAuxId</item>
@@ -198,7 +201,6 @@
                 <item name="configuration" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Configuration</item>
                 <item name="child_items" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\BundleItems</item>
                 <item name="options" xsi:type="object">Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields\Options</item>
-                <item name="unitprice" xsi:type="string">price</item>
             </argument>
         </arguments>
     </virtualType>
