@@ -5,21 +5,25 @@
         <policy id="script-src">
             <values>
                 <value id="punchout" type="host">*.punchout2go.com</value>
+                <value id="tradecentric" type="host">*.tradecentric.com</value>
             </values>
         </policy>
         <policy id="frame-src">
             <values>
                 <value id="punchout" type="host">*.punchout2go.com</value>
+                <value id="tradecentric" type="host">*.tradecentric.com</value>
             </values>
         </policy>
         <policy id="form-action">
             <values>
                 <value id="punchout" type="host">*.punchout2go.com</value>
+                <value id="tradecentric" type="host">*.tradecentric.com</value>
             </values>
         </policy>
         <policy id="style-src">
             <values>
                 <value id="punchout" type="host">*.punchout2go.com</value>
+                <value id="tradecentric" type="host">*.tradecentric.com</value>
             </values>
         </policy>
     </policies>
