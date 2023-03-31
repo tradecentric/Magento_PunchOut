@@ -61,4 +61,9 @@ interface SessionInterface
      * @return PunchoutQuoteInterface
      */
     public function getPunchoutQuote(): PunchoutQuoteInterface;
+
+    /**
+     * @return string
+     */
+    public function getInItemSku(): string;
 }

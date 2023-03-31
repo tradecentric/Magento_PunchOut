@@ -89,6 +89,14 @@
                     <label>Start Page New Session</label>
                     <comment>Default : store view home page.</comment>
                 </field>
+                <field id="start_redirect_edit" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Start Page Edit Session</label>
+                    <comment>Default : checkout/cart</comment>
+                </field>
+                <field id="start_redirect_item" translate="label comment" type="text" sortOrder="31" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Start L2 Item Redirect</label>
+                    <comment>Default : {item_url}</comment>
+                </field>
                 <field id="js_reload_sections" translate="label comment" type="text" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Reload sections (after clean)</label>
                     <comment>Sections (no spaces) ie.. customer,cart</comment>
@@ -97,6 +105,10 @@
                     <label>Exclude POSID in Redirect</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>Do not include the POSID in the redirect URL.</comment>
+                </field>
+                <field id="selected_item_ignore" translate="label comment" type="text" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Ignore Selected Items</label>
+                    <comment>Comma-separated list of Level2 that should be ignored</comment>
                 </field>
             </group>
             <group id="customer" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">

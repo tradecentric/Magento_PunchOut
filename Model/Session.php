@@ -359,7 +359,7 @@ class Session extends SessionManager implements SessionInterface
      */
     public function isEdit(): bool
     {
-        return  $this->storage->getData('is_editable');
+        return (bool) $this->storage->getData('is_editable');
     }
 
     /**
@@ -391,5 +391,18 @@ class Session extends SessionManager implements SessionInterface
         $this->customerSession->destroy([]);
         $this->checkoutSession->destroy([]);
         $this->destroy(['send_expire_cookie'=>true]);
+    }
+
+    /**
+     * @return string
+     */
+    public function getInItemSku(): string
+    {
+        $items = (array) $this->storage->getData('params/body/items');
+        $items = array_filter($items, function (array $item) {
+            return $item['type'] == "in";
+        });
+        $item = current($items);
+        return $item['primaryId'] ?? '';
     }
 }

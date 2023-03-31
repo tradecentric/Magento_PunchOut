@@ -15,6 +15,9 @@
             </security>
             <session>
                 <start_redirect_new>/</start_redirect_new>
+                <start_redirect_edit>checkout/cart</start_redirect_edit>
+                <start_redirect_item>{item_url}</start_redirect_item>
+                <selected_item_ignore>AAA</selected_item_ignore>
                 <punchout_only>1</punchout_only>
                 <type>login</type>
                 <js_session_clean>1</js_session_clean>
