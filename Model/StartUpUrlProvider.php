@@ -11,6 +11,7 @@ use Punchout2Go\Punchout\Api\SessionInterface;
 use Punchout2Go\Punchout\Api\StartUpUrlProviderInterface;
 use Punchout2Go\Punchout\Helper\Session as SessionHelper;
 use Magento\Framework\App\RequestInterface;
+use Punchout2Go\Punchout\Helper\Data as DataHelper;
 
 class StartUpUrlProvider implements StartUpUrlProviderInterface
 {
@@ -32,6 +33,9 @@ class StartUpUrlProvider implements StartUpUrlProviderInterface
     /** @var RequestInterface  */
     private $request;
 
+    /** @var DataHelper */
+    private $dataHelper;
+
     /**
      * StartUpUrlProvider constructor.
      *
@@ -44,12 +48,14 @@ class StartUpUrlProvider implements StartUpUrlProviderInterface
         SessionHelper $helper,
         UrlInterface $url,
         ProductRepositoryInterface $productRepository,
-        RequestInterface $request
+        RequestInterface $request,
+        DataHelper $dataHelper
     ) {
         $this->sessionHelper = $helper;
         $this->url = $url;
         $this->productRepository = $productRepository;
         $this->request = $request;
+        $this->dataHelper = $dataHelper;
     }
 
     /**
@@ -103,8 +109,10 @@ class StartUpUrlProvider implements StartUpUrlProviderInterface
             $queryParams['posid'] = $session->getPunchoutSessionId();
         }
 
-        /** @todo add GET query params to the redirect */
-        $requestParams = $this->request->getQuery()->toArray();
-        return array_merge($queryParams, $requestParams);
+        if ($this->dataHelper->isMaintainQueryString()) {
+            return array_merge($queryParams, $this->request->getQuery()->toArray());
+        }
+
+        return $queryParams;
     }
 }
