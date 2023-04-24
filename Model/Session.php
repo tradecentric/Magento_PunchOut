@@ -222,6 +222,7 @@ class Session extends SessionManager implements SessionInterface
         if ($this->punchoutSession === null) {
             try {
                 $this->punchoutSession = $this->punchoutQuoteRepository->getByPunchoutId($this->getPunchoutSessionId());
+                $this->punchoutSession->setParams($this->storage->getData('params'));
             } catch (NoSuchEntityException $e) {
                 $this->punchoutSession = $this->getNewPunchoutSession();
             } catch (\Exception $e) {

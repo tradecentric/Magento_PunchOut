@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData;
 
 use Magento\Quote\Api\Data\CartItemInterface;
+use Punchout2Go\PurchaseOrder\Helper\Data;
 
 /**
  * Class QuoteRelatedData
@@ -42,6 +43,15 @@ class QuoteRelatedData implements QuoteItemRelatedDataHandlerInterface
             }
             $result[$fieldCode] = $cartItem->getData($field);
         }
+
+        $weeTax = $cartItem->getWeeeTaxApplied();
+        if ($weeTax) {
+            $weeTax = json_decode($weeTax, true);
+            foreach ($weeTax as $tax) {
+                $result[Data::prepareTaxTotalName($tax['title'])] = $tax['row_amount'];
+            }
+        }
+
         return $result;
     }
 }
