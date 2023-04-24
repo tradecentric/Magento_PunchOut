@@ -5,6 +5,7 @@ namespace Punchout2Go\Punchout\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\View\Model\Layout\Merge;
 
 /**
  * Class LayoutObserver
@@ -23,15 +24,22 @@ class LayoutObserver implements ObserverInterface
     protected $session;
 
     /**
+     * @var \Magento\Framework\View\Page\Config
+     */
+    protected $pageConfig;
+
+    /**
      * @param \Punchout2Go\Punchout\Helper\Data $dataHelper
      * @param \Punchout2Go\Punchout\Model\Session $session
      */
     public function __construct(
         \Punchout2Go\Punchout\Helper\Data $dataHelper,
-        \Punchout2Go\Punchout\Model\Session $session
+        \Punchout2Go\Punchout\Model\Session $session,
+        \Magento\Framework\View\Page\Config $pageConfig
     ) {
         $this->helper = $dataHelper;
         $this->session = $session;
+        $this->pageConfig = $pageConfig;
     }
 
     /**
@@ -39,13 +47,19 @@ class LayoutObserver implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        $layout = $observer->getLayout();
+        /** @var Merge $layoutUpdate */
+        $layoutUpdate = $observer->getLayout()->getUpdate();
         $isActive = $this->helper->isPunchoutActive();
         if ($isActive) {
-            $layout->getUpdate()->addHandle('punchout');
+            $layoutUpdate->addHandle('punchout');
         }
-        if ($observer->getFullActionName() == 'checkout_cart_index' & $isActive && $this->session->isValid()) {
-            $layout->getUpdate()->addHandle('punchout_checkout_cart_index');
+
+        if ($isActive && $this->session->isValid()) {
+            if ($observer->getFullActionName() == 'checkout_cart_index') {
+                $layoutUpdate->addHandle('punchout_checkout_cart_index');
+            }
+
+            $this->pageConfig->addBodyClass('is-punchout-session');
         }
     }
 }

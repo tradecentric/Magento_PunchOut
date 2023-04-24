@@ -256,6 +256,14 @@ class Session extends SessionManager implements SessionInterface
         if ($this->helper->getCustomerSessionType() == Login::LOGIN_LOGGED_IN) {
             $this->loginCustomer($container->getCustomer());
         }
+
+        $metadata = $this->cookieMetadataFactory
+            ->createPublicCookieMetadata()
+            ->setDuration(86400)
+            ->setPath($this->getCookiePath() ?? '/')
+            ->setDomain($this->getCookieDomain() ?? '/')
+            ->setSecure(true);
+        $this->cookieManager->setPublicCookie('punchout_session_key', $container->getSession()->getPunchoutSessionId(), $metadata);
     }
 
     /**
@@ -392,6 +400,7 @@ class Session extends SessionManager implements SessionInterface
         $this->customerSession->destroy([]);
         $this->checkoutSession->destroy([]);
         $this->destroy(['send_expire_cookie'=>true]);
+        $this->cookieManager->deleteCookie('punchout_session_key');
     }
 
     /**
