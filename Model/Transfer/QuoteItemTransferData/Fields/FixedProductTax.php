@@ -35,9 +35,9 @@ class FixedProductTax implements ProductRelatedDataHandlerInterface
     public function handle(ProductInterface $product, $storeId = null): array
     {
         $result = [];
-        foreach ($this->helper->getProductWeeeAttributes($product) as $item) {
-            $result[$item->getCode()] = $product->getData($item->getCode());
-        }
+//        foreach ($this->helper->getProductWeeeAttributesForDisplay($product) as $item) {
+//            $result[$item->getCode()] = $product->getData($item->getCode());
+//        }
         return $result;
     }
 }

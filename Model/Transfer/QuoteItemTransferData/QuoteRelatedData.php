@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData;
 
+use Magento\Catalog\Model\ProductRepository;
 use Magento\Quote\Api\Data\CartItemInterface;
+use Magento\Weee\Helper\Data as WeeHelper;
 use Punchout2Go\PurchaseOrder\Helper\Data;
 
 /**
@@ -13,6 +15,16 @@ use Punchout2Go\PurchaseOrder\Helper\Data;
 class QuoteRelatedData implements QuoteItemRelatedDataHandlerInterface
 {
     /**
+     * @var WeeHelper
+     */
+    protected $weeHelper;
+
+    /**
+     * @var ProductRepository
+     */
+    protected $productRepository;
+
+    /**
      * @var array
      */
     protected $mapping = [];
@@ -21,9 +33,15 @@ class QuoteRelatedData implements QuoteItemRelatedDataHandlerInterface
      * QuoteRelatedData constructor.
      * @param array $mapping
      */
-    public function __construct(array $mapping = [])
+    public function __construct(
+        WeeHelper $weeHelper,
+        ProductRepository $repository,
+        array $mapping = []
+    )
     {
         $this->mapping = $mapping;
+        $this->weeHelper = $weeHelper;
+        $this->productRepository = $repository;
     }
 
     /**
@@ -50,6 +68,12 @@ class QuoteRelatedData implements QuoteItemRelatedDataHandlerInterface
             foreach ($weeTax as $tax) {
                 $result[Data::prepareTaxTotalName($tax['title'])] = $tax['row_amount'];
             }
+        }
+
+        /** @var Magento\Catalog\Model\Product $product */
+        $product = $this->productRepository->getById($cartItem->getProduct()->getId());
+        foreach ($this->weeHelper->getProductWeeeAttributes($cartItem->getProduct()) as $item) {
+            $result[$item->getCode()] = $product->getData($item->getCode());
         }
 
         return $result;
