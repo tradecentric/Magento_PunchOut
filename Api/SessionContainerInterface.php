@@ -26,4 +26,6 @@ interface SessionContainerInterface
      * @return CartInterface
      */
     public function getQuote(): CartInterface;
+
+    public function setQuote(CartInterface $quote): SessionContainerInterface;
 }

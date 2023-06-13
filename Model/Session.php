@@ -17,6 +17,7 @@ use Magento\Framework\Session\ValidatorInterface;
 use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Quote\Api\Data\CartInterface;
 use Punchout2Go\Punchout\Api\Data\PunchoutQuoteInterface;
 use Punchout2Go\Punchout\Api\Data\PunchoutQuoteInterfaceFactory;
 use Punchout2Go\Punchout\Api\PunchoutQuoteRepositoryInterface;
@@ -185,16 +186,20 @@ class Session extends SessionManager implements SessionInterface
         $this->sessionCollector->handle($container);
         $this->logger->log('Collect data complete');
 
+        $this->sessionPostStart($container);
+        $this->logger->log('Post start');
+
         /** save magento quote */
-        $quote = $container->getQuote()->setTotalsCollectedFlag(false)->collectTotals();
+        $this->checkoutSession->clearStorage();
+        $quote = $this->initQuote()->setTotalsCollectedFlag(false)->collectTotals();
+        $container->setQuote($quote);
         $this->cartRepository->save($quote);
 
         /** save punchout quote */
-        $punchoutQuote = $container->getSession()->setQuoteId((int) $quote->getId());
+        $punchoutQuote = $container->getSession()->setQuoteId((int)$quote->getId());
         $this->punchoutQuoteRepository->save($punchoutQuote);
-
         $this->logger->log('Collect Totals, cart save Complete');
-        $this->sessionPostStart($container);
+
         $this->logger->log('Session start completed');
     }
 
@@ -208,10 +213,23 @@ class Session extends SessionManager implements SessionInterface
         return $this->containerFactory->create(
             [
                 'session' => $this->getPunchoutQuote(),
-                'quote' => $this->checkoutSession->getQuote(),
+                'quote' => $this->initQuote(),
                 'customer' => $this->customerSession->getCustomer()->getDataModel()
             ]
         );
+    }
+
+    private function initQuote(): CartInterface {
+        $quote = $this->checkoutSession->getQuote();
+        if (!$quote->isObjectNew()) {
+            $quote->setIsActive(false);
+            $this->cartRepository->save($quote);
+            $this->checkoutSession->clearStorage();
+            return $this->initQuote();
+        }
+
+        $quote->setIsActive(true);
+        return $quote;
     }
 
     /**

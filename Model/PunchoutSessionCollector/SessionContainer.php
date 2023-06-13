@@ -68,4 +68,11 @@ class SessionContainer implements SessionContainerInterface
     {
         return $this->session;
     }
+
+    public function setQuote(CartInterface $quote): SessionContainerInterface
+    {
+        $this->quote = $quote;
+
+        return $this;
+    }
 }
