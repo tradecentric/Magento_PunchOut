@@ -26,6 +26,15 @@ define([
     function isNotMatchUrl(redirectUrl) {
         let current = new URL(window.location.href),
             redirect = new URL(redirectUrl);
+
+        if (redirect.pathname.slice(-1) == '/') {
+            redirect.pathname = redirect.pathname.slice(0, -1)
+        }
+
+        if (current.pathname.slice(-1) == '/') {
+            current.pathname = current.pathname.slice(0, -1)
+        }
+
         return current.pathname !== redirect.pathname;
     }
 
