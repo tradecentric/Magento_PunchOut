@@ -1,5 +1,8 @@
 TradeCentric - PunchOut
 ===========
+### 3.1.6 (2023-09-27)
+* Added support for Magento Website Restrictions module
+
 ### 3.1.5 (2023-06-20)
 * Added support for Magento Fixed Product Taxes (FPT)
 * Fixed issue for return cart when customer group changes
