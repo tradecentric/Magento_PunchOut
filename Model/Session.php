@@ -278,6 +278,7 @@ class Session extends SessionManager implements SessionInterface
         $metadata = $this->cookieMetadataFactory
             ->createPublicCookieMetadata()
             ->setDuration(86400)
+            //->setSameSite('None')
             ->setPath($this->getCookiePath() ?? '/')
             ->setDomain($this->getCookieDomain() ?? '/')
             ->setSecure(true);
