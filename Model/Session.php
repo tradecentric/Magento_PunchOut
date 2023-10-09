@@ -220,8 +220,14 @@ class Session extends SessionManager implements SessionInterface
     }
 
     private function initQuote(): CartInterface {
+        $isEdit = false;
+        if (
+            !empty($this->storage->getData()['params']['operation']) &&
+            $this->storage->getData()['params']['operation'] === 'edit'
+        ) $isEdit = true;
+
         $quote = $this->checkoutSession->getQuote();
-        if (!$quote->isObjectNew()) {
+        if (!$quote->isObjectNew() && !$isEdit) {
             $quote->setIsActive(false);
             $this->cartRepository->save($quote);
             $this->checkoutSession->clearStorage();
