@@ -38,7 +38,7 @@ class UnitOfMeasure implements ProductRelatedDataHandlerInterface
     {
         $uom_field = $this->helper->getUomField($storeId);
         $uom = $product->getData($uom_field);
-        if (is_numeric($uom)) {
+        if (is_numeric($uom) && $product->getAttributeText($uom_field)) {
             $uom = $product->getAttributeText($uom_field);
         }
 
