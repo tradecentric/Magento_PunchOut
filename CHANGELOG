@@ -1,5 +1,9 @@
 TradeCentric - PunchOut
 ===========
+### 3.1.7 (2023-11-17)
+* Fix for UOM Not Returning Accurately on Return Cart
+
+
 ### 3.1.6 (2023-09-27)
 * Added support for Magento Website Restrictions module
 
