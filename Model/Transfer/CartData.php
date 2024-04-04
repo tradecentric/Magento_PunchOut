@@ -49,7 +49,7 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getAddresses(): ?array
     {
@@ -113,7 +113,7 @@ class CartData extends \Magento\Framework\DataObject implements CartDataInterfac
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getCustomFields(): array
     {

@@ -216,7 +216,7 @@ class Transfer extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * @param null $store
-     * @return array
+     * @return mixed[]
      */
     public function getCartItemMap($store = null)
     {
@@ -230,7 +230,7 @@ class Transfer extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * @param null $store
-     * @return array
+     * @return mixed[]
      */
     public function getCartMap($store = null)
     {

@@ -381,7 +381,7 @@ class Session extends SessionManager implements SessionInterface
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getParams(): array
     {

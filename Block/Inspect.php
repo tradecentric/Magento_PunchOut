@@ -59,7 +59,7 @@ class Inspect extends \Magento\Framework\View\Element\Template
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     private function getCartData()
     {

@@ -15,7 +15,7 @@ class ProductOptionFields implements OptionRelatedDataInterface
     /**
      * @param OptionsContainerInterface $container
      * @param null $storeId
-     * @return array
+     * @return mixed[]
      */
     public function handle(OptionsContainerInterface $container, $storeId = null): array
     {

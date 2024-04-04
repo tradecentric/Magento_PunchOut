@@ -73,7 +73,7 @@ class QuoteItemOptionsTransferData implements TransferCartItemDataInterface
 
     /**
      * @param ItemTransferDtoInterface $dto
-     * @return array
+     * @return mixed[]
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */

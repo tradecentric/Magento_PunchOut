@@ -14,7 +14,7 @@ interface OptionRelatedDataInterface
     /**
      * @param OptionsContainerInterface $object
      * @param null $storeId
-     * @return array
+     * @return mixed[]
      */
     public function handle(OptionsContainerInterface $object, $storeId = null): array;
 }

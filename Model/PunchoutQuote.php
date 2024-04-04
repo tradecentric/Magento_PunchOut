@@ -58,7 +58,7 @@ class PunchoutQuote extends \Magento\Framework\Model\AbstractModel implements Pu
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getParams(): array
     {

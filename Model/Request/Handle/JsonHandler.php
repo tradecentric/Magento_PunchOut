@@ -29,7 +29,7 @@ class JsonHandler implements RequestParamsHandlerInterface
 
     /**
      * @param array $params
-     * @return array
+     * @return mixed[]
      * @throws LocalizedException
      */
     public function handle(array $params = []): array

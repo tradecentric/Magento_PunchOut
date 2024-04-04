@@ -28,7 +28,7 @@ class ProductRelatedData implements ProductRelatedDataHandlerInterface
      *
      * @param \Magento\Catalog\Api\Data\ProductInterface $product
      * @param null $storeId
-     * @return array
+     * @return mixed[]
      */
     public function handle(\Magento\Catalog\Api\Data\ProductInterface $product, $storeId = null): array
     {

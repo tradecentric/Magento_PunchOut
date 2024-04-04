@@ -35,7 +35,7 @@ interface CartDataInterface
     public function getShippingCode(): ?string;
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getAddresses(): ?array;
 
@@ -75,7 +75,7 @@ interface CartDataInterface
     public function getCurrencyRate(): float;
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getCustomFields(): array;
 

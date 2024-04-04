@@ -27,7 +27,7 @@ class QuoteDataPool implements QuoteDataHandlerInterface
 
     /**
      * @param \Magento\Quote\Api\Data\CartInterface $cart
-     * @return array
+     * @return mixed[]
      * @throws LocalizedException
      */
     public function handle(\Magento\Quote\Api\Data\CartInterface $cart): array

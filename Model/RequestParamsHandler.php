@@ -65,7 +65,7 @@ class RequestParamsHandler implements RequestParamsHandlerInterface
 
     /**
      * @param $params
-     * @return array
+     * @return mixed[]
      */
     protected function getRequiredParams($params): array
     {

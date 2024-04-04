@@ -28,7 +28,7 @@ class VersionExtension implements QuoteDataHandlerInterface
 
     /**
      * @param \Magento\Quote\Api\Data\CartInterface $cart
-     * @return array
+     * @return mixed[]
      */
     public function handle(\Magento\Quote\Api\Data\CartInterface $cart): array
     {

@@ -132,7 +132,7 @@ class QuoteTransferData extends \Magento\Framework\DataObject implements Transfe
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getItemsData()
     {

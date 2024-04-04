@@ -17,7 +17,7 @@ interface TransferCartDataInterface
     public function getCartData(): CartDataInterface;
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getItemsData();
 

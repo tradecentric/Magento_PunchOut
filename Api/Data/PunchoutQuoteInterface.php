@@ -61,7 +61,7 @@ interface PunchoutQuoteInterface
     public function setUpdatedAt(string $updatedAt): PunchoutQuoteInterface;
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getParams(): array;
 

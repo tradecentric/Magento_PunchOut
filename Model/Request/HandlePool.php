@@ -28,7 +28,7 @@ class HandlePool implements RequestParamsHandlerInterface
 
     /**
      * @param array $params
-     * @return array
+     * @return mixed[]
      */
     public function handle(array $params = []): array
     {

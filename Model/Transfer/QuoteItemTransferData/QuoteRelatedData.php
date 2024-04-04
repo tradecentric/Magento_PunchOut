@@ -49,7 +49,7 @@ class QuoteRelatedData implements QuoteItemRelatedDataHandlerInterface
      *
      * @param CartItemInterface $cartItem
      * @param $storeId
-     * @return array
+     * @return mixed[]
      */
     public function handle(CartItemInterface $cartItem, $storeId): array
     {

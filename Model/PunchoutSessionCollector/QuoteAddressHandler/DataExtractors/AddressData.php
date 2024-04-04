@@ -27,7 +27,7 @@ class AddressData implements DataExtractorInterface
 
     /**
      * @param array $data
-     * @return array
+     * @return mixed[]
      */
     public function extract(array $data): array
     {

@@ -192,7 +192,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * @param null $store
-     * @return array
+     * @return mixed[]
      */
     public function getCustomerAttributeMap($store = null)
     {
@@ -209,7 +209,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * @param string $sessionId
-     * @return array|string|string[]|null
+     * @return mixed[]|string|string[]|null
      */
     public function getRemoteInfoUrl(string $sessionId = '')
     {
@@ -218,7 +218,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * @param string $to
-     * @return array
+     * @return mixed[]
      */
     public function getAddressName(string $to)
     {
@@ -237,7 +237,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @param $data
      *
-     * @return array
+     * @return mixed[]
      */
     public function getUserSplitName($data)
     {

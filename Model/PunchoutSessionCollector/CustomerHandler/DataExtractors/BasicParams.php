@@ -27,7 +27,7 @@ class BasicParams implements DataExtractorInterface
 
     /**
      * @param array $params
-     * @return array|string[]
+     * @return mixed[]|string[]
      */
     public function extract(array $params): array
     {

@@ -28,7 +28,7 @@ class ProductConfiguration implements ConfigurationInterface
 
     /**
      * @param ItemInterface $item
-     * @return array
+     * @return mixed[]
      */
     public function getOptions(ItemInterface $item): array
     {

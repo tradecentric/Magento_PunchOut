@@ -20,7 +20,7 @@ interface TransferCartItemDataInterface
 
     /**
      * @param ItemTransferDtoInterface $dto
-     * @return array
+     * @return mixed[]
      */
     public function getData(ItemTransferDtoInterface $dto): array;
 }

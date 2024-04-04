@@ -22,7 +22,7 @@ class Session extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_IS_PUNCHOUT_ONLY_URL = 'punchout2go_punchout/site/punchout_only_url';
     const XML_PATH_EXCLUDE_POS_ID_IN_REDIRECT = 'punchout2go_punchout/session/exclude_posid_redirect';
     const XML_PATH_IGNORE_ITEMS = 'punchout2go_punchout/session/selected_item_ignore';
-    
+
     /**
      * @param null $store
      * @return string
@@ -150,13 +150,13 @@ class Session extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * @param null $store
-     * @return array
+     * @return mixed[]
      */
     public function getIgnoreItems($store = null): array
     {
         return array_map(
-            'trim', 
-            explode(',', 
+            'trim',
+            explode(',',
                 (string) $this->scopeConfig->getValue(
                 static::XML_PATH_IGNORE_ITEMS,
             ScopeInterface::SCOPE_STORE,

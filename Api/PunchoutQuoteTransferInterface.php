@@ -10,7 +10,7 @@ interface PunchoutQuoteTransferInterface
 {
     /**
      * @param string $punchoutQuoteId
-     * @return TransferCartDataInterface
+     * @return \Punchout2Go\Punchout\Api\TransferCartDataInterface
      */
     public function getTransferData(string $punchoutQuoteId): TransferCartDataInterface;
 }

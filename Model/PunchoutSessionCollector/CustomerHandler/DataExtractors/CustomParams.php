@@ -27,7 +27,7 @@ class CustomParams implements DataExtractorInterface
 
     /**
      * @param array $params
-     * @return array[]
+     * @return mixed[][]
      */
     public function extract(array $params): array
     {

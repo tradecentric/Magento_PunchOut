@@ -45,7 +45,7 @@ class CustomFields implements QuoteDataHandlerInterface
 
     /**
      * @param CartInterface $cart
-     * @return array[]
+     * @return mixed[][]
      */
     public function handle(CartInterface $cart): array
     {

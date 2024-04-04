@@ -44,7 +44,7 @@ class Shipping implements QuoteDataHandlerInterface
 
     /**
      * @param \Magento\Quote\Api\Data\CartInterface $cart
-     * @return array
+     * @return mixed[]
      */
     public function handle(\Magento\Quote\Api\Data\CartInterface $cart): array
     {
@@ -66,7 +66,7 @@ class Shipping implements QuoteDataHandlerInterface
 
     /**
      * @param array $addresses
-     * @return array
+     * @return mixed[]
      */
     protected function getAddresses(array $addresses): array
     {

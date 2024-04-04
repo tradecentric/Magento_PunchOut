@@ -36,7 +36,7 @@ class RemoteInfoHandler
 
     /**
      * @param $validateSessionUrl
-     * @return array
+     * @return mixed[]
      */
     public function getRemoteSession($validateSessionUrl)
     {

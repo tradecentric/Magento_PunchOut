@@ -17,7 +17,7 @@ class Login implements \Magento\Framework\Data\OptionSourceInterface
     /**
      * Options getter
      *
-     * @return array
+     * @return mixed[]
      */
     public function toOptionArray()
     {

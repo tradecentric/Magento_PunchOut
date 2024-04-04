@@ -13,7 +13,7 @@ class ItemData implements DataExtractorInterface
 {
     /**
      * @param array $params
-     * @return array|array[]
+     * @return mixed[]|array[]
      */
     public function extract(array $params): array
     {

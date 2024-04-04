@@ -32,7 +32,7 @@ class Configuration implements QuoteItemRelatedDataHandlerInterface
     /**
      * @param CartItemInterface $product
      * @param $storeId
-     * @return array
+     * @return mixed[]
      */
     public function handle(CartItemInterface $product, $storeId): array
     {

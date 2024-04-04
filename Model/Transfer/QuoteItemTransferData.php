@@ -16,7 +16,7 @@ use Magento\Catalog\Api\ProductRepositoryInterface;
 class QuoteItemTransferData implements TransferCartItemDataInterface
 {
     /**
-     * @var ProductProviderInterface 
+     * @var ProductProviderInterface
      */
     protected $productProvider;
 
@@ -48,7 +48,7 @@ class QuoteItemTransferData implements TransferCartItemDataInterface
 
     /**
      * @param ItemTransferDtoInterface $dto
-     * @return array
+     * @return mixed[]
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */

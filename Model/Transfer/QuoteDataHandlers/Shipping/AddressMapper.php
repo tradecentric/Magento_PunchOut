@@ -25,7 +25,7 @@ class AddressMapper
 
     /**
      * @param \Magento\Quote\Api\Data\AddressInterface $address
-     * @return array
+     * @return mixed[]
      */
     public function getAddressData(\Magento\Quote\Api\Data\AddressInterface $address)
     {

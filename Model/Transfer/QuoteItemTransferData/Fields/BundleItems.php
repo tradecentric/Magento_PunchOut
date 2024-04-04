@@ -44,7 +44,7 @@ class BundleItems implements QuoteItemRelatedDataHandlerInterface
     /**
      * @param CartItemInterface $cartItem
      * @param $storeId
-     * @return array
+     * @return mixed[]
      * @throws \Magento\Framework\Exception\LocalizedException
      */
    public function handle(CartItemInterface $cartItem, $storeId): array

@@ -35,7 +35,7 @@ class PunchoutQuoteId implements SectionSourceInterface
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getSectionData()
     {

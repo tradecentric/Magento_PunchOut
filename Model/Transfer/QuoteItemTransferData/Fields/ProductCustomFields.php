@@ -46,7 +46,7 @@ class ProductCustomFields implements ProductRelatedDataHandlerInterface
     /**
      * @param ProductInterface $product
      * @param null $storeId
-     * @return array
+     * @return mixed[]
      */
     public function handle(ProductInterface $product, $storeId = null): array
     {

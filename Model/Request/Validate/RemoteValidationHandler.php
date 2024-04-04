@@ -70,7 +70,7 @@ class RemoteValidationHandler implements RequestParamsValidatorInterface
 
     /**
      * @param array $params
-     * @return array
+     * @return mixed[]
      */
     protected function getValidationInfo(array $params)
     {

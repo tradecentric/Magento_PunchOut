@@ -33,7 +33,7 @@ interface SessionInterface
     public function getReturnUrl(): string;
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getParams(): array;
 
