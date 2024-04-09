@@ -27,6 +27,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_IS_PUNCHOUT_ACTIVE = 'punchout2go_punchout/security/punchout_active';
     const XML_PATH_IS_MAINTAIN_QUERY_STRING = 'punchout2go_punchout/system/query_string';
 
+    const XML_PATH_IS_MINIMUM_ORDER_AMOUNT_BEHAVIOR_ENABLED = 'punchout2go_punchout/order/enable_minimum_order';
+
     const DEFAULT_FIRSTNAME = 'Punchout User';
     const DEFAULT_LASTNAME = 'No Last Name';
 
@@ -300,6 +302,47 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function isMaintainQueryString($store = null) {
         return $this->scopeConfig->isSetFlag(
             static::XML_PATH_IS_MAINTAIN_QUERY_STRING,
+            ScopeInterface::SCOPE_STORE,
+            $store
+        );
+    }
+
+    /**
+     * Check if Punchout option is enabled and magento min order amount set
+     *
+     * @param $store
+     * @return bool
+     */
+    public function isMinimumOrderAmountBehaviorEnabled($store = null)
+    {
+        return $this->scopeConfig->isSetFlag(
+            static::XML_PATH_IS_MINIMUM_ORDER_AMOUNT_BEHAVIOR_ENABLED,
+            ScopeInterface::SCOPE_STORE,
+            $store
+        ) && ($this->getMinimumOrderAmount($store) > 0);
+    }
+
+    /**
+     * @param $store
+     * @return float
+     */
+    public function getMinimumOrderAmount($store = null)
+    {
+        return (float)$this->scopeConfig->getValue(
+            'sales/minimum_order/amount',
+            ScopeInterface::SCOPE_STORE,
+            $store
+        );
+    }
+
+    /**
+     * @param $store
+     * @return mixed
+     */
+    public function getMinimumOrderAmountMessage($store = null)
+    {
+        return $this->scopeConfig->getValue(
+            'sales/minimum_order/error_message',
             ScopeInterface::SCOPE_STORE,
             $store
         );

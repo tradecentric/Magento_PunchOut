@@ -31,6 +31,15 @@ class Transfer extends \Magento\Framework\View\Element\Template
      */
     protected $jsonSerializer;
 
+    /** @var \Punchout2Go\Punchout\Helper\Data  */
+    protected $dataHelper;
+
+    /** @var \Magento\Checkout\Model\Session  */
+    protected $checkoutSession;
+
+    /** @var \Magento\Framework\Message\ManagerInterface  */
+    protected $messageManager;
+
     /**
      * Transfer constructor.
      * @param Template\Context $context
@@ -46,12 +55,18 @@ class Transfer extends \Magento\Framework\View\Element\Template
         \Punchout2Go\Punchout\Helper\Transfer $transferHelper,
         \Magento\Framework\Serialize\Serializer\Json $jsonSerializer,
         \Punchout2Go\Punchout\Model\Session $punchoutSession,
+        \Punchout2Go\Punchout\Helper\Data $dataHelper,
+        \Magento\Checkout\Model\Session $checkoutSession,
+        \Magento\Framework\Message\ManagerInterface $messageManager,
         array $data = []
     ) {
         $this->transferHelper = $transferHelper;
         $this->sessionHelper = $sessionHelper;
         $this->jsonSerializer = $jsonSerializer;
         $this->punchoutSession = $punchoutSession;
+        $this->dataHelper = $dataHelper;
+        $this->checkoutSession = $checkoutSession;
+        $this->messageManager = $messageManager;
         parent::__construct($context, $data);
     }
 
@@ -91,5 +106,24 @@ class Transfer extends \Magento\Framework\View\Element\Template
     public function getIsJsLogging()
     {
         return (int) $this->transferHelper->getIsJsLogging();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTransferButtonActive()
+    {
+        if ($this->dataHelper->isMinimumOrderAmountBehaviorEnabled()) {
+            $quote = $this->checkoutSession->getQuote();
+            if ($quote->getGrandTotal() < $this->dataHelper->getMinimumOrderAmount()) {
+                if ($message = $this->dataHelper->getMinimumOrderAmountMessage()) {
+                    $this->messageManager->addNoticeMessage($message);
+                }
+
+                return false;
+            }
+        }
+
+        return true;
     }
 }
