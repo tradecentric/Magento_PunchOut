@@ -1,5 +1,8 @@
 TradeCentric - PunchOut
 ===========
+### 3.1.8 (2024-04-04)
+* Added support compatibility for Swagger
+
 ### 3.1.7 (2023-11-17)
 * Fix for UOM Not Returning Accurately on Return Cart
 * 'Create' operation for return cart was restored
