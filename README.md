@@ -1,7 +1,7 @@
-# TradeCentric PunchOut Module - 
+# TradeCentric PunchOut Module 
 
 ## Composer Installation
-TradeCentric uses [Composer] (https://getcomposer.org/) to manage our Adobe Commerce modules and their dependencies, this assumes that you 
+TradeCentric uses [Composer](https://getcomposer.org/) to manage our Adobe Commerce modules and their dependencies, this assumes that you 
 already have Composer installed and a composer.json file exists in your Magento installations root directory. 
 
 <br>
