@@ -2,7 +2,7 @@
 
 ## Composer Installation
 TradeCentric uses [Composer](https://getcomposer.org/) to manage our Adobe Commerce modules and their dependencies, this assumes that you 
-already have Composer installed and a composer.json file exists in your Magento installations root directory. 
+already have Composer installed and a composer.json file exists in your Magento installation root directory. 
 
 <br>
 
