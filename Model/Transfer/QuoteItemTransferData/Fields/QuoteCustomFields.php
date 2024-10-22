@@ -63,7 +63,7 @@ class QuoteCustomFields implements QuoteItemRelatedDataHandlerInterface
         $fields = $this->helper->getCartItemMap();		
 		
 $this->logger->log('QuoteCustomFields/handle fields', $fields);
-$this->logger->log('QuoteCustomFields/handle product', $product);
+// $this->logger->log('QuoteCustomFields/handle product', $product);
 
         if (!$fields) {
 $this->logger->log('QuoteCustomFields/handle fields not');			
@@ -73,10 +73,11 @@ $this->logger->log('QuoteCustomFields/handle fields not');
 $this->logger->log(sprintf('QuoteCustomFiels - field %s', $field));			
             list($source, $destination) = $this->defaultHelper->prepareSource($field);
             if (strlen($source) && strlen($destination) && ($val = $this->getMapSourceValue($source, $product))) {
-$this->logger->log(sprintf('QuoteCustomFields - source %s : destination %s', $source, $destination));					
+$this->logger->log(sprintf('QuoteCustomFields - source %s : destination %s : val %s', $source, $destination, $val));					
                 $result[$destination] = $val;
             }
         }
+$this->logger->log('QuoteCustomFields/handle result', $result);		
         return $result;
     }
 
@@ -103,7 +104,7 @@ $this->logger->log('QuoteCustomFiels/getMapSourceValue handler is empty');
             return '';
         }
 		
-$this->logger->log('QuoteCustomFields/getMapSourceValue handler', $handler);		
+//$this->logger->log('QuoteCustomFields/getMapSourceValue handler', $handler);		
         return $handler->handle($product, $path);
     }
 }
