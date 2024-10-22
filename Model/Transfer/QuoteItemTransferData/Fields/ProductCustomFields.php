@@ -53,7 +53,7 @@ class ProductCustomFields implements ProductRelatedDataHandlerInterface
         $result = [];
         $fields = $this->helper->getCartItemMap();
 		
-var_dump('ProductCustomFields - ' . $fields)
+var_dump('ProductCustomFields - ' . $fields);
 exit(0);
 	
         if (!$fields) {
