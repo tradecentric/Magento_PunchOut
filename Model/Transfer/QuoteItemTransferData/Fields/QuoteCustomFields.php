@@ -61,8 +61,12 @@ class QuoteCustomFields implements QuoteItemRelatedDataHandlerInterface
     {
         $result = [];
         $fields = $this->helper->getCartItemMap();		
+		
+$this->logger->log('QuoteCustomFields/handle fields', $fields);
+$this->logger->log('QuoteCustomFields/handle product', $product);
+
         if (!$fields) {
-$this->logger->log('QuoteCustomFields/handle fields is empty');			
+$this->logger->log('QuoteCustomFields/handle fields not');			
             return $result;
         }
         foreach ($fields as $field) {
@@ -99,7 +103,7 @@ $this->logger->log('QuoteCustomFiels/getMapSourceValue handler is empty');
             return '';
         }
 		
-$this->logger->log(sprintf('QuoteCustomFields/getMapSourceValue handler %s', $handler));		
+$this->logger->log('QuoteCustomFields/getMapSourceValue handler', $handler);		
         return $handler->handle($product, $path);
     }
 }
