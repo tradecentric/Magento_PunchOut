@@ -26,21 +26,30 @@ class QuoteCustomFields implements QuoteItemRelatedDataHandlerInterface
      * @var \Punchout2Go\Punchout\Model\Transfer\CustomFields\CartItemPartResolver
      */
     protected $partFactory;
+	
+    /**
+     * @var \Punchout2Go\Punchout\Api\LoggerInterface
+     */
+    protected $logger;
+
 
     /**
      * QuoteCustomFields constructor.
      * @param \Punchout2Go\Punchout\Helper\Transfer $helper
      * @param \Punchout2Go\Punchout\Helper\Data $data
      * @param \Punchout2Go\Punchout\Model\Transfer\CustomFields\CartItemPartResolver $partFactory
+	 * @param \Punchout2Go\Punchout\Api\LoggerInterface $logger
      */
     public function __construct(
         \Punchout2Go\Punchout\Helper\Transfer $helper,
         \Punchout2Go\Punchout\Helper\Data $data,
-        \Punchout2Go\Punchout\Model\Transfer\CustomFields\CartItemPartResolver $partFactory
+        \Punchout2Go\Punchout\Model\Transfer\CustomFields\CartItemPartResolver $partFactory,
+		\Punchout2Go\Punchout\Api\LoggerInterface $logger
     ) {
         $this->helper = $helper;
         $this->defaultHelper = $data;
         $this->partFactory = $partFactory;
+		$this->logger = $logger;
     }
 
     /**
@@ -52,10 +61,10 @@ class QuoteCustomFields implements QuoteItemRelatedDataHandlerInterface
     {
         $result = [];
         $fields = $this->helper->getCartItemMap();
-		
-var_dump('QuoteCustomFields - ' . $fields);
-exit(0);
 
+$this->logger->log(sprintf('QuoteCustomFiels - fields %s', var_dump($fields)));
+$this->logger->log(sprintf('QuoteCustomFiels - product %s', var_dump($product)));
+		
         if (!$fields) {
             return $result;
         }
@@ -83,6 +92,9 @@ exit(0);
         $part = $s[1];
         $path = $s[2];
         $handler = $this->partFactory->resolve($part);
+		
+$this->logger->log(sprintf('QuoteCustomFiels/getMapSourceValue part %s : path %s : handler %s', $part, $path, var_dump($handler)));
+		
         if (!$handler) {
             return '';
         }
