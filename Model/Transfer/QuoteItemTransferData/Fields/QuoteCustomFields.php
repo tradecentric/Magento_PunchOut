@@ -70,14 +70,14 @@ $this->logger->log('QuoteCustomFields/handle fields not');
             return $result;
         }
         foreach ($fields as $field) {
-$this->logger->log(sprintf('QuoteCustomFiels - field %s', $field));			
+//$this->logger->log(sprintf('QuoteCustomFiels - field %s', $field));			
             list($source, $destination) = $this->defaultHelper->prepareSource($field);
             if (strlen($source) && strlen($destination) && ($val = $this->getMapSourceValue($source, $product))) {
 $this->logger->log(sprintf('QuoteCustomFields - source %s : destination %s : val %s', $source, $destination, $val));					
                 $result[$destination] = $val;
             }
         }
-$this->logger->log('QuoteCustomFields/handle result', $result);		
+//$this->logger->log('QuoteCustomFields/handle result', $result);		
         return $result;
     }
 
@@ -104,7 +104,7 @@ $this->logger->log('QuoteCustomFiels/getMapSourceValue handler is empty');
             return '';
         }
 		
-//$this->logger->log('QuoteCustomFields/getMapSourceValue handler', $handler);		
+$this->logger->log('QuoteCustomFields/getMapSourceValue handler', $handler);		
         return $handler->handle($product, $path);
     }
 }
