@@ -53,7 +53,7 @@ class QuoteCustomFields implements QuoteItemRelatedDataHandlerInterface
         $result = [];
         $fields = $this->helper->getCartItemMap();
 		
-var_dump('QuoteCustomFields - ' . $fields)
+var_dump('QuoteCustomFields - ' . $fields);
 exit(0);
 
         if (!$fields) {
