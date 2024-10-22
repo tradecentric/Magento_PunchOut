@@ -62,8 +62,8 @@ class QuoteCustomFields implements QuoteItemRelatedDataHandlerInterface
         $result = [];
         $fields = $this->helper->getCartItemMap();
 
-$this->logger->log(sprintf('QuoteCustomFiels - fields %s', var_dump($fields)));
-$this->logger->log(sprintf('QuoteCustomFiels - product %s', var_dump($product)));
+$this->logger->log(sprintf('QuoteCustomFiels - fields %s', $fields));
+$this->logger->log(sprintf('QuoteCustomFiels - product %s', $product));
 		
         if (!$fields) {
             return $result;
@@ -93,7 +93,7 @@ $this->logger->log(sprintf('QuoteCustomFiels - product %s', var_dump($product)))
         $path = $s[2];
         $handler = $this->partFactory->resolve($part);
 		
-$this->logger->log(sprintf('QuoteCustomFiels/getMapSourceValue part %s : path %s : handler %s', $part, $path, var_dump($handler)));
+$this->logger->log(sprintf('QuoteCustomFiels/getMapSourceValue part %s : path %s : handler %s', $part, $path));
 		
         if (!$handler) {
             return '';
