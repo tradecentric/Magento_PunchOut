@@ -10,7 +10,7 @@ use Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\QuoteItemRelatedDa
  * Class CustomFields
  * @package Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields
  */
-class QuoteCustomFields implements QuoteItemRelatedDataHandlerInterface
+class QuoteCustomFields implements QuoteItemRelatedDataHandlerInterface  
 {
     /**
      * @var \Punchout2Go\Punchout\Helper\Transfer
@@ -26,21 +26,30 @@ class QuoteCustomFields implements QuoteItemRelatedDataHandlerInterface
      * @var \Punchout2Go\Punchout\Model\Transfer\CustomFields\CartItemPartResolver
      */
     protected $partFactory;
+	
+    /**
+     * @var \Punchout2Go\Punchout\Api\LoggerInterface
+     */
+    protected $logger;
+
 
     /**
      * QuoteCustomFields constructor.
      * @param \Punchout2Go\Punchout\Helper\Transfer $helper
      * @param \Punchout2Go\Punchout\Helper\Data $data
      * @param \Punchout2Go\Punchout\Model\Transfer\CustomFields\CartItemPartResolver $partFactory
+	 * @param \Punchout2Go\Punchout\Api\LoggerInterface $logger
      */
     public function __construct(
         \Punchout2Go\Punchout\Helper\Transfer $helper,
         \Punchout2Go\Punchout\Helper\Data $data,
-        \Punchout2Go\Punchout\Model\Transfer\CustomFields\CartItemPartResolver $partFactory
+        \Punchout2Go\Punchout\Model\Transfer\CustomFields\CartItemPartResolver $partFactory,
+		\Punchout2Go\Punchout\Api\LoggerInterface $logger
     ) {
         $this->helper = $helper;
         $this->defaultHelper = $data;
         $this->partFactory = $partFactory;
+		$this->logger = $logger;
     }
 
     /**
@@ -51,20 +60,16 @@ class QuoteCustomFields implements QuoteItemRelatedDataHandlerInterface
     public function handle(CartItemInterface $product, $storeId): array
     {
         $result = [];
-        $fields = $this->helper->getCartItemMap();
-		
-var_dump('QuoteCustomFields - ' . $fields)
-exit(0);
-
+        $fields = $this->helper->getCartItemMap();		
         if (!$fields) {
             return $result;
         }
         foreach ($fields as $field) {
             list($source, $destination) = $this->defaultHelper->prepareSource($field);
-            if (strlen($source) && strlen($destination) && ($val = $this->getMapSourceValue($source, $product))) {
+            if (strlen($source) && strlen($destination) && ($val = $this->getMapSourceValue($source, $product))) {		
                 $result[$destination] = $val;
             }
-        }
+        }		
         return $result;
     }
 
@@ -82,10 +87,16 @@ exit(0);
         }
         $part = $s[1];
         $path = $s[2];
-        $handler = $this->partFactory->resolve($part);
-        if (!$handler) {
+
+//		if ($product->getData($path)) {
+//            return $product->getData($path);
+//        }
+//        return '';
+
+        $handler = $this->partFactory->resolve($part);	
+        if (!$handler) {		
             return '';
-        }
+        }		
         return $handler->handle($product, $path);
     }
 }

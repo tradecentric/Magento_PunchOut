@@ -6,13 +6,13 @@ namespace Punchout2Go\Punchout\Model\Transfer\CustomFields;
 use Magento\Quote\Api\Data\CartItemInterface;
 
 /**
- * Interface ProductPartInterface
+ * Interface CartItemPartInterface
  * @package Punchout2Go\Punchout\Model\Transfer\CustomFields
  */
 interface CartItemPartInterface
 {
     /**
-     * @param \Magento\Catalog\Model\AbstractModel $model
+     * @param \Magento\Quote\Api\Data\CartItemInterface $model
      * @param string $path
      * @return string
      */
