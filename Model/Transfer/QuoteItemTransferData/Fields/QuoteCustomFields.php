@@ -71,7 +71,7 @@ class QuoteCustomFields implements QuoteItemRelatedDataHandlerInterface
             }
         }
 		
-		$result = ['sku' => $product->getSku()];
+		$result = ['my_additional_data' => $product->getAdditionalData()];
 		
         return $result;
     }
