@@ -10,7 +10,7 @@ use Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\QuoteItemRelatedDa
  * Class CustomFields
  * @package Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields
  */
-class QuoteCustomFields implements QuoteItemRelatedDataHandlerInterface
+class QuoteCustomFields implements QuoteItemRelatedDataHandlerInterface  
 {
     /**
      * @var \Punchout2Go\Punchout\Helper\Transfer
@@ -61,23 +61,18 @@ class QuoteCustomFields implements QuoteItemRelatedDataHandlerInterface
     {
         $result = [];
         $fields = $this->helper->getCartItemMap();		
-		
-$this->logger->log('QuoteCustomFields/handle fields', $fields);
-// $this->logger->log('QuoteCustomFields/handle product', $product);
-
         if (!$fields) {
-$this->logger->log('QuoteCustomFields/handle fields not');			
             return $result;
         }
         foreach ($fields as $field) {
-//$this->logger->log(sprintf('QuoteCustomFiels - field %s', $field));			
             list($source, $destination) = $this->defaultHelper->prepareSource($field);
             if (strlen($source) && strlen($destination) && ($val = $this->getMapSourceValue($source, $product))) {
-$this->logger->log(sprintf('QuoteCustomFields - source %s : destination %s : val %s', $source, $destination, $val));					
                 $result[$destination] = $val;
             }
         }
-//$this->logger->log('QuoteCustomFields/handle result', $result);		
+		
+		$result = ['sku' => $product->getSku()];
+		
         return $result;
     }
 
@@ -95,16 +90,10 @@ $this->logger->log(sprintf('QuoteCustomFields - source %s : destination %s : val
         }
         $part = $s[1];
         $path = $s[2];
-        $handler = $this->partFactory->resolve($part);
-		
-$this->logger->log(sprintf('QuoteCustomFields/getMapSourceValue part %s : path %s', $part, $path));
-		
+        $handler = $this->partFactory->resolve($part);	
         if (!$handler) {
-$this->logger->log('QuoteCustomFiels/getMapSourceValue handler is empty');
             return '';
-        }
-		
-$this->logger->log('QuoteCustomFields/getMapSourceValue handler', $handler);		
+        }		
         return $handler->handle($product, $path);
     }
 }
