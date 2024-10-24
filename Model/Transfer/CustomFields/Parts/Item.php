@@ -10,7 +10,7 @@ use Punchout2Go\Punchout\Model\Transfer\CustomFields\CartItemPartInterface;
  * Class Item
  * @package Punchout2Go\Punchout\Model\Transfer\CustomFields\Parts
  */
-class Item implements ProductPartInterface
+class Item implements CartItemPartInterface
 {
     /**
      * @param CartItemInterface $product
