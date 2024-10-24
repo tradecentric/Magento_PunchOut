@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Punchout2Go\Punchout\Model\Transfer\CustomFields\Parts;
 
-use Magento\Catalog\Api\Data\CartItemInterface;
+use Magento\Quote\Api\Data\CartItemInterface;
 use Punchout2Go\Punchout\Model\Transfer\CustomFields\CartItemPartInterface;
 
 /**
