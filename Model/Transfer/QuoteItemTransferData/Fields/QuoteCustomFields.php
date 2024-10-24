@@ -97,6 +97,6 @@ class QuoteCustomFields implements QuoteItemRelatedDataHandlerInterface
         if (!$handler) {		
             return '';
         }		
-        return $handler->handle($product, $path, $part);
+        return $handler->handle($product, $path);
     }
 }
