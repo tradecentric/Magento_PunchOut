@@ -96,7 +96,7 @@ $this->logger->log('path data is: ' . $product->getData($path));
  //           $attribute = $product->getResource()->getAttribute($path);
             return $product->getData($path);
         }
-        return $'';
+        return '';
 
 //        $handler = $this->partFactory->resolve($part);	
 //        if (!$handler) {
