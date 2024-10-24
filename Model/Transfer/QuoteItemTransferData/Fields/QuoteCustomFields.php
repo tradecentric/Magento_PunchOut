@@ -94,7 +94,7 @@ $this->logger->log('path is: ' . $path);
 		if ($product->getData($path)) {
 $this->logger->log('path data is: ' . $product->getData($path));
  //           $attribute = $product->getResource()->getAttribute($path);
-            return = $product->getData($path);
+            return $product->getData($path);
         }
         return $'';
 
