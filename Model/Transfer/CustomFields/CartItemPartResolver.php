@@ -40,9 +40,9 @@ class CartItemPartResolver
      */
     public function resolve($partType = '') : ?CartItemPartInterface
     {
-  //      if (!isset($this->partObjects[$partType])) {
-  //          return null;
-  //      }
+        if (!isset($this->partObjects[$partType])) {
+            return null;
+        }
         return $this->objectManager->create($this->partObjects[$partType]);
     }
 }
