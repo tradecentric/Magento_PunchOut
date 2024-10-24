@@ -20,7 +20,8 @@ class Item implements CartItemPartInterface
     public function handle(CartItemInterface $product, string $path)
     {
         $returnValue = '';
-        if (isset($product->getData($path)) {
+		$productData = $product->getData($path);
+        if (isset($productData)) {
 //            $attribute = $product->getResource()->getAttribute($path);
 //            $returnValue = $attribute->getFrontend()->getValue($product);
 			$returnValue = $product->getData($path);
