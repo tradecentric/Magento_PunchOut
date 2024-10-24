@@ -17,13 +17,13 @@ class Item implements CartItemPartInterface
      * @param string $path
      * @return string
      */
-    public function handle(CartItemInterface $product, string $path): string
+    public function handle(CartItemInterface $product, string $path)
     {
         $returnValue = '';
-        if ($product->getData($path)) {
+        if ($product->getData($path) && isset($product->getData($path))) {
 //            $attribute = $product->getResource()->getAttribute($path);
 //            $returnValue = $attribute->getFrontend()->getValue($product);
-			$returnValue = $product->getValue($path);
+			$returnValue = $product->getData($path);
         }
         return $returnValue;
     }
