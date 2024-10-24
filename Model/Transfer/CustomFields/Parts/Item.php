@@ -21,8 +21,9 @@ class Item implements CartItemPartInterface
     {
         $returnValue = '';
         if ($product->getData($path)) {
-            $attribute = $product->getResource()->getAttribute($path);
-            $returnValue = $attribute->getFrontend()->getValue($product);
+//            $attribute = $product->getResource()->getAttribute($path);
+//            $returnValue = $attribute->getFrontend()->getValue($product);
+			$returnValue = $product->getValue($path);
         }
         return $returnValue;
     }

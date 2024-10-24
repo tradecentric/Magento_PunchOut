@@ -66,8 +66,7 @@ class QuoteCustomFields implements QuoteItemRelatedDataHandlerInterface
         }
         foreach ($fields as $field) {
             list($source, $destination) = $this->defaultHelper->prepareSource($field);
-            if (strlen($source) && strlen($destination) && ($val = $this->getMapSourceValue($source, $product))) {
-$this->logger->log('val is: '  . $val);				
+            if (strlen($source) && strlen($destination) && ($val = $this->getMapSourceValue($source, $product))) {		
                 $result[$destination] = $val;
             }
         }		
@@ -88,21 +87,16 @@ $this->logger->log('val is: '  . $val);
         }
         $part = $s[1];
         $path = $s[2];
-$this->logger->log('part is: ' . $part);
-$this->logger->log('path is: ' . $path);
 
-		if ($product->getData($path)) {
-$this->logger->log('path data is: ' . $product->getData($path));
- //           $attribute = $product->getResource()->getAttribute($path);
-            return $product->getData($path);
-        }
-        return '';
+//		if ($product->getData($path)) {
+//            return $product->getData($path);
+//        }
+//        return '';
 
-//        $handler = $this->partFactory->resolve($part);	
-//        if (!$handler) {
-//$this->logger->log('handler is empty');			
-//            return '';
-//        }		
-//        return $handler->handle($product, $path);
+        $handler = $this->partFactory->resolve($part);	
+        if (!$handler) {		
+            return '';
+        }		
+        return $handler->handle($product, $path, $part);
     }
 }
