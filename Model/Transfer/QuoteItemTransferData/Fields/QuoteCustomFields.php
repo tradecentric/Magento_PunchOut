@@ -90,11 +90,19 @@ $this->logger->log('val is: '  . $val);
         $path = $s[2];
 $this->logger->log('part is: ' . $part);
 $this->logger->log('path is: ' . $path);
-        $handler = $this->partFactory->resolve($part);	
-        if (!$handler) {
-$this->logger->log('handler is empty');			
-            return '';
-        }		
-        return $handler->handle($product, $path);
+
+		if ($product->getData($path)) {
+$this->logger->log('path data is: ' . $product->getData($path));
+ //           $attribute = $product->getResource()->getAttribute($path);
+            return = $product->getData($path);
+        }
+        return $'';
+
+//        $handler = $this->partFactory->resolve($part);	
+//        if (!$handler) {
+//$this->logger->log('handler is empty');			
+//            return '';
+//        }		
+//        return $handler->handle($product, $path);
     }
 }
