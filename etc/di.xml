@@ -306,11 +306,7 @@
         <arguments>
             <argument name="partObjects" xsi:type="array">
                  <item name="option" xsi:type="string">Punchout2Go\Punchout\Model\Transfer\CustomFields\Parts\Option</item>
-<<<<<<< HEAD
                  <item name="item" xsi:type="string">Punchout2Go\Punchout\Model\Transfer\CustomFields\Parts\Item</item>
-=======
-				 <item name="item" xsi:type="string">Punchout2Go\Punchout\Model\Transfer\CustomFields\Parts\Item</item>
->>>>>>> b7376b6 (CN-393 item mapping initial)
             </argument>
         </arguments>
     </type>
