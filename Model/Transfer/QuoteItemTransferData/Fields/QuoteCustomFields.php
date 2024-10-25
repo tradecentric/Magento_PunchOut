@@ -26,30 +26,21 @@ class QuoteCustomFields implements QuoteItemRelatedDataHandlerInterface
      * @var \Punchout2Go\Punchout\Model\Transfer\CustomFields\CartItemPartResolver
      */
     protected $partFactory;
-	
-    /**
-     * @var \Punchout2Go\Punchout\Api\LoggerInterface
-     */
-    protected $logger;
-
 
     /**
      * QuoteCustomFields constructor.
      * @param \Punchout2Go\Punchout\Helper\Transfer $helper
      * @param \Punchout2Go\Punchout\Helper\Data $data
      * @param \Punchout2Go\Punchout\Model\Transfer\CustomFields\CartItemPartResolver $partFactory
-	 * @param \Punchout2Go\Punchout\Api\LoggerInterface $logger
      */
     public function __construct(
         \Punchout2Go\Punchout\Helper\Transfer $helper,
         \Punchout2Go\Punchout\Helper\Data $data,
-        \Punchout2Go\Punchout\Model\Transfer\CustomFields\CartItemPartResolver $partFactory,
-		\Punchout2Go\Punchout\Api\LoggerInterface $logger
+        \Punchout2Go\Punchout\Model\Transfer\CustomFields\CartItemPartResolver $partFactory
     ) {
         $this->helper = $helper;
         $this->defaultHelper = $data;
         $this->partFactory = $partFactory;
-		$this->logger = $logger;
     }
 
     /**
@@ -87,12 +78,6 @@ class QuoteCustomFields implements QuoteItemRelatedDataHandlerInterface
         }
         $part = $s[1];
         $path = $s[2];
-
-//		if ($product->getData($path)) {
-//            return $product->getData($path);
-//        }
-//        return '';
-
         $handler = $this->partFactory->resolve($part);	
         if (!$handler) {		
             return '';
