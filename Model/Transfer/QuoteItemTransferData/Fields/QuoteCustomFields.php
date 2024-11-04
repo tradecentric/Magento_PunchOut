@@ -51,16 +51,16 @@ class QuoteCustomFields implements QuoteItemRelatedDataHandlerInterface
     public function handle(CartItemInterface $product, $storeId): array
     {
         $result = [];
-        $fields = $this->helper->getCartItemMap();		
+        $fields = $this->helper->getCartItemMap();
         if (!$fields) {
             return $result;
         }
         foreach ($fields as $field) {
             list($source, $destination) = $this->defaultHelper->prepareSource($field);
-            if (strlen($source) && strlen($destination) && ($val = $this->getMapSourceValue($source, $product))) {		
+            if (strlen($source) && strlen($destination) && ($val = $this->getMapSourceValue($source, $product))) {
                 $result[$destination] = $val;
             }
-        }		
+        }
         return $result;
     }
 
@@ -78,10 +78,10 @@ class QuoteCustomFields implements QuoteItemRelatedDataHandlerInterface
         }
         $part = $s[1];
         $path = $s[2];
-        $handler = $this->partFactory->resolve($part);	
-        if (!$handler) {		
+        $handler = $this->partFactory->resolve($part);
+        if (!$handler) {
             return '';
-        }		
+        }
         return $handler->handle($product, $path);
     }
 }
