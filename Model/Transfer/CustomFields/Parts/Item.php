@@ -19,7 +19,6 @@ class Item implements CartItemPartInterface
      */
     public function handle(CartItemInterface $product, string $path): string
     {
-        $productData = $product->getData($path);
         return $product->getData($path) ?? '';
     }
 }
