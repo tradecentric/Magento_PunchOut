@@ -10,7 +10,7 @@ use Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\QuoteItemRelatedDa
  * Class CustomFields
  * @package Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\Fields
  */
-class QuoteCustomFields implements QuoteItemRelatedDataHandlerInterface  
+class QuoteCustomFields implements QuoteItemRelatedDataHandlerInterface
 {
     /**
      * @var \Punchout2Go\Punchout\Helper\Transfer
