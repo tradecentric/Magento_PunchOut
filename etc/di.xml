@@ -306,6 +306,7 @@
         <arguments>
             <argument name="partObjects" xsi:type="array">
                  <item name="option" xsi:type="string">Punchout2Go\Punchout\Model\Transfer\CustomFields\Parts\Option</item>
+                 <item name="item" xsi:type="string">Punchout2Go\Punchout\Model\Transfer\CustomFields\Parts\Item</item>
             </argument>
         </arguments>
     </type>
