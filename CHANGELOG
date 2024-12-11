@@ -1,5 +1,9 @@
 TradeCentric - PunchOut
 ===========
+### 3.1.9 (2024-12-11)
+* PBR-2220: Item Mapping is not returning expected data
+* PBR-1898: TradeCentric Punchout to Magento Default User Behavior Issue
+
 ### 3.1.8 (2024-05-28)
 * Added support compatibility for Swagger
 * Added Minimum Order Amount behavior in the Shopping Cart
