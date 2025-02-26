@@ -6,7 +6,7 @@
                 <resource id="Magento_Backend::stores">
                     <resource id="Magento_Backend::stores_settings">
                         <resource id="Magento_Config::config">
-                            <resource id="Punchout2Go_Punchout::config_punchout" title="TradeCentric Punchout" translate="title" sortOrder="1000" />
+                            <resource id="Punchout2Go_Punchout::config_punchout" title="TradeCentric Punchout" translate="title" sortOrder="1340" />
                         </resource>
                     </resource>
                 </resource>
