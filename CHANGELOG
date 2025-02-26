@@ -1,5 +1,8 @@
 TradeCentric - PunchOut
 ===========
+### 3.1.9 (20254-02-26)
+* Added ACL support for Role management
+
 ### 3.1.8 (2024-05-28)
 * Added support compatibility for Swagger
 * Added Minimum Order Amount behavior in the Shopping Cart
