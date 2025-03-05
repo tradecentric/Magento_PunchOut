@@ -1,5 +1,8 @@
 TradeCentric - PunchOut
 ===========
+### 3.1.10 (2025-02-26)
+* PBR-2329: Added ACL support for Role management
+
 ### 3.1.9 (2024-12-11)
 * PBR-2220: Item Mapping is not returning expected data
 * PBR-1898: TradeCentric Punchout to Magento Default User Behavior Issue
