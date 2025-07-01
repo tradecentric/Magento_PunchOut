@@ -26,8 +26,8 @@ class AddressMapper
 	 * @param \Punchout2Go\Punchout\Api\LoggerInterface $logger
      */
     public function __construct(
-		array $addressMap = [],
-		\Punchout2Go\Punchout\Api\LoggerInterface $logger
+		\Punchout2Go\Punchout\Api\LoggerInterface $logger,
+		array $addressMap = []	
 	)
     {
         $this->addressMap = $addressMap;
