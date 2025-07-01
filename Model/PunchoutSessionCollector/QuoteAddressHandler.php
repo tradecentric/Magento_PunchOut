@@ -59,18 +59,25 @@ class QuoteAddressHandler implements EntityHandlerInterface
         $address->setCustomerId($object->getCustomer()->getId());
         $address->setEmail($object->getCustomer()->getEmail());
 		
-		$this->logger->log('Logging getSessionaddress()->getParams() data');
-		$this->logger->log(print_r($addressData, true));
+		$address->setCustomerAddressId($object->getCustomer()->getDefaultShipping());
+		$address->setMiddleName('Bob');
+		$address->setLastName('Bob');
+		$address->setPrefix('Bob');
+		$address->setSuffix('Bob');
+		$address->setCompany('Bob');
+		$address->setStreet('Bob');
+		$address->setCity('Bob');
+		$address->setTelephone('67855599999');
 		
 		$this->logger->log('Logging Shipping address data');
 		$this->logger->log(print_r($address, true));
 		
-		$this->logger->log('Logging SessionContainer object');
-		$this->logger->log(print_r($object, true));
+	//	$this->logger->log('Logging SessionContainer object');
+	//	$this->logger->log(print_r($object, true));
 		
         $address->addData($addressData);
         $address->setCollectShippingRates(false);
-        $this->logger->log(sprintf('Saving address data quote_id %s : address_id %s', $object->getQuote()->getId(), $address->getId()));
+        $this->logger->log(sprintf('Saving address data quote_id %d : address_id %d', $object->getQuote()->getId(), $address->getId()));
         $this->logger->log('Quote Address Setup Complete');
     }
 }

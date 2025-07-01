@@ -42,9 +42,6 @@ class AddressMapper
     {
         $result = $address->getData();
 		
-		$this->logger->log('AddressInterface Customer Shipping address data');
-		$this->logger->log(print_r($result, true));
-		
         foreach ($this->addressMap as $destination => $field) {
             if (is_object($field) && ($field instanceof AddressFieldInterface)) {
                 $result[$destination] = $field->handle($address);
@@ -52,6 +49,10 @@ class AddressMapper
             }
             $result[$destination] = $address->getData($field);
         }
+		
+	//	$this->logger->log('AddressInterface Customer Shipping address data');
+	//	$this->logger->log(print_r($result, true));
+		
         return $result;
     }
 }
