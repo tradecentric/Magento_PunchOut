@@ -13,14 +13,25 @@ class AddressMapper
      * @var array
      */
     protected $addressMap;
+	
+	/**
+     * @var \Punchout2Go\Punchout\Api\LoggerInterface
+	 
+     */
+    protected $logger;
 
     /**
      * AddressMapper constructor.
      * @param array $addressMap
+	 * @param \Punchout2Go\Punchout\Api\LoggerInterface $logger
      */
-    public function __construct(array $addressMap = [])
+    public function __construct(
+		array $addressMap = [],
+		\Punchout2Go\Punchout\Api\LoggerInterface $logger
+	)
     {
         $this->addressMap = $addressMap;
+		$this->logger = $logger;
     }
 
     /**
@@ -30,6 +41,10 @@ class AddressMapper
     public function getAddressData(\Magento\Quote\Api\Data\AddressInterface $address)
     {
         $result = $address->getData();
+		
+		$this->logger->log('AddressInterface Customer Shipping address data');
+		$this->logger->log(print_r($result, true));
+		
         foreach ($this->addressMap as $destination => $field) {
             if (is_object($field) && ($field instanceof AddressFieldInterface)) {
                 $result[$destination] = $field->handle($address);

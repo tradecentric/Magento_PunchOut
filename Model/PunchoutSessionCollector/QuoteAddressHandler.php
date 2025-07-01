@@ -59,11 +59,14 @@ class QuoteAddressHandler implements EntityHandlerInterface
         $address->setCustomerId($object->getCustomer()->getId());
         $address->setEmail($object->getCustomer()->getEmail());
 		
-		$this->logger->log(sprintf('Logging getSessionaddress()->getParams() data'));
+		$this->logger->log('Logging getSessionaddress()->getParams() data');
 		$this->logger->log(print_r($addressData, true));
 		
-		$this->logger->log(sprintf('Logging Shipping address data'));
+		$this->logger->log('Logging Shipping address data');
 		$this->logger->log(print_r($address, true));
+		
+		$this->logger->log('Logging SessionContainer object');
+		$this->logger->log(print_r($object, true));
 		
         $address->addData($addressData);
         $address->setCollectShippingRates(false);
