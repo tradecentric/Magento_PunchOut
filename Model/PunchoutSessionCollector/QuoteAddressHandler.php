@@ -92,9 +92,9 @@ class QuoteAddressHandler implements EntityHandlerInterface
 		$this->logger->log('Logging Shipping address data');
 		$this->logger->log(print_r($address, true));
 		
- //       $address->addData($addressData);
+        $address->addData($addressData);
         $address->setCollectShippingRates(false);
-        $this->logger->log(sprintf('Saving address data customer_id %d : customer_address_id', $address->getCustomerId(), $address->getCustomerAddressId()));
+        $this->logger->log(sprintf('Saving address data customer_id %d : customer_address_id %d ', $address->getCustomerId(), $address->getCustomerAddressId()));
         $this->logger->log('Quote Address Setup Complete');
     }
 }

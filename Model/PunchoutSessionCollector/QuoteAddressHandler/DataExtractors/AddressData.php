@@ -47,9 +47,6 @@ class AddressData implements DataExtractorInterface
      */
     public function extract(array $data): array
     {
-		$this->logger->log('Logging Address extractor data');
-		$this->logger->log(print_r($data, true));
-		
         $result = [];
         $addressData = $data['body']['shipping']['data'] ?? [];
         foreach ($this->mapping as $targetField => $valueField) {
