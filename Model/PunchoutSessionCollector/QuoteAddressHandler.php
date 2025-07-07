@@ -71,10 +71,7 @@ class QuoteAddressHandler implements EntityHandlerInterface
 		$customeraddresses = $customer->getAddresses();
 
         foreach ($customeraddresses as $customeraddress) {
-            if ($customeraddress->isDefaultShipping()) {
-				$this->logger->log('Logging Customer Shipping Address data');
-				$this->logger->log(print_r($customeraddress, true));
-				
+            if ($customeraddress->isDefaultShipping()) {			
 				// Set Quote Shipping Address data
 				$address->setCustomerAddressId($customeraddress->getId());
 				$address->setFirstName($customeraddress->getFirstName());
