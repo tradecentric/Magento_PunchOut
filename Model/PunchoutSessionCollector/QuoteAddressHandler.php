@@ -31,6 +31,11 @@ class QuoteAddressHandler implements EntityHandlerInterface
      * @var \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository
      */
     protected $customerRepository;
+	
+	/**
+     * @var \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
+     */
+    protected $quoteRepository;	
 
     /**
      * QuoteAddressHandler constructor.
@@ -38,17 +43,20 @@ class QuoteAddressHandler implements EntityHandlerInterface
      * @param \Punchout2Go\Punchout\Api\LoggerInterface $logger
      * @param \Punchout2Go\Punchout\Model\DataExtractorInterface $dataExtractor
 	 * @param \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository
+	 * @param \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
      */
     public function __construct(
         \Punchout2Go\Punchout\Helper\Data $helper,
         \Punchout2Go\Punchout\Api\LoggerInterface $logger,
         \Punchout2Go\Punchout\Model\DataExtractorInterface $dataExtractor,
-		\Magento\Customer\Api\CustomerRepositoryInterface $customerRepository
+		\Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
+		\Magento\Quote\Api\CartRepositoryInterface $quoteRepository
     ) {
         $this->dataExtractor = $dataExtractor;
         $this->logger = $logger;
         $this->helper = $helper;
 		$this->customerRepository = $customerRepository;
+		$this->quoteRepository = $quoteRepository;
     }
 
     /**
@@ -65,7 +73,8 @@ class QuoteAddressHandler implements EntityHandlerInterface
 		$this->logger->log('Logging param addressData');
 		$this->logger->log(print_r($addressData, true));
 		
-        $address = $object->getQuote()->getShippingAddress();
+		$quote = $object->getQuote();
+        $address = $quote->getShippingAddress();
         $address->setSameAsBilling(0);
         $address->setCustomerId($object->getCustomer()->getId());
         $address->setEmail($object->getCustomer()->getEmail());
@@ -96,15 +105,17 @@ class QuoteAddressHandler implements EntityHandlerInterface
 		$this->logger->log('Logging Shipping address data - after');
 		$this->logger->log(print_r($address, true));
 		
-        $address->addData($addressData);
+//       $address->addData($addressData);
         $address->setCollectShippingRates(false);
 		
-		$this->logger->log('Logging Shipping address data - after addData');
-		$this->logger->log(print_r($address, true));
+//		$this->logger->log('Logging Shipping address data - after addData');
+//		$this->logger->log(print_r($address, true));
+
+//		$this->logger->log('Logging quote data');
+//		$this->logger->log(print_r($quote, true))
 		
 		/** @var \Magento\Quote\Api\CartRepositoryInterface $quoteRepository */
-		$quoteRepository = $objectManager->get(\Magento\Quote\Api\CartRepositoryInterface::class);
-		$quoteRepository->save($object->getQuote());
+		$quoteRepository->save($quote);
 		
         $this->logger->log(sprintf('Saving address data customer_id %d : customer_address_id %d ', $address->getCustomerId(), $address->getCustomerAddressId()));
         $this->logger->log('Quote Address Setup Complete');

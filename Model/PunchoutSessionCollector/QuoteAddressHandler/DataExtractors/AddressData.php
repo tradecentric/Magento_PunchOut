@@ -53,9 +53,6 @@ class AddressData implements DataExtractorInterface
             $result[$targetField] = isset($addressData[$valueField]) ? trim($addressData[$valueField]) : '';
         }
 		
-		$this->logger->log('Logging Address data');
-		$this->logger->log(print_r($result, true));
-		
         return $result;
     }
 }
