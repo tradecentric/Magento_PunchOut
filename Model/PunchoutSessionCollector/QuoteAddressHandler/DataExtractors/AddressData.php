@@ -11,6 +11,22 @@ use Punchout2Go\Punchout\Model\DataExtractorInterface;
  */
 class AddressData implements DataExtractorInterface
 {
+	/**
+     * @var \Punchout2Go\Punchout\Api\LoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * Country constructor.
+	 * @param \Punchout2Go\Punchout\Api\LoggerInterface $logger
+     */
+    public function __construct(
+		\Punchout2Go\Punchout\Api\LoggerInterface $logger
+	)
+    {
+		$this->logger = $logger;
+    }
+	
     /**
      * @var string[]
      */
@@ -31,11 +47,18 @@ class AddressData implements DataExtractorInterface
      */
     public function extract(array $data): array
     {
+		$this->logger->log('Logging Address extractor data');
+		$this->logger->log(print_r($data, true));
+		
         $result = [];
         $addressData = $data['body']['shipping']['data'] ?? [];
         foreach ($this->mapping as $targetField => $valueField) {
             $result[$targetField] = isset($addressData[$valueField]) ? trim($addressData[$valueField]) : '';
         }
+		
+		$this->logger->log('Logging Address data');
+		$this->logger->log(print_r($result, true));
+		
         return $result;
     }
 }

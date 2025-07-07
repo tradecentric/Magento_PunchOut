@@ -60,9 +60,9 @@ class QuoteAddressHandler implements EntityHandlerInterface
         $address->setEmail($object->getCustomer()->getEmail());
 		
 		// get Customer Shipping Address Data
-		$customerAddresses = $object->getCustomer()->getAddresses();
-//		$customer = $this->customerRepository->getById($object->getCustomer()->getId());
-//		$addresses = $customer->getAddresses();
+//		$customerAddresses = $object->getCustomer()->getAddresses();
+		$customer = $this->customerRepository->getById($object->getCustomer()->getId());
+		$customeraddresses = $customer->getAddresses();
 
         foreach ($customerAddresses as $customeraddress) {
             if ($customeraddress->isDefaultShipping()) {
