@@ -37,6 +37,7 @@ class QuoteAddressHandler implements EntityHandlerInterface
      * @param \Punchout2Go\Punchout\Helper\Data $helper
      * @param \Punchout2Go\Punchout\Api\LoggerInterface $logger
      * @param \Punchout2Go\Punchout\Model\DataExtractorInterface $dataExtractor
+	 * @param \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository
      */
     public function __construct(
         \Punchout2Go\Punchout\Helper\Data $helper,
@@ -61,10 +62,16 @@ class QuoteAddressHandler implements EntityHandlerInterface
             return;
         }
         $addressData = $this->dataExtractor->extract($object->getSession()->getParams());
+		$this->logger->log('Logging param addressData');
+		$this->logger->log(print_r($addressData, true));
+		
         $address = $object->getQuote()->getShippingAddress();
         $address->setSameAsBilling(0);
         $address->setCustomerId($object->getCustomer()->getId());
         $address->setEmail($object->getCustomer()->getEmail());
+		
+		$this->logger->log('Logging Shipping address data - before');
+		$this->logger->log(print_r($address, true));
 		
 		// get Customer Shipping Address Data
 		$customer = $this->customerRepository->getById($object->getCustomer()->getId());
@@ -86,12 +93,19 @@ class QuoteAddressHandler implements EntityHandlerInterface
             }
         }
 						
-		$this->logger->log('Logging Shipping address data');
+		$this->logger->log('Logging Shipping address data - after');
 		$this->logger->log(print_r($address, true));
 		
         $address->addData($addressData);
         $address->setCollectShippingRates(false);
-		$address->save();
+		
+		$this->logger->log('Logging Shipping address data - after addData');
+		$this->logger->log(print_r($address, true));
+		
+		/** @var \Magento\Quote\Api\CartRepositoryInterface $quoteRepository */
+		$quoteRepository = $objectManager->get(\Magento\Quote\Api\CartRepositoryInterface::class);
+		$quoteRepository->save($object->getQuote());
+		
         $this->logger->log(sprintf('Saving address data customer_id %d : customer_address_id %d ', $address->getCustomerId(), $address->getCustomerAddressId()));
         $this->logger->log('Quote Address Setup Complete');
     }
