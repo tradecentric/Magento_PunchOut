@@ -50,10 +50,8 @@ class Name implements DataExtractorInterface
         }
         list($firstname, $lastname) = $this->helper->getAddressName($to);
         return [
-  //          'firstname' => $firstname,
-  //          'lastname' => $lastname
-			'firstname' => 'Joe',
-            'lastname' => 'Joe'
+            'firstname' => $firstname,
+            'lastname' => $lastname
         ];
     }
 }

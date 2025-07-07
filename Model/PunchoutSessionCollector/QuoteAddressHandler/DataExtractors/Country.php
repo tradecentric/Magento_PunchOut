@@ -18,7 +18,7 @@ class Country implements DataExtractorInterface
     public function extract(array $data): array
     {
         $countryId = $data['body']['shipping']['data']['country_id'] ?? '';
-        $countryId = strlen($countryId) ? trim($countryId) : 'XX';
+        $countryId = strlen($countryId) ? trim($countryId) : 'US';
         return [
             'country_id' => $countryId
         ];
