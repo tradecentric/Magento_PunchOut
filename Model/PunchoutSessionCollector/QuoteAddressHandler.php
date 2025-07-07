@@ -70,7 +70,7 @@ class QuoteAddressHandler implements EntityHandlerInterface
 		$customer = $this->customerRepository->getById($object->getCustomer()->getId());
 		$customeraddresses = $customer->getAddresses();
 
-        foreach ($customerAddresses as $customeraddress) {
+        foreach ($customeraddresses as $customeraddress) {
             if ($customeraddress->isDefaultShipping()) {
 				$this->logger->log('Logging Customer Shipping Address data');
 				$this->logger->log(print_r($customeraddress, true));
