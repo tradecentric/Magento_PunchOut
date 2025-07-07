@@ -115,7 +115,7 @@ class QuoteAddressHandler implements EntityHandlerInterface
 //		$this->logger->log(print_r($quote, true))
 		
 		/** @var \Magento\Quote\Api\CartRepositoryInterface $quoteRepository */
-		$quoteRepository->save($quote);
+		$this->quoteRepository->save($quote);
 		
         $this->logger->log(sprintf('Saving address data customer_id %d : customer_address_id %d ', $address->getCustomerId(), $address->getCustomerAddressId()));
         $this->logger->log('Quote Address Setup Complete');
