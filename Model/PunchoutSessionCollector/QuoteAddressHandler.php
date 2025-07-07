@@ -60,27 +60,33 @@ class QuoteAddressHandler implements EntityHandlerInterface
         $address->setEmail($object->getCustomer()->getEmail());
 		
 		// get Customer Shipping Address Data
-		$customerShipping = $object->getCustomer()->getShippingAddress();
-		$this->logger->log('Logging Customer Shipping Address data');
-		$this->logger->log(print_r($customerShipping, true));
+		$customerAddresses = $object->getCustomer()->getAddresses();
+//		$customer = $this->customerRepository->getById($object->getCustomer()->getId());
+//		$addresses = $customer->getAddresses();
+
+        foreach ($customerAddresses as $customeraddress) {
+            if ($customeraddress->isDefaultShipping()) {
+				$this->logger->log('Logging Customer Shipping Address data');
+				$this->logger->log(print_r($customeraddress, true));
+				
+				// Set Quote Shipping Address data
+				$address->setCustomerAddressId($customeraddress->getId());
+				$address->setFirstName($customeraddress->getFirstName());
+				$address->setMiddleName($customeraddress->getMiddleName());
+				$address->setLastName($customeraddress->getLastname());
+				$address->setPrefix($customeraddress->getPrefix());
+				$address->setSuffix($customeraddress->getSuffix());
+				$address->setCompany($customeraddress->getCompany());
+				$address->setStreet($customeraddress->getStreet());
+				$address->setCity($customeraddress->getCity());
+				$address->setTelephone($customeraddress->getTelephone());
+            }
+        }
+						
+		$this->logger->log('Logging Shipping address data');
+		$this->logger->log(print_r($address, true));
 		
-//		$address->setCustomerAddressId($customerShipping->getId());
-//		$address->setMiddleName('Bob');
-//		$address->setLastName('Bob');
-//		$address->setPrefix('Bob');
-//		$address->setSuffix('Bob');
-//		$address->setCompany('Bob');
-//		$address->setStreet('Bob');
-//		$address->setCity('Bob');
-//		$address->setTelephone('67855599999');
-		
-//		$this->logger->log('Logging Shipping address data');
-//		$this->logger->log(print_r($address, true));
-		
-	//	$this->logger->log('Logging SessionContainer object');
-	//	$this->logger->log(print_r($object, true));
-		
-        $address->addData($addressData);
+ //       $address->addData($addressData);
         $address->setCollectShippingRates(false);
         $this->logger->log(sprintf('Saving address data customer_id %d : customer_address_id', $address->getCustomerId(), $address->getCustomerAddressId()));
         $this->logger->log('Quote Address Setup Complete');
