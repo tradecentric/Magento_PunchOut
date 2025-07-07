@@ -26,6 +26,11 @@ class QuoteAddressHandler implements EntityHandlerInterface
      * @var \Punchout2Go\Punchout\Model\DataExtractorInterface
      */
     protected $dataExtractor;
+	
+	/**
+     * @var \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository
+     */
+    protected $customerRepository;
 
     /**
      * QuoteAddressHandler constructor.
@@ -36,11 +41,13 @@ class QuoteAddressHandler implements EntityHandlerInterface
     public function __construct(
         \Punchout2Go\Punchout\Helper\Data $helper,
         \Punchout2Go\Punchout\Api\LoggerInterface $logger,
-        \Punchout2Go\Punchout\Model\DataExtractorInterface $dataExtractor
+        \Punchout2Go\Punchout\Model\DataExtractorInterface $dataExtractor,
+		\Magento\Customer\Api\CustomerRepositoryInterface $customerRepository
     ) {
         $this->dataExtractor = $dataExtractor;
         $this->logger = $logger;
         $this->helper = $helper;
+		$this->customerRepository = $customerRepository;
     }
 
     /**
@@ -60,7 +67,6 @@ class QuoteAddressHandler implements EntityHandlerInterface
         $address->setEmail($object->getCustomer()->getEmail());
 		
 		// get Customer Shipping Address Data
-//		$customerAddresses = $object->getCustomer()->getAddresses();
 		$customer = $this->customerRepository->getById($object->getCustomer()->getId());
 		$customeraddresses = $customer->getAddresses();
 

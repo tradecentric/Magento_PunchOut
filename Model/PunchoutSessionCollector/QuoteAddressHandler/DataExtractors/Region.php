@@ -40,10 +40,7 @@ class Region implements DataExtractorInterface
      * @return mixed[]
      */
     public function extract(array $data): array
-    {
-		$this->logger->log('Logging Region extractor data');
-		$this->logger->log(print_r($data, true));
-		
+    {	
 		$state = $data['body']['shipping']['data']['shipping_state'] ?? '';
         $countryId = $data['body']['shipping']['data']['country_id'] ?? '';
         if (!$state || !$countryId) {
