@@ -137,7 +137,7 @@ class Session extends SessionManager implements SessionInterface
         Session\SessionEditStatus $editStatus,
         PunchoutQuoteRepositoryInterface $punchoutQuoteRepository,
         PunchoutQuoteInterfaceFactory $punchoutQuoteInterfaceFactory,
-        SessionStartChecker $sessionStartChecker = null
+        SessionStartChecker|null $sessionStartChecker = null
     ) {
         $this->logger = $logger;
         $this->sessionCollector = $sessionCollector;
@@ -306,7 +306,7 @@ class Session extends SessionManager implements SessionInterface
      *
      * login customer
      */
-    protected function loginCustomer(\Magento\Customer\Api\Data\CustomerInterface $customer = null)
+    protected function loginCustomer(\Magento\Customer\Api\Data\CustomerInterface|null $customer = null)
     {
         if ($customer && $customer->getId()) {
             $this->customerSession->loginById($customer->getId());
