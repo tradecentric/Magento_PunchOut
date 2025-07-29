@@ -48,7 +48,7 @@ class ProductCustomFields implements ProductRelatedDataHandlerInterface
      * @param null $storeId
      * @return mixed[]
      */
-    public function handle(ProductInterface $product, $storeId = null): array
+    public function handle(ProductInterface $product, ?$storeId = null): array
     {
         $result = [];
         $fields = $this->helper->getCartItemMap();

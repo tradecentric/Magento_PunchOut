@@ -33,7 +33,7 @@ class Classification implements ProductRelatedDataHandlerInterface
      * @param null $storeId
      * @return mixed[]|string
      */
-    public function handle(ProductInterface $product, $storeId = null): array
+    public function handle(ProductInterface $product, ?$storeId = null): array
     {
         $classificationField = $this->helper->getProductClassificationField($storeId);
         $value = $product->getData($classificationField) ?: $this->helper->getProductDefaultClassification($storeId);
