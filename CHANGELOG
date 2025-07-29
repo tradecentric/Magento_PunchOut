@@ -1,5 +1,8 @@
 TradeCentric - PunchOut
 ===========
+### 3.1.11 (2025-08-12)
+* PBR-2419: Added support for PHP 8.4 compatibility with MAgento 2.4.8
+
 ### 3.1.10 (2025-02-26)
 * PBR-2329: Added ACL support for Role management
 
