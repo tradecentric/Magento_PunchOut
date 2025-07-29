@@ -137,7 +137,7 @@ class Session extends SessionManager implements SessionInterface
         Session\SessionEditStatus $editStatus,
         PunchoutQuoteRepositoryInterface $punchoutQuoteRepository,
         PunchoutQuoteInterfaceFactory $punchoutQuoteInterfaceFactory,
-        SessionStartChecker $sessionStartChecker = null
+        ?SessionStartChecker $sessionStartChecker = null
     ) {
         $this->logger = $logger;
         $this->sessionCollector = $sessionCollector;
