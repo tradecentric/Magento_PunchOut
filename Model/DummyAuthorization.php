@@ -16,7 +16,7 @@ class DummyAuthorization implements  AuthorizationInterface
      * @param null $privilege
      * @return bool
      */
-    public function isAllowed($resource, ?$privilege = null)
+    public function isAllowed($resource, $privilege = null)
     {
         return true;
     }

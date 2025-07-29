@@ -34,7 +34,7 @@ class UnitOfMeasure implements ProductRelatedDataHandlerInterface
      * @param null $storeId
      * @return mixed[]
      */
-    public function handle(ProductInterface $product, ?$storeId = null): array
+    public function handle(ProductInterface $product, $storeId = null): array
     {
         $uom_field = $this->helper->getUomField($storeId);
         $uom = $product->getData($uom_field);

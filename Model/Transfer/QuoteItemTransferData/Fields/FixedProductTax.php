@@ -32,7 +32,7 @@ class FixedProductTax implements ProductRelatedDataHandlerInterface
      * @param null $storeId
      * @return mixed[]|string
      */
-    public function handle(ProductInterface $product, ?$storeId = null): array
+    public function handle(ProductInterface $product, $storeId = null): array
     {
         $result = [];
 //        foreach ($this->helper->getProductWeeeAttributesForDisplay($product) as $item) {
