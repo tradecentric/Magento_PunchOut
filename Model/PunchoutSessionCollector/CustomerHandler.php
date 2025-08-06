@@ -80,7 +80,7 @@ class CustomerHandler implements EntityHandlerInterface
             return;
         }
         $isCustomerNew = false;
-		$isAllowCustomerUpdate = $this->helper->isAllowCustomer_Update();
+        $isAllowCustomerUpdate = $this->helper->isAllowCustomer_Update();
         $customerParams = $this->customerDataExtractor->extract($object->getSession()->getParams());
         $customer = $this->customerService->loadCustomer($customerParams['email']);
         $this->logger->log('Customer loading');

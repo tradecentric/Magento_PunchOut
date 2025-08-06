@@ -121,10 +121,10 @@
                     <label>Auto-Create User</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-				<field id="allow_customer_update" translate="label" type="select" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="allow_customer_update" translate="label" type="select" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Allow Customer Update</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-					<depends>
+                    <depends>
                         <field id="auto_create_user">0</field>
                     </depends>
                 </field>

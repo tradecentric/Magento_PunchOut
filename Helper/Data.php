@@ -20,6 +20,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_SESSION_ENCRYPTION_KEY = 'punchout2go_punchout/security/punchout_encryption_key';
     const XML_PATH_CUSTOMER_SESSION_TYPE = 'punchout2go_punchout/session/type';
     const XML_PATH_AUTO_CREATE_USER = 'punchout2go_punchout/customer/auto_create_user';
+	const XML_PATH_ALLOW_CUSTOMER_UPDATE = 'punchout2go_punchout/customer/allow_customer_update';
     const XML_PATH_CUSTOMER_ATTRIBUTE_MAP = 'punchout2go_punchout/customer/preinsert_customer_attribute_map';
     const XML_PATH_CREATE_ADDRESS = 'punchout2go_punchout/customer/address_to_cart';
     const XML_PATH_RETURN_LINK = 'punchout2go_punchout/display/return_link_enabled';
@@ -138,6 +139,15 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             $store
         );
     }
+	
+    public function isAllowCustomerUpdate($store = null)
+    {
+        return $this->scopeConfig->isSetFlag(
+            static::XML_PATH_ALLOW_CUSTOMER_UPDATE,
+            ScopeInterface::SCOPE_STORE,
+            $store
+        );
+    }	
 
     /**
      * @param null $store
