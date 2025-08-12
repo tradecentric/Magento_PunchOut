@@ -100,7 +100,7 @@ class CustomerHandler implements EntityHandlerInterface
                 __('Unable to login without a default user.')
             );
         }
-        if ($customer && (!$isCustomerNew && $isAllowCustomerUpdate)) {
+        if ($customer && !$isCustomerNew && $isAllowCustomerUpdate) {
             // update customer params
             $this->customerService->updateCustomer($customer, $customerParams);
         }
