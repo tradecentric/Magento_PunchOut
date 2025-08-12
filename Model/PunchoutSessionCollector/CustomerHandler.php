@@ -80,6 +80,7 @@ class CustomerHandler implements EntityHandlerInterface
             return;
         }
         $isCustomerNew = false;
+        $isAllowCustomerUpdate = $this->helper->isAllowCustomerUpdate();
         $customerParams = $this->customerDataExtractor->extract($object->getSession()->getParams());
         $customer = $this->customerService->loadCustomer($customerParams['email']);
         $this->logger->log('Customer loading');
@@ -99,7 +100,7 @@ class CustomerHandler implements EntityHandlerInterface
                 __('Unable to login without a default user.')
             );
         }
-        if ($customer && !$isCustomerNew) {
+        if ($customer && !$isCustomerNew && $isAllowCustomerUpdate) {
             // update customer params
             $this->customerService->updateCustomer($customer, $customerParams);
         }

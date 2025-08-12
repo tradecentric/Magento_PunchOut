@@ -26,6 +26,7 @@
             </session>
             <customer>
                 <auto_create_user>1</auto_create_user>
+                <allow_customer_update>1</allow_customer_update>
                 <preinsert_customer_attribute_map>{}</preinsert_customer_attribute_map>
                 <address_to_cart>1</address_to_cart>
             </customer>
