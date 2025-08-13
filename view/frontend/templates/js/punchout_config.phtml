@@ -1,4 +1,4 @@
-<?php $helper = $this->helper(\Punchout2Go\Punchout\Helper\Session::class) ?>
+<?php $helper = $this->helper(\Punchout2Go\Punchout\Helper\Session::class); ?>
 <script>
     window.reloadParam = <?= json_encode($helper->getFirstLoadParam()) ?>;
 </script>
