@@ -11,7 +11,7 @@
     {
         "#po2go-close": {
             "Punchout2Go_Punchout/js/view/close-button": {
-                "redirectUrl": <?= json_encode($block->getUrl('punchout/session/close')) ?>
+                "redirectUrl": "<?= $escaper->escapeUrl($block->getUrl('punchout/session/close')) ?>"
             }
         }
     }
