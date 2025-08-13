@@ -3,15 +3,15 @@
 
 <?php if ($helper->isReturnEnabled()): ?>
     <li id="po2go-close">
-        <a <?php echo /* @noEscape */ $block->getLinkAttributes() ?>>
-            <?php echo $block->escapeHtml($helper->getReturnLinkLabel()); ?>
+        <a <?= /* @noEscape */ $block->getLinkAttributes() ?>>
+            <?= $block->escapeHtml($helper->getReturnLinkLabel()); ?>
         </a>
     </li>
     <script type="text/x-magento-init">
     {
         "#po2go-close": {
             "Punchout2Go_Punchout/js/view/close-button": {
-                "redirectUrl": "<?php echo $block->getUrl('punchout/session/close') ?>"
+                "redirectUrl": <?= json_encode($block->getUrl('punchout/session/close')) ?>		
             }
         }
     }
