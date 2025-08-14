@@ -75,7 +75,7 @@ class Transfer extends \Magento\Framework\View\Element\Template
      */
     public function getPunchoutConfig()
     {
-        return jsonSerializer->serialize([
+        return $this->jsonSerializer->serialize([
             'account' => $this->transferHelper->getApiKey(),
             'session_id' => $this->punchoutSession->getPunchoutSessionId(),
             'return_url' => $this->punchoutSession->getReturnUrl()
