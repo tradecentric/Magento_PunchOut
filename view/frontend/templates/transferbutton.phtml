@@ -6,22 +6,18 @@
 <?php if ($help = $helper->getButtonHelp()): ?>
     <br /><small><?= $block->escapeHtml($help) ?></small>
 <?php endif; ?>
-<?php
-	$isDebug = $block->getIsDebug();
-	$isJsLogging = $block->getIsJsLogging();
-?>
 <div id="transfer-container"></div>
 <script type="text/x-magento-init">
 {
     "#po2go-transfer": {
         "Punchout2Go_Punchout/js/view/transfer-button": {
             "elementId": "#po2go-transfer",
-            "debug": <?= $escaper->escapeJs($isDebug) ?>,
+            "debug": <?= $block->getIsDebug() ?>,
             "checkoutConfig": {
                 "punchoutConfig": <?= $block->getPunchoutConfig() ?>,
                 "elementsUrl": <?= $block->getPunchoutElementsUrl() ?>
             },
-            "js_logging": <?= $escaper->escapeJs($isJsLogging) ?>,
+            "js_logging": <?= $block->getIsJsLogging() ?>,
             "closeSessionUrl": "<?= $escaper->escapeUrl($block->getUrl('punchout/session/closePost')) ?>"
         }
     }
