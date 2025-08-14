@@ -12,12 +12,12 @@
     "#po2go-transfer": {
         "Punchout2Go_Punchout/js/view/transfer-button": {
             "elementId": "#po2go-transfer",
-            "debug": <?= (int)$block->getIsDebug() ?>,
+            "debug": <?= (bool)$block->getIsDebug() ?>,
             "checkoutConfig": {
                 "punchoutConfig": <?= $block->getPunchoutConfig() ?>,
                 "elementsUrl": <?= $block->getPunchoutElementsUrl() ?>
             },
-            "js_logging": <?= (int)$block->getIsJsLogging() ?>,
+            "js_logging": <?= (bool)$block->getIsJsLogging() ?>,
             "closeSessionUrl": "<?= $escaper->escapeUrl($block->getUrl('punchout/session/closePost')) ?>"
         }
     }
