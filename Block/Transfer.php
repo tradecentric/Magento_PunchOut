@@ -88,8 +88,8 @@ class Transfer extends \Magento\Framework\View\Element\Template
     public function getPunchoutElementsUrl()
     {
         return $this->jsonSerializer->serialize(
-			array_map([$this, 'escapeUrl'], $this->sessionHelper->getPunchoutRequiredElementsUrl())
-		);
+            array_map([$this, 'escapeUrl'], $this->sessionHelper->getPunchoutRequiredElementsUrl())
+        );
     }
 
     /**
