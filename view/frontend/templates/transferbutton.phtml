@@ -14,7 +14,7 @@
             "elementId": "#po2go-transfer",
             "debug": <?= (int)$block->getIsDebug() ?>,
             "checkoutConfig": {
-                "punchoutConfig": <?= ($block->getPunchoutConfig() ?>,
+                "punchoutConfig": <?= $block->getPunchoutConfig() ?>,
                 "elementsUrl": <?= $block->getPunchoutElementsUrl() ?>
             },
             "js_logging": <?= (int)$block->getIsJsLogging() ?>,
