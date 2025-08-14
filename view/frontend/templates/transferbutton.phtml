@@ -18,7 +18,7 @@
                 "elementsUrl": <?= $block->getPunchoutElementsUrl() ?>
             },
             "js_logging": <?= $block->getIsJsLogging() ?>,
-            "closeSessionUrl": "<?= $block->getUrl('punchout/session/closePost') ?>"
+            "closeSessionUrl": "<?= $escaper->escapeUrl($block->getUrl('punchout/session/closePost')) ?>"
         }
     }
 }
