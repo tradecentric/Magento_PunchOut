@@ -1,5 +1,5 @@
 <?php /** @var \Punchout2Go\Punchout\Helper\Transfer $helper */ ?>
-<?php $helper = $this->helper(\Punchout2Go\Punchout\Helper\Transfer::class); ?>
+<?php $helper = $this->helper(\Punchout2Go\Punchout\Helper\Transfer::class) ?>
 <button class="action primary checkout <?= $block->escapeHtml($helper->getButtonCss()) ?>" id="po2go-transfer" <?= !$block->isTransferButtonActive() ? "disabled" : "" ?>>
     <span><?= $block->escapeHtml($helper->getButtonLabel()); ?></span>
 </button>
@@ -14,8 +14,8 @@
             "elementId": "#po2go-transfer",
             "debug": <?= (int) $block->getIsDebug() ?>,
             "checkoutConfig": {
-                "punchoutConfig": <?= $escaper->escapeJs($block->getPunchoutConfig()) ?>,
-                "elementsUrl": <?= $escaper->escapeJs($block->getPunchoutElementsUrl()) ?>
+                "punchoutConfig": <?= $escaper->escapeJs(json_encode($block->getPunchoutConfig())) ?>,
+                "elementsUrl": <?= $escaper->escapeJs(json_encode($block->getPunchoutElementsUrl())) ?>
             },
             "js_logging": <?= (int) $block->getIsJsLogging() ?>,
             "closeSessionUrl": "<?= $escaper->escapeUrl($block->getUrl('punchout/session/closePost')) ?>"
