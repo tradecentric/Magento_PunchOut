@@ -75,11 +75,11 @@ class Transfer extends \Magento\Framework\View\Element\Template
      */
     public function getPunchoutConfig()
     {
-        return [
+        return jsonSerializer->serialize([
             'account' => $this->transferHelper->getApiKey(),
             'session_id' => $this->punchoutSession->getPunchoutSessionId(),
             'return_url' => $this->punchoutSession->getReturnUrl()
-        ];
+        ]);
     }
 
     /**
@@ -87,7 +87,9 @@ class Transfer extends \Magento\Framework\View\Element\Template
      */
     public function getPunchoutElementsUrl()
     {
-        return array_map([$this, 'escapeUrl'], $this->sessionHelper->getPunchoutRequiredElementsUrl());
+        return $this->jsonSerializer->serialize(
+			array_map([$this, 'escapeUrl'], $this->sessionHelper->getPunchoutRequiredElementsUrl())
+		);
     }
 
     /**
