@@ -14,8 +14,8 @@
             "elementId": "#po2go-transfer",
             "debug": <?php echo (int) $block->getIsDebug() ?>,
             "checkoutConfig": {
-                "punchoutConfig": <?php echo $escaper->escapeJs($block->getPunchoutConfig()) ?>,
-                "elementsUrl": <?php echo $block->getPunchoutElementsUrl() ?>
+                "punchoutConfig": <?php echo $block->getPunchoutConfig()) ?>,
+                "elementsUrl": <?php echo $escaper->escapeJs($block->getPunchoutElementsUrl()) ?>
             },
             "js_logging": <?php echo (int) $block->getIsJsLogging() ?>,
             "closeSessionUrl": "<?php echo $escaper->escapeUrl($block->getUrl('punchout/session/closePost')) ?>"
