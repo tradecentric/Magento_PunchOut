@@ -1,10 +1,10 @@
 <?php /** @var \Punchout2Go\Punchout\Helper\Data $helper */ ?>
-<?php $helper = $this->helper(\Punchout2Go\Punchout\Helper\Data::class); ?>
+<?php $helper = $this->helper(\Punchout2Go\Punchout\Helper\Data::class) ?>
 
 <?php if ($helper->isReturnEnabled()): ?>
     <li id="po2go-close">
-        <a <?= /* @noEscape */ $block->getLinkAttributes() ?>>
-            <?= $block->escapeHtml($helper->getReturnLinkLabel()); ?>
+        <a <?php echo /* @noEscape */ $block->getLinkAttributes() ?>>
+            <?php echo $block->escapeHtml($helper->getReturnLinkLabel()); ?>
         </a>
     </li>
     <script type="text/x-magento-init">
