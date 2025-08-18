@@ -11,7 +11,6 @@ use Punchout2Go\Punchout\Model\DataExtractorInterface;
  */
 class Country implements DataExtractorInterface
 {
-	
     /**
      * @param array $data
      * @return mixed[]

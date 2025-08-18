@@ -11,33 +11,37 @@ use Punchout2Go\Punchout\Model\DataExtractorInterface;
  */
 class AddressData implements DataExtractorInterface
 {
-	/**
+    /**
      * @var \Punchout2Go\Punchout\Api\LoggerInterface
      */
     protected $logger;
 
     /**
      * Country constructor.
-	 * @param \Punchout2Go\Punchout\Api\LoggerInterface $logger
+     * @param \Punchout2Go\Punchout\Api\LoggerInterface $logger
      */
     public function __construct(
-		\Punchout2Go\Punchout\Api\LoggerInterface $logger
-	)
+        \Punchout2Go\Punchout\Api\LoggerInterface $logger
+    )
     {
-		$this->logger = $logger;
+        $this->logger = $logger;
     }
-	
+
     /**
      * @var string[]
      */
     protected $mapping = [
        /* 'country_id' => 'country_id',*/
         /*'to' => 'shipping_to',*/
-        'company' => 'shipping_business',
-        'street' => 'shipping_street',
-        'city' => 'shipping_city',
-        'postcode' => 'shipping_zip',
-        'telephone' => 'shipping_phone',
+        'prefix' => 'prefix',
+        'firstname' => 'firstname',
+        'lastname' => 'lastname',
+        'suffix' => 'suffix',
+        'company' => 'company',
+        'street' => 'street',
+        'city' => 'city',
+        'postcode' => 'postcode',
+        'telephone' => 'telephone',
         'region' => 'shipping_state'
     ];
 
@@ -47,12 +51,14 @@ class AddressData implements DataExtractorInterface
      */
     public function extract(array $data): array
     {
+        $this->logger->log("data['body']['shipping']['data']:");
+        $this->logger->log(print_r($data['body']['shipping']['data'], true));
+
         $result = [];
         $addressData = $data['body']['shipping']['data'] ?? [];
         foreach ($this->mapping as $targetField => $valueField) {
             $result[$targetField] = isset($addressData[$valueField]) ? trim($addressData[$valueField]) : '';
         }
-		
         return $result;
     }
 }
