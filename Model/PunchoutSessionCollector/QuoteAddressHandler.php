@@ -33,9 +33,9 @@ class QuoteAddressHandler implements EntityHandlerInterface
     protected $customerRepository;
     
     /**
-     * @var \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
+     * @var \Magento\Quote\Api\CartRepositoryInterface $cartRepository
      */
-    protected $quoteRepository; 
+    protected $cartRepository; 
 
     /**
      * QuoteAddressHandler constructor.
@@ -50,13 +50,13 @@ class QuoteAddressHandler implements EntityHandlerInterface
         \Punchout2Go\Punchout\Api\LoggerInterface $logger,
         \Punchout2Go\Punchout\Model\DataExtractorInterface $dataExtractor,
         \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
-        \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
+        \Magento\Quote\Api\CartRepositoryInterface $cartRepository
     ) {
         $this->dataExtractor = $dataExtractor;
         $this->logger = $logger;
         $this->helper = $helper;
         $this->customerRepository = $customerRepository;
-        $this->quoteRepository = $quoteRepository;
+        $this->cartRepository = $cartRepository;
     }
 
     /**
@@ -69,44 +69,18 @@ class QuoteAddressHandler implements EntityHandlerInterface
             $this->logger->log('Create address disabled');
             return;
         }
-        $addressData = $this->dataExtractor->extract($object->getSession()->getParams());
-        $this->logger->log('Logging param addressData');
-        $this->logger->log(print_r($addressData, true));
-        
-//      $quote = $object->getQuote();
-        $address = $object->getQuote()->getShippingAddress();
-        $address->setSameAsBilling(0);
-        $address->setCustomerId($object->getCustomer()->getId());
-        $address->setEmail($object->getCustomer()->getEmail());
-        
-        $this->logger->log('Logging Shipping address data - before');
-        $this->logger->log(print_r($address, true));
-        
+                
         // get Customer Shipping Address Data
         $customer = $this->customerRepository->getById($object->getCustomer()->getId());
         $customeraddresses = $customer->getAddresses();
-
-        foreach ($customeraddresses as $customeraddress) {
-            if ($customeraddress->isDefaultShipping()) {            
-                // Set Quote Shipping Address data
-                $address->setCustomerAddressId($customeraddress->getId());
-                $address->setFirstName($customeraddress->getFirstName());
-                $address->setMiddleName($customeraddress->getMiddleName());
-                $address->setLastName($customeraddress->getLastname());
-                $address->setPrefix($customeraddress->getPrefix());
-                $address->setSuffix($customeraddress->getSuffix());
-                $address->setCompany($customeraddress->getCompany());
-                $address->setStreet($customeraddress->getStreet());
-                $address->setCity($customeraddress->getCity());
-                $address->setTelephone($customeraddress->getTelephone());
-            }
-        }
-                        
-        $this->logger->log('Logging Shipping address data - after');
-        $this->logger->log(print_r($address, true));
         
-        $address->addData($addressData);
-        $address->setCollectShippingRates(false);
+		// pull Customer Address Data
+		$addressData = getCustomerAddressData($customeraddresses, 'shipping');
+		
+		$addressData = getCustomerAddressData($customeraddresses, 'billing');
+		
+ //       $address->addData($addressData);
+ //       $address->setCollectShippingRates(false);
         
 //      $this->logger->log('Logging Shipping address data - after addData');
 //      $this->logger->log(print_r($address, true));
@@ -119,5 +93,121 @@ class QuoteAddressHandler implements EntityHandlerInterface
         
         $this->logger->log(sprintf('Saving address data customer_id %d : customer_address_id %d ', $address->getCustomerId(), $address->getCustomerAddressId()));
         $this->logger->log('Quote Address Setup Complete');
+    }
+
+	/**
+     * @param Magento\Customer\Api\Data\AddressInterface $cuatomerId
+     * @param string $type 
+     * return $addressData array	 
+     */
+	private function getCustomerAddressData(Magento\Customer\Api\Data\AddressInterface $customerAddresses, $type = 'shipping')
+    {
+        $addressData = "";
+		
+		// get Customer Shipping Address Data
+        if ($customerAddress) {
+			foreach ($customerAddresses as $customerAddress) {
+				if ($customerAddress->getIsDefaultShipping() && $type === 'shipping') {            
+					// Get Customer Shipping Address data
+					$addressData = [setCustomerAddressId($customeraddress->getId();
+						'firstname' => $customerAddress->getFirstName();
+						'middlename'=> $customeraddress->getMiddleName());
+						'lastname'	=> $customerAddress->getLastname();
+						'prefix'	=> $customerAddress->getPrefix();
+						'suffix'	=> $customerAddress->getSuffix();
+						'company'	=> $customeraddress->getCompany();
+						'street'	=> $customerAddress->getStreet();
+						'city'		=> $customerAddress->getCity();
+						'telephone'	=> $customerAddress->getTelephone();
+				} else if ($customeraddress->GetIsDefaultBilling() && $type === 'billing') {
+					// Get Customer Billing Address data
+					$addressData = [setCustomerAddressId($customeraddress->getId();
+						'firstname' => $customerAddress->getFirstName();
+						'middlename'=> $customeraddress->getMiddleName());
+						'lastname'	=> $customerAddress->getLastname();
+						'prefix'	=> $customerAddress->getPrefix();
+						'suffix'	=> $customerAddress->getSuffix();
+						'company'	=> $customeraddress->getCompany();
+						'street'	=> $customerAddress->getStreet();
+						'city'		=> $customerAddress->getCity();
+						'telephone'	=> $customerAddress->getTelephone();
+				}
+			}
+			
+			$this->logger->log('Logging customer shipping address data');
+			$this->logger->log(print_r($addressData, true));
+		}
+		
+		return $addressData;
+	}
+
+	/**
+     * @param quoteId string
+	 * @param addressData array
+     * @param type string	 
+     */
+	private function updateSessionQuoteAddress(array $addressData, $type = 'shipping')
+    {
+        /** @var \Magento\Quote\Model\Quote $quote */
+        $quote = $this->checkoutSession->getQuote();
+
+        if (!$quote->getId()) {
+            throw new \Exception("No active quote found in session.");
+        }
+
+        // Update either shipping or billing address
+        $address = ($type === 'shipping')
+            ? $quote->getShippingAddress()
+            : $quote->getBillingAddress();
+
+        $address->addData($addressData);
+
+        if ($type === 'shipping') {
+            $address->setCollectShippingRates(true);
+        }
+
+        // Save quote to DB
+        $this->cartRepository->save($quote);
+
+        // Update session container with the fresh quote
+        $this->checkoutSession->replaceQuote($quote)->unsLastRealOrderId();
+
+        return $quote;
+    }
+
+
+    /**
+     * @param quoteId string
+	 * @param addressData array
+     * @param type string	 
+     */
+	private function updateQuoteAddress($quoteId, $addressData, $type = 'shipping')
+    {
+        // Load the quote
+        $quote = $this->quoteFactory->create()->load($quoteId);
+
+        if (!$quote->getId()) {
+            throw new \Exception("Quote not found with ID: $quoteId");
+        }
+
+        // Get existing address (shipping or billing)
+        if ($type === 'shipping') {
+            $address = $quote->getShippingAddress();
+        } else {
+            $address = $quote->getBillingAddress();
+        }
+
+        // Update address fields
+        $address->addData($addressData);
+
+        // Mark as needing shipping rate recollection (if shipping)
+        if ($type === 'shipping') {
+            $address->setCollectShippingRates(true);
+        }
+
+        // Save quote
+        $this->cartRepository->save($quote);
+
+        return $quote;
     }
 }
