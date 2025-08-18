@@ -73,8 +73,8 @@ class QuoteAddressHandler implements EntityHandlerInterface
 		$this->logger->log('Logging param addressData');
 		$this->logger->log(print_r($addressData, true));
 		
-		$quote = $object->getQuote();
-        $address = $quote->getShippingAddress();
+//		$quote = $object->getQuote();
+        $address = $object->getQuote()->getShippingAddress();
         $address->setSameAsBilling(0);
         $address->setCustomerId($object->getCustomer()->getId());
         $address->setEmail($object->getCustomer()->getEmail());
@@ -105,7 +105,7 @@ class QuoteAddressHandler implements EntityHandlerInterface
 		$this->logger->log('Logging Shipping address data - after');
 		$this->logger->log(print_r($address, true));
 		
-//       $address->addData($addressData);
+        $address->addData($addressData);
         $address->setCollectShippingRates(false);
 		
 //		$this->logger->log('Logging Shipping address data - after addData');
@@ -115,7 +115,7 @@ class QuoteAddressHandler implements EntityHandlerInterface
 //		$this->logger->log(print_r($quote, true))
 		
 		/** @var \Magento\Quote\Api\CartRepositoryInterface $quoteRepository */
-		$this->quoteRepository->save($quote);
+//		$this->quoteRepository->save($quote);
 		
         $this->logger->log(sprintf('Saving address data customer_id %d : customer_address_id %d ', $address->getCustomerId(), $address->getCustomerAddressId()));
         $this->logger->log('Quote Address Setup Complete');
