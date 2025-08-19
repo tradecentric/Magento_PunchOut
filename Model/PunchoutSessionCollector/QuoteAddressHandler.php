@@ -76,9 +76,20 @@ class QuoteAddressHandler implements EntityHandlerInterface
         
 		if ($customerAddresses) {
 			// get Customer Address Data
-			$this->getCustomerAddressData($customerAddresses, 'shipping');	
-			$this->getCustomerAddressData($customerAddresses, 'billing');
-		}    
+			$addressData = $this->getCustomerAddressData($customerAddresses, 'shipping');	
+			if ($addressData) {
+				$this->logger->log('Customer Shipping Address');
+				$this->logger->log(print_r($addressData, true));
+				$this->updateSessionQuoteAddress($object, $addressData, $type)
+			}
+
+			$addressData = $this->getCustomerAddressData($customerAddresses, 'billing');
+			if ($addressData) {
+				$this->logger->log('Customer Shipping Billing');
+				$this->logger->log(print_r($addressData, true));
+				$this->updateSessionQuoteAddress($object, $addressData, $type)
+			}
+		}
         $this->logger->log('Quote Address Setup Complete');
     }
 
@@ -126,11 +137,7 @@ class QuoteAddressHandler implements EntityHandlerInterface
 			}
 		}	
 		
-		if ($addressData) {
-			$this->logger->log(print_r($addressData, true));
-			$this->updateSessionQuoteAddress($addressData, $type)
-		}
-
+		return $addressData;
 	}
 
 	/**
@@ -138,12 +145,12 @@ class QuoteAddressHandler implements EntityHandlerInterface
 	 * @param addressData array
      * @param type string	 
      */
-	private function updateSessionQuoteAddress(array $addressData, $type = 'shipping')
+	private function updateSessionQuoteAddress($object, array $addressData, $type = 'shipping')
     {
         /** @var \Magento\Quote\Model\Quote $quote */
-        $quote = $this->checkoutSession->getQuote();
+        $quote = $object->getQuote();
 
-        if (!$quote->getId()) {
+        if (!quote->getId()) {
             throw new \Exception("No active quote found in session.");
         }
 
@@ -152,6 +159,8 @@ class QuoteAddressHandler implements EntityHandlerInterface
             ? $quote->getShippingAddress()
             : $quote->getBillingAddress();
 
+		$address->setCustomerId($object->getCustomer()->getId());
+		$address->setEmail($object->getCustomer()->getEmail());
         $address->addData($addressData);
 
         if ($type === 'shipping') {
@@ -162,10 +171,8 @@ class QuoteAddressHandler implements EntityHandlerInterface
         $this->cartRepository->save($quote);
 
         // Update session container with the fresh quote
-        $this->checkoutSession->replaceQuote($quote)->unsLastRealOrderId();
+        $object->replaceQuote($quote)->unsLastRealOrderId();
 		
 		$this->logger->log(sprintf('Saving address data customer_id %d : customer_address_id %d ', $address->getCustomerId(), $address->getCustomerAddressId()));
-
-        return $quote;
     }
 }
