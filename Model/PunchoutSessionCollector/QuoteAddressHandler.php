@@ -149,11 +149,7 @@ class QuoteAddressHandler implements EntityHandlerInterface
     {
         /** @var \Magento\Quote\Model\Quote $quote */
         $quote = $object->getQuote();
-
- //       if (!$quote->getId()) {
- //           throw new \Exception("No active quote found in session.");
- //       }
-		
+	
 		$paramsData = $this->dataExtractor->extract($object->getSession()->getParams());
         $this->logger->log(print_r($paramsData, true));
 
@@ -174,7 +170,7 @@ class QuoteAddressHandler implements EntityHandlerInterface
         $this->cartRepository->save($quote);
 
         // Update session container with the fresh quote
-        $object->replaceQuote($quote)->unsLastRealOrderId();
+  //      $object->replaceQuote($quote)->unsLastRealOrderId();
 		
 		$this->logger->log(sprintf('Saving address data customer_id %d : customer_address_id %d ', $address->getCustomerId(), $address->getCustomerAddressId()));
     }
