@@ -98,7 +98,7 @@ class QuoteAddressHandler implements EntityHandlerInterface
      * @param string $type 
      * return $addressData array	 
      */
-	private function getCustomerAddressData( array $customerAddresses, $type = 'shipping')
+	private function getCustomerAddressData($customerAddresses, $type = 'shipping')
     {
         $addressData = "";
 		// get Customer Shipping Address Data
@@ -108,7 +108,7 @@ class QuoteAddressHandler implements EntityHandlerInterface
 				$addressData = [
 					'addtress_type' => 'shipping',
 					'same_as_billing' => 0,
-					'customer_id' => $customeraddress->getId(),
+					'address_id' => $customerAddress->getId(),
 					'firstname' => $customerAddress->getFirstName(),
 					'middlename'=> $customeraddress->getMiddleName(),
 					'lastname'	=> $customerAddress->getLastname(),
@@ -123,7 +123,7 @@ class QuoteAddressHandler implements EntityHandlerInterface
 				// Get Customer Billing Address data
 				$addressData = [
 					'addtress_type' => 'billing',
-					'customer_id' => $customeraddress->getId(),
+					'address_id' => $customerAddress->getId(),
 					'firstname' => $customerAddress->getFirstName(),
 					'middlename'=> $customeraddress->getMiddleName(),
 					'lastname'	=> $customerAddress->getLastname(),
