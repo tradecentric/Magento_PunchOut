@@ -74,10 +74,20 @@ class QuoteAddressHandler implements EntityHandlerInterface
         $customer = $this->customerRepository->getById($object->getCustomer()->getId());
         $customeraddresses = $customer->getAddresses();
         
-		// pull Customer Address Data
-		$addressData = getCustomerAddressData($customeraddresses, 'shipping');
+		if ($customerAddress) {
+			// pull Customer Address Data
+			$addressData = getCustomerAddressData($customeraddresses, 'shipping');
+			if ($addressData) {
+				$this->logger->log('Logging customer shipping address data');
+				$this->logger->log(print_r($addressData, true));
+			}
 		
-		$addressData = getCustomerAddressData($customeraddresses, 'billing');
+			$addressData = getCustomerAddressData($customeraddresses, 'billing');
+			if ($addressData) {
+				$this->logger->log('Logging customer billing address data');
+				$this->logger->log(print_r($addressData, true));				
+			}
+		}
 		
  //       $address->addData($addressData);
  //       $address->setCollectShippingRates(false);
@@ -103,41 +113,39 @@ class QuoteAddressHandler implements EntityHandlerInterface
 	private function getCustomerAddressData(Magento\Customer\Api\Data\AddressInterface $customerAddresses, $type = 'shipping')
     {
         $addressData = "";
-		
 		// get Customer Shipping Address Data
-        if ($customerAddress) {
-			foreach ($customerAddresses as $customerAddress) {
-				if ($customerAddress->getIsDefaultShipping() && $type === 'shipping') {            
-					// Get Customer Shipping Address data
-					$addressData = [setCustomerAddressId($customeraddress->getId();
-						'firstname' => $customerAddress->getFirstName();
-						'middlename'=> $customeraddress->getMiddleName());
-						'lastname'	=> $customerAddress->getLastname();
-						'prefix'	=> $customerAddress->getPrefix();
-						'suffix'	=> $customerAddress->getSuffix();
-						'company'	=> $customeraddress->getCompany();
-						'street'	=> $customerAddress->getStreet();
-						'city'		=> $customerAddress->getCity();
-						'telephone'	=> $customerAddress->getTelephone();
-				} else if ($customeraddress->GetIsDefaultBilling() && $type === 'billing') {
-					// Get Customer Billing Address data
-					$addressData = [setCustomerAddressId($customeraddress->getId();
-						'firstname' => $customerAddress->getFirstName();
-						'middlename'=> $customeraddress->getMiddleName());
-						'lastname'	=> $customerAddress->getLastname();
-						'prefix'	=> $customerAddress->getPrefix();
-						'suffix'	=> $customerAddress->getSuffix();
-						'company'	=> $customeraddress->getCompany();
-						'street'	=> $customerAddress->getStreet();
-						'city'		=> $customerAddress->getCity();
-						'telephone'	=> $customerAddress->getTelephone();
-				}
+		foreach ($customerAddresses as $customerAddress) {
+			if ($customerAddress->getIsDefaultShipping() && $type === 'shipping') {            
+				// Get Customer Shipping Address data
+				$addressData = [
+					'addtress_type' => 'shipping',
+					'same_as_billing' => 0,
+					'customer_id' => $customeraddress->getId(),
+					'firstname' => $customerAddress->getFirstName(),
+					'middlename'=> $customeraddress->getMiddleName()),
+					'lastname'	=> $customerAddress->getLastname(),
+					'prefix'	=> $customerAddress->getPrefix(),
+					'suffix'	=> $customerAddress->getSuffix(),
+					'company'	=> $customeraddress->getCompany(),
+					'street'	=> $customerAddress->getStreet(),
+					'city'		=> $customerAddress->getCity(),
+					'telephone'	=> $customerAddress->getTelephone()
+			} else if ($customeraddress->GetIsDefaultBilling() && $type === 'billing') {
+				// Get Customer Billing Address data
+				$addressData = [
+					'addtress_type' => 'billing',
+					'customer_id' => $customeraddress->getId(),
+					'firstname' => $customerAddress->getFirstName(),
+					'middlename'=> $customeraddress->getMiddleName()),
+					'lastname'	=> $customerAddress->getLastname(),
+					'prefix'	=> $customerAddress->getPrefix(),
+					'suffix'	=> $customerAddress->getSuffix(),
+					'company'	=> $customeraddress->getCompany(),
+					'street'	=> $customerAddress->getStreet(),
+					'city'		=> $customerAddress->getCity(),
+					'telephone'	=> $customerAddress->getTelephone()
 			}
-			
-			$this->logger->log('Logging customer shipping address data');
-			$this->logger->log(print_r($addressData, true));
-		}
-		
+		}	
 		return $addressData;
 	}
 
