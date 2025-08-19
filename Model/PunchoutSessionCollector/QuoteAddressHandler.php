@@ -119,7 +119,7 @@ class QuoteAddressHandler implements EntityHandlerInterface
 					'city'		=> $customerAddress->getCity(),
 					'telephone'	=> $customerAddress->getTelephone()
 				];
-			} else if ($customeraddress->isDefaultBilling() && $type === 'billing') {
+			} else if ($customerAddress->isDefaultBilling() && $type === 'billing') {
 				// Get Customer Billing Address data
 				$addressData = [
 					'addtress_type' => 'billing',
