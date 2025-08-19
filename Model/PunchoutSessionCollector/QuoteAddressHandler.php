@@ -150,7 +150,7 @@ class QuoteAddressHandler implements EntityHandlerInterface
         /** @var \Magento\Quote\Model\Quote $quote */
         $quote = $object->getQuote();
 
-        if (!quote->getId()) {
+        if (!$quote->getId()) {
             throw new \Exception("No active quote found in session.");
         }
 
