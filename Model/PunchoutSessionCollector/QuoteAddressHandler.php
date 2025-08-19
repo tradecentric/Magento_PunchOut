@@ -80,14 +80,14 @@ class QuoteAddressHandler implements EntityHandlerInterface
 			if ($addressData) {
 				$this->logger->log('Customer Shipping Address');
 				$this->logger->log(print_r($addressData, true));
-				$this->updateSessionQuoteAddress($object, $addressData, $type);
+				$this->updateSessionQuoteAddress($object, $addressData, 'shipping');
 			}
 
 			$addressData = $this->getCustomerAddressData($customerAddresses, 'billing');
 			if ($addressData) {
 				$this->logger->log('Customer Shipping Billing');
 				$this->logger->log(print_r($addressData, true));
-				$this->updateSessionQuoteAddress($object, $addressData, $type);
+				$this->updateSessionQuoteAddress($object, $addressData, 'billing');
 			}
 		}
         $this->logger->log('Quote Address Setup Complete');
