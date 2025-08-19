@@ -1,13 +1,13 @@
-<?php $helper = $this->helper(\Punchout2Go\Punchout\Helper\Session::class) ?>
+<?php $helper = $this->helper(\Punchout2Go\Punchout\Helper\Session::class); ?>
 <script>
-    window.reloadParam = "<?php echo $helper->getFirstLoadParam()?>";
+    window.reloadParam = <?php echo $escaper->escapeJs(json_encode($helper->getFirstLoadParam())) ?>;
 </script>
 <script type="text/x-magento-init">
     {
         "*" :
             {
                 "Punchout2Go_Punchout/js/view/punchout-component" : {
-                    "jsReloadSections" : "<?php echo $helper->getJsReloadSections(); ?>"
+                    "jsReloadSections" : "<?php echo $escaper->escapeJs(json_encode($helper->getJsReloadSections())); ?>"
                 }
             }
     }
@@ -18,9 +18,8 @@
         "*" :
             {
                 "Punchout2Go_Punchout/js/view/redirect-component" : {
-                    "redirectUrl": "<?php echo $block->escapeUrl($helper->getPunchoutRedirectUrl()); ?>"
+                    "redirectUrl": "<?php echo $escaper->escapeUrl($helper->getPunchoutRedirectUrl()); ?>"
                  }
             }
     }
 </script>
-
