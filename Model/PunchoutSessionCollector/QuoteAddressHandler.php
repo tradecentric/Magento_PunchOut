@@ -76,13 +76,13 @@ class QuoteAddressHandler implements EntityHandlerInterface
         
 		if ($customerAddresses) {
 			// pull Customer Address Data
-			$addressData = getCustomerAddressData($customerAddresses, 'shipping');
+			$addressData = $this->getCustomerAddressData($customerAddresses, 'shipping');
 			if ($addressData) {
 				$this->logger->log('Logging customer shipping address data');
 				$this->logger->log(print_r($addressData, true));
 			}
 		
-			$addressData = getCustomerAddressData($customerAddresses, 'billing');
+			$addressData = $this->getCustomerAddressData($customerAddresses, 'billing');
 			if ($addressData) {
 				$this->logger->log('Logging customer billing address data');
 				$this->logger->log(print_r($addressData, true));				
@@ -181,42 +181,6 @@ class QuoteAddressHandler implements EntityHandlerInterface
 
         // Update session container with the fresh quote
         $this->checkoutSession->replaceQuote($quote)->unsLastRealOrderId();
-
-        return $quote;
-    }
-
-
-    /**
-     * @param quoteId string
-	 * @param addressData array
-     * @param type string	 
-     */
-	private function updateQuoteAddress($quoteId, $addressData, $type = 'shipping')
-    {
-        // Load the quote
-        $quote = $this->quoteFactory->create()->load($quoteId);
-
-        if (!$quote->getId()) {
-            throw new \Exception("Quote not found with ID: $quoteId");
-        }
-
-        // Get existing address (shipping or billing)
-        if ($type === 'shipping') {
-            $address = $quote->getShippingAddress();
-        } else {
-            $address = $quote->getBillingAddress();
-        }
-
-        // Update address fields
-        $address->addData($addressData);
-
-        // Mark as needing shipping rate recollection (if shipping)
-        if ($type === 'shipping') {
-            $address->setCollectShippingRates(true);
-        }
-
-        // Save quote
-        $this->cartRepository->save($quote);
 
         return $quote;
     }
