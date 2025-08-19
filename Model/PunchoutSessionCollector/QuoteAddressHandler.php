@@ -130,6 +130,7 @@ class QuoteAddressHandler implements EntityHandlerInterface
 					'street'	=> $customerAddress->getStreet(),
 					'city'		=> $customerAddress->getCity(),
 					'telephone'	=> $customerAddress->getTelephone()
+				];
 			} else if ($customeraddress->GetIsDefaultBilling() && $type === 'billing') {
 				// Get Customer Billing Address data
 				$addressData = [
@@ -144,6 +145,7 @@ class QuoteAddressHandler implements EntityHandlerInterface
 					'street'	=> $customerAddress->getStreet(),
 					'city'		=> $customerAddress->getCity(),
 					'telephone'	=> $customerAddress->getTelephone()
+				];
 			}
 		}	
 		return $addressData;
