@@ -210,7 +210,7 @@ class Session extends SessionManager implements SessionInterface
 	//		}
 	//		$this->logger->log('Get Customer Addresses Complete');
 			
-        }
+   //     }
 		
         /** save magento quote */
         $this->checkoutSession->clearStorage();
@@ -221,12 +221,17 @@ class Session extends SessionManager implements SessionInterface
 			$this->logger->log('Get Customer Addresses');			
 			
 			$this->logger->log(print_r($container->getCustomer(), true));
-			$customerAddresses = $container->getCustomer()->getAddresses();
+			$customerAddresses = $container->getCustomer()->getId()->getAddresses();
 			$this->logger->log(print_r($customerAddresses, true));
 			
 			if ($customerAddresses) {
+				// update Shipping Address
 				$addressData = $this->getCustomerAddressData($customerAddresses, 'shipping');	
-				$this->logger->log(print_r($quote, true));
+				$address = $quote->getShippingAddress()
+				$address->addData($addressData);
+				
+				// update Billing Address
+				$addressData = $this->getCustomerAddressData($customerAddresses, 'billing');	
 				$address = $quote->getShippingAddress()
 				$address->addData($addressData);
 			}
