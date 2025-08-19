@@ -185,10 +185,36 @@ class Session extends SessionManager implements SessionInterface
         $this->sessionPreStart($container);
         $this->sessionCollector->handle($container);
         $this->logger->log('Collect data complete');
+		
+		$this->logger->log(print_r($container, true));
 
         $this->sessionPostStart($container);
         $this->logger->log('Post start');
 
+		/** get customer addresses **/
+		if ($this->helper->isAddressToCart()) {
+            $this->logger->log('Get Customer Addresses');
+			$customerAddresses = $container->getCustomer()->getAddresses();
+			if ($customerAddresses) {
+				// get Customer Address Data
+				$addressData = $this->getCustomerAddressData($customerAddresses, 'shipping');	
+				if ($addressData) {
+					$this->logger->log('Customer Shipping Address');
+					$this->logger->log(print_r($addressData, true));
+					$this->updateSessionQuoteAddress($object, $addressData, 'shipping');
+				}
+
+				$addressData = $this->getCustomerAddressData($customerAddresses, 'billing');
+				if ($addressData) {
+					$this->logger->log('Customer Shipping Billing');
+					$this->logger->log(print_r($addressData, true));
+					$this->updateSessionQuoteAddress($object, $addressData, 'billing');
+				}
+			}
+			$this->logger->log('Get Customer Addresses Complete');
+			
+        }
+		
         /** save magento quote */
         $this->checkoutSession->clearStorage();
         $quote = $this->initQuote()->setTotalsCollectedFlag(false)->collectTotals();
@@ -335,6 +361,53 @@ class Session extends SessionManager implements SessionInterface
             $this->customerSession->logout();
         }
     }
+
+	/**
+     * @param array $cuatomerId
+     * @param string $type 
+     * return $addressData array	 
+     */
+	private function getCustomerAddressData($customerAddresses, $type = 'shipping')
+    {
+        $addressData = "";
+		// get Customer Shipping Address Data
+		foreach ($customerAddresses as $customerAddress) {
+			if ($customerAddress->isDefaultShipping() && $type === 'shipping') {            
+				// Get Customer Shipping Address data
+				$addressData = [
+					'addtress_type' => 'shipping',
+					'same_as_billing' => 0,
+					'address_id'=> $customerAddress->getId(),
+					'firstname' => $customerAddress->getFirstName(),
+					'middlename'=> $customerAddress->getMiddleName(),
+					'lastname'	=> $customerAddress->getLastname(),
+					'prefix'	=> $customerAddress->getPrefix(),
+					'suffix'	=> $customerAddress->getSuffix(),
+					'company'	=> $customerAddress->getCompany(),
+					'street'	=> $customerAddress->getStreet(),
+					'city'		=> $customerAddress->getCity(),
+					'telephone'	=> $customerAddress->getTelephone()
+				];
+			} else if ($customerAddress->isDefaultBilling() && $type === 'billing') {
+				// Get Customer Billing Address data
+				$addressData = [
+					'addtress_type' => 'billing',
+					'address_id'=> $customerAddress->getId(),
+					'firstname' => $customerAddress->getFirstName(),
+					'middlename'=> $customerAddress->getMiddleName(),
+					'lastname'	=> $customerAddress->getLastname(),
+					'prefix'	=> $customerAddress->getPrefix(),
+					'suffix'	=> $customerAddress->getSuffix(),
+					'company'	=> $customerAddress->getCompany(),
+					'street'	=> $customerAddress->getStreet(),
+					'city'		=> $customerAddress->getCity(),
+					'telephone'	=> $customerAddress->getTelephone()
+				];
+			}
+		}	
+		
+		return $addressData;
+	}
 
     /**
      * clear quote

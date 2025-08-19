@@ -54,30 +54,13 @@ class QuoteAddressHandler implements EntityHandlerInterface
             return;
         }
         $addressData = $this->dataExtractor->extract($object->getSession()->getParams());
-		$addressData = [
-		    "company" => "tradecentric",
-			"street" => "123 Main Street",
-			"city" => "Nashville",
-			"[postcode" => "37076",
-			"telephone" => "",
-			"region" => 19,
-			"country_id" => "US"
-		];
-		$this->logger->log(print_r($addressData, true));
-		
         $address = $object->getQuote()->getShippingAddress();
-		
         $address->setSameAsBilling(0);
         $address->setCustomerId($object->getCustomer()->getId());
         $address->setEmail($object->getCustomer()->getEmail());
         $address->addData($addressData);
         $address->setCollectShippingRates(false);
-		
-		$this->logger->log(print_r($address, true));
-		$this->logger->log(print_r($object->getQuote(), true));
-
         $this->logger->log(sprintf("Saving address data quite_id %d : address_id %d ", $object->getQuote()->getId(), $address->getId()));
-		$this->logger->log(sprintf('Saving address data customer_id %d : address_id %d ', $address->getCustomerId(), $address->getAddressId()));
         $this->logger->log('Quote Address Setup Complete');
     }
 }
