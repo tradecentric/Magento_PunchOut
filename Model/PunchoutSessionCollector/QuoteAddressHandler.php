@@ -75,33 +75,10 @@ class QuoteAddressHandler implements EntityHandlerInterface
         $customerAddresses = $customer->getAddresses();
         
 		if ($customerAddresses) {
-			// pull Customer Address Data
-			$addressData = $this->getCustomerAddressData($customerAddresses, 'shipping');
-			if ($addressData) {
-				$this->logger->log('Logging customer shipping address data');
-				$this->logger->log(print_r($addressData, true));
-			}
-		
-			$addressData = $this->getCustomerAddressData($customerAddresses, 'billing');
-			if ($addressData) {
-				$this->logger->log('Logging customer billing address data');
-				$this->logger->log(print_r($addressData, true));				
-			}
-		}
-		
- //       $address->addData($addressData);
- //       $address->setCollectShippingRates(false);
-        
-//      $this->logger->log('Logging Shipping address data - after addData');
-//      $this->logger->log(print_r($address, true));
-
-//      $this->logger->log('Logging quote data');
-//      $this->logger->log(print_r($quote, true))
-        
-        /** @var \Magento\Quote\Api\CartRepositoryInterface $quoteRepository */
-//      $this->quoteRepository->save($quote);
-        
-        $this->logger->log(sprintf('Saving address data customer_id %d : customer_address_id %d ', $address->getCustomerId(), $address->getCustomerAddressId()));
+			// get Customer Address Data
+			$this->getCustomerAddressData($customerAddresses, 'shipping');	
+			$this->getCustomerAddressData($customerAddresses, 'billing');
+		}    
         $this->logger->log('Quote Address Setup Complete');
     }
 
@@ -110,12 +87,12 @@ class QuoteAddressHandler implements EntityHandlerInterface
      * @param string $type 
      * return $addressData array	 
      */
-	private function getCustomerAddressData($customerAddresses, $type = 'shipping')
+	private function getCustomerAddressData( array $customerAddresses, $type = 'shipping')
     {
         $addressData = "";
 		// get Customer Shipping Address Data
 		foreach ($customerAddresses as $customerAddress) {
-			if ($customerAddress->getIsDefaultShipping() && $type === 'shipping') {            
+			if ($customerAddress->isDefaultShipping() && $type === 'shipping') {            
 				// Get Customer Shipping Address data
 				$addressData = [
 					'addtress_type' => 'shipping',
@@ -131,7 +108,7 @@ class QuoteAddressHandler implements EntityHandlerInterface
 					'city'		=> $customerAddress->getCity(),
 					'telephone'	=> $customerAddress->getTelephone()
 				];
-			} else if ($customeraddress->GetIsDefaultBilling() && $type === 'billing') {
+			} else if ($customeraddress->isDefaultBilling() && $type === 'billing') {
 				// Get Customer Billing Address data
 				$addressData = [
 					'addtress_type' => 'billing',
@@ -148,7 +125,12 @@ class QuoteAddressHandler implements EntityHandlerInterface
 				];
 			}
 		}	
-		return $addressData;
+		
+		if ($addressData) {
+			$this->logger->log(print_r($addressData, true));
+			$this->updateSessionQuoteAddress($addressData, $type)
+		}
+
 	}
 
 	/**
@@ -181,6 +163,8 @@ class QuoteAddressHandler implements EntityHandlerInterface
 
         // Update session container with the fresh quote
         $this->checkoutSession->replaceQuote($quote)->unsLastRealOrderId();
+		
+		$this->logger->log(sprintf('Saving address data customer_id %d : customer_address_id %d ', $address->getCustomerId(), $address->getCustomerAddressId()));
 
         return $quote;
     }
