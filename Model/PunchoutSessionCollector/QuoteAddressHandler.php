@@ -74,7 +74,7 @@ class QuoteAddressHandler implements EntityHandlerInterface
         $customer = $this->customerRepository->getById($object->getCustomer()->getId());
         $customerAddresses = $customer->getAddresses();
         
-		if ($customerAddress) {
+		if ($customerAddresses) {
 			// pull Customer Address Data
 			$addressData = getCustomerAddressData($customerAddresses, 'shipping');
 			if ($addressData) {
