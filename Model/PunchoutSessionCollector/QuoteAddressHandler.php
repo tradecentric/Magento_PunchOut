@@ -108,13 +108,13 @@ class QuoteAddressHandler implements EntityHandlerInterface
 				$addressData = [
 					'addtress_type' => 'shipping',
 					'same_as_billing' => 0,
-					'address_id' => $customerAddress->getId(),
+					'address_id'=> $customerAddress->getId(),
 					'firstname' => $customerAddress->getFirstName(),
-					'middlename'=> $customeraddress->getMiddleName(),
+					'middlename'=> $customerAddress->getMiddleName(),
 					'lastname'	=> $customerAddress->getLastname(),
 					'prefix'	=> $customerAddress->getPrefix(),
 					'suffix'	=> $customerAddress->getSuffix(),
-					'company'	=> $customeraddress->getCompany(),
+					'company'	=> $customerAddress->getCompany(),
 					'street'	=> $customerAddress->getStreet(),
 					'city'		=> $customerAddress->getCity(),
 					'telephone'	=> $customerAddress->getTelephone()
@@ -123,13 +123,13 @@ class QuoteAddressHandler implements EntityHandlerInterface
 				// Get Customer Billing Address data
 				$addressData = [
 					'addtress_type' => 'billing',
-					'address_id' => $customerAddress->getId(),
+					'address_id'=> $customerAddress->getId(),
 					'firstname' => $customerAddress->getFirstName(),
-					'middlename'=> $customeraddress->getMiddleName(),
+					'middlename'=> $customerAddress->getMiddleName(),
 					'lastname'	=> $customerAddress->getLastname(),
 					'prefix'	=> $customerAddress->getPrefix(),
 					'suffix'	=> $customerAddress->getSuffix(),
-					'company'	=> $customeraddress->getCompany(),
+					'company'	=> $customerAddress->getCompany(),
 					'street'	=> $customerAddress->getStreet(),
 					'city'		=> $customerAddress->getCity(),
 					'telephone'	=> $customerAddress->getTelephone()
