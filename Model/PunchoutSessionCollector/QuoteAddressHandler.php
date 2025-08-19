@@ -150,9 +150,12 @@ class QuoteAddressHandler implements EntityHandlerInterface
         /** @var \Magento\Quote\Model\Quote $quote */
         $quote = $object->getQuote();
 
-        if (!$quote->getId()) {
-            throw new \Exception("No active quote found in session.");
-        }
+ //       if (!$quote->getId()) {
+ //           throw new \Exception("No active quote found in session.");
+ //       }
+		
+		$paramsData = $this->dataExtractor->extract($object->getSession()->getParams());
+        $this->logger->log(print_r($paramsData, true));
 
         // Update either shipping or billing address
         $address = ($type === 'shipping')
