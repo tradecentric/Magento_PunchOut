@@ -106,11 +106,11 @@ class QuoteAddressHandler implements EntityHandlerInterface
     }
 
 	/**
-     * @param Magento\Customer\Api\Data\AddressInterface $cuatomerId
+     * @param array $cuatomerId
      * @param string $type 
      * return $addressData array	 
      */
-	private function getCustomerAddressData(Magento\Customer\Api\Data\AddressInterface $customerAddresses, $type = 'shipping')
+	private function getCustomerAddressData($customerAddresses, $type = 'shipping')
     {
         $addressData = "";
 		// get Customer Shipping Address Data
