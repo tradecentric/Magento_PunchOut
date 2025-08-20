@@ -227,12 +227,12 @@ class Session extends SessionManager implements SessionInterface
 			if ($customerAddresses) {
 				// update Shipping Address
 				$addressData = $this->getCustomerAddressData($customerAddresses, 'shipping');	
-				$address = $quote->getShippingAddress()
+				$address = $quote->getShippingAddress();
 				$address->addData($addressData);
 				
 				// update Billing Address
 				$addressData = $this->getCustomerAddressData($customerAddresses, 'billing');	
-				$address = $quote->getShippingAddress()
+				$address = $quote->getShippingAddress();
 				$address->addData($addressData);
 			}
 		}
