@@ -137,7 +137,7 @@ class Session extends SessionManager implements SessionInterface
         Session\SessionEditStatus $editStatus,
         PunchoutQuoteRepositoryInterface $punchoutQuoteRepository,
         PunchoutQuoteInterfaceFactory $punchoutQuoteInterfaceFactory,
-        SessionStartChecker $sessionStartChecker = null
+        ?SessionStartChecker $sessionStartChecker = null
     ) {
         $this->logger = $logger;
         $this->sessionCollector = $sessionCollector;
@@ -187,30 +187,6 @@ class Session extends SessionManager implements SessionInterface
         $this->logger->log('Collect data complete');
         $this->sessionPostStart($container);
         $this->logger->log('Post start');
-
-	//	/** get customer addresses **/
-	//	if ($this->helper->isAddressToCart()) {
-    //        $this->logger->log('Get Customer Addresses');
-	//		$customerAddresses = $container->getCustomer()->getAddresses();
-	//		if ($customerAddresses) {
-	//			// get Customer Address Data
-	//			$addressData = $this->getCustomerAddressData($customerAddresses, 'shipping');	
-	//			if ($addressData) {
-	//				$this->logger->log('Customer Shipping Address');
-	//				$this->logger->log(print_r($addressData, true));
-	//				$this->updateSessionQuoteAddress($object, $addressData, 'shipping');
-	//			}
-
-	//			$addressData = $this->getCustomerAddressData($customerAddresses, 'billing');
-	//			if ($addressData) {
-	//				$this->logger->log('Customer Shipping Billing');
-	//				$this->logger->log(print_r($addressData, true));
-	//				$this->updateSessionQuoteAddress($object, $addressData, 'billing');
-	//			}
-	//		}
-	//		$this->logger->log('Get Customer Addresses Complete');
-			
-   //     }
 		
         /** save magento quote */
         $this->checkoutSession->clearStorage();
@@ -219,9 +195,7 @@ class Session extends SessionManager implements SessionInterface
 		/** get customer addresses **/
 		if ($this->helper->isAddressToCart()) {
 			$this->logger->log('Get Customer Addresses');			
-			
-			$this->logger->log(print_r($container->getCustomer(), true));
-			$customerAddresses = $container->getCustomer()->getId()->getAddresses();
+			$customerAddresses = $this->customerSession->getCustomer()->getAddresses();
 			$this->logger->log(print_r($customerAddresses, true));
 			
 			if ($customerAddresses) {
