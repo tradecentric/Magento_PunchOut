@@ -83,6 +83,7 @@ class CustomerHandler implements EntityHandlerInterface
         $customerParams = $this->customerDataExtractor->extract($object->getSession()->getParams());
         $customer = $this->customerService->loadCustomer($customerParams['email']);
         $this->logger->log('Customer loading');
+		$this->logger->log($customerParams['email']);
 
         if (!$customer && $this->helper->isAutoCreateUser()) {
             $this->logger->log('Create new customer');
