@@ -144,8 +144,8 @@ class Session extends SessionManager implements SessionInterface
         CartRepositoryInterface $cartRepository,
         Session\SessionEditStatus $editStatus,
         PunchoutQuoteRepositoryInterface $punchoutQuoteRepository,
-		CustomerRepository $customerRepository,
         PunchoutQuoteInterfaceFactory $punchoutQuoteInterfaceFactory,
+		CustomerRepository $customerRepository,
         ?SessionStartChecker $sessionStartChecker = null
     ) {
         $this->logger = $logger;
@@ -158,8 +158,8 @@ class Session extends SessionManager implements SessionInterface
         $this->cartRepository = $cartRepository;
         $this->editStatus = $editStatus;
         $this->punchoutQuoteRepository = $punchoutQuoteRepository;
-		$this->customerRepository = $customerRepository;
         $this->punchoutQuoteInterfaceFactory = $punchoutQuoteInterfaceFactory;
+		$this->customerRepository = $customerRepository;
         parent::__construct(
             $request,
             $sidResolver,
