@@ -25,6 +25,7 @@ use Punchout2Go\Punchout\Api\SessionContainerInterface;
 use Punchout2Go\Punchout\Api\SessionContainerInterfaceFactory;
 use Punchout2Go\Punchout\Api\SessionInterface;
 use Punchout2Go\Punchout\Model\System\Config\Source\Login;
+use Magento\Customer\Api\CustomerRepositoryInterface as CustomerRepository;
 
 /**
  * Class Session
@@ -90,6 +91,12 @@ class Session extends SessionManager implements SessionInterface
      * @var Session\SessionEditStatus
      */
     protected $editStatus;
+	
+    /**
+     * @var Magento\Customer\Api\CustomerRepositoryInterface
+     */
+    protected $customerRepository;
+	
 
     /**
      * Session constructor.
@@ -113,6 +120,7 @@ class Session extends SessionManager implements SessionInterface
      * @param Session\SessionEditStatus $editStatus
      * @param PunchoutQuoteRepositoryInterface $punchoutQuoteRepository
      * @param PunchoutQuoteInterfaceFactory $punchoutQuoteInterfaceFactory
+	 * @param Magento\Customer\Api\CustomerRepositoryInterface $customerRepository
      * @param SessionStartChecker|null $sessionStartChecker
      * @throws \Magento\Framework\Exception\SessionException
      */
@@ -136,6 +144,7 @@ class Session extends SessionManager implements SessionInterface
         CartRepositoryInterface $cartRepository,
         Session\SessionEditStatus $editStatus,
         PunchoutQuoteRepositoryInterface $punchoutQuoteRepository,
+		CustomerRepository $customerRepository
         PunchoutQuoteInterfaceFactory $punchoutQuoteInterfaceFactory,
         ?SessionStartChecker $sessionStartChecker = null
     ) {
@@ -149,6 +158,7 @@ class Session extends SessionManager implements SessionInterface
         $this->cartRepository = $cartRepository;
         $this->editStatus = $editStatus;
         $this->punchoutQuoteRepository = $punchoutQuoteRepository;
+		$this->customerRepository = $customerRepository;
         $this->punchoutQuoteInterfaceFactory = $punchoutQuoteInterfaceFactory;
         parent::__construct(
             $request,
@@ -195,9 +205,11 @@ class Session extends SessionManager implements SessionInterface
 		/** get customer addresses **/
 		if ($this->helper->isAddressToCart()) {
 			
-			$this->logger->log('Get Customer Addresses');			
-			$customerAddresses = $this->customerSession->getCustomer()->getAddresses();
-			$this->logger->log(print_r($customerAddresses, true));
+			$this->logger->log('Get Customer Addresses');	
+			$customerId = $this->customerSession->getCustomer()->getId();
+			$customerAddresses = $this->customerRepository->getById($customerId)->getAddresses();
+		$this->logger->log('Customer Id: ' . $customerId);
+		$this->logger->log(print_r($customerAddresses, true));
 			
 			if ($customerAddresses) {
 				// update Shipping Address
