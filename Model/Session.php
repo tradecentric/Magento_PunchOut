@@ -25,7 +25,6 @@ use Punchout2Go\Punchout\Api\SessionContainerInterface;
 use Punchout2Go\Punchout\Api\SessionContainerInterfaceFactory;
 use Punchout2Go\Punchout\Api\SessionInterface;
 use Punchout2Go\Punchout\Model\System\Config\Source\Login;
-use Magento\Customer\Api\CustomerRepositoryInterface as CustomerRepository;
 
 /**
  * Class Session
@@ -97,7 +96,6 @@ class Session extends SessionManager implements SessionInterface
      */
     protected $customerRepository;
 	
-
     /**
      * Session constructor.
      * @param \Magento\Framework\App\Request\Http $request
@@ -120,8 +118,8 @@ class Session extends SessionManager implements SessionInterface
      * @param Session\SessionEditStatus $editStatus
      * @param PunchoutQuoteRepositoryInterface $punchoutQuoteRepository
      * @param PunchoutQuoteInterfaceFactory $punchoutQuoteInterfaceFactory
-	 * @param Magento\Customer\Api\CustomerRepositoryInterface $customerRepository
-     * @param SessionStartChecker|null $sessionStartChecker
+     * @param SessionStartChecker|null $sessionStartCheckerclear
+	 * @param \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository
      * @throws \Magento\Framework\Exception\SessionException
      */
     public function __construct(
@@ -145,7 +143,7 @@ class Session extends SessionManager implements SessionInterface
         Session\SessionEditStatus $editStatus,
         PunchoutQuoteRepositoryInterface $punchoutQuoteRepository,
         PunchoutQuoteInterfaceFactory $punchoutQuoteInterfaceFactory,
-		CustomerRepository $customerRepository,
+		\Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
         ?SessionStartChecker $sessionStartChecker = null
     ) {
         $this->logger = $logger;
@@ -206,7 +204,7 @@ class Session extends SessionManager implements SessionInterface
 		if ($this->helper->isAddressToCart()) {
 			
 			$this->logger->log('Get Customer Addresses');	
-			$customerId = $this->customerSession->getCustomer()->getId();
+			$customerId = $this->customerSession->getCustomerId();
 			$customerAddresses = $this->customerRepository->getById($customerId)->getAddresses();
 		$this->logger->log('Customer Id: ' . $customerId);
 		$this->logger->log(print_r($customerAddresses, true));
