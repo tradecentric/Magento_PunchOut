@@ -143,8 +143,8 @@ class Session extends SessionManager implements SessionInterface
         Session\SessionEditStatus $editStatus,
         PunchoutQuoteRepositoryInterface $punchoutQuoteRepository,
         PunchoutQuoteInterfaceFactory $punchoutQuoteInterfaceFactory,
-		\Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
-        ?SessionStartChecker $sessionStartChecker = null
+        ?SessionStartChecker $sessionStartChecker = null.
+		\Magento\Customer\Api\CustomerRepositoryInterface $customerRepository
     ) {
         $this->logger = $logger;
         $this->sessionCollector = $sessionCollector;
