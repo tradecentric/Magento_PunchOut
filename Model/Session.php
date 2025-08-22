@@ -90,12 +90,7 @@ class Session extends SessionManager implements SessionInterface
      * @var Session\SessionEditStatus
      */
     protected $editStatus;
-	
-    /**
-     * @var Magento\Customer\Api\CustomerRepositoryInterface
-     */
-    protected $customerRepository;
-	
+		
     /**
      * Session constructor.
      * @param \Magento\Framework\App\Request\Http $request
@@ -119,7 +114,6 @@ class Session extends SessionManager implements SessionInterface
      * @param PunchoutQuoteRepositoryInterface $punchoutQuoteRepository
      * @param PunchoutQuoteInterfaceFactory $punchoutQuoteInterfaceFactory
      * @param SessionStartChecker|null $sessionStartCheckerclear
-	 * @param \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository
      * @throws \Magento\Framework\Exception\SessionException
      */
     public function __construct(
@@ -143,8 +137,7 @@ class Session extends SessionManager implements SessionInterface
         Session\SessionEditStatus $editStatus,
         PunchoutQuoteRepositoryInterface $punchoutQuoteRepository,
         PunchoutQuoteInterfaceFactory $punchoutQuoteInterfaceFactory,
-        ?SessionStartChecker $sessionStartChecker = null,
-		\Magento\Customer\Api\CustomerRepositoryInterface $customerRepository
+        ?SessionStartChecker $sessionStartChecker = null
     ) {
         $this->logger = $logger;
         $this->sessionCollector = $sessionCollector;
@@ -156,8 +149,7 @@ class Session extends SessionManager implements SessionInterface
         $this->cartRepository = $cartRepository;
         $this->editStatus = $editStatus;
         $this->punchoutQuoteRepository = $punchoutQuoteRepository;
-        $this->punchoutQuoteInterfaceFactory = $punchoutQuoteInterfaceFactory;
-		$this->customerRepository = $customerRepository;
+        $this->punchoutQuoteInterfaceFactory = $punchoutQuoteInterfaceFactory
         parent::__construct(
             $request,
             $sidResolver,
@@ -203,29 +195,35 @@ class Session extends SessionManager implements SessionInterface
 		/** get customer addresses **/
 		if ($this->helper->isAddressToCart()) {
 			
+			// Get customer repository
+			$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+			$customerRepository = $objectManager->get(\Magento\Customer\Api\CustomerRepositoryInterface::class);
+			
 			$this->logger->log('Get Customer Addresses');	
 			$customerId = $this->customerSession->getCustomerId();
-			$customerAddresses = $this->customerRepository->getById($customerId)->getAddresses();
+			if ($customerId) {
+				$customerAddresses = customerRepository->getById($customerId)->getAddresses();
 		$this->logger->log('Customer Id: ' . $customerId);
 		$this->logger->log(print_r($customerAddresses, true));
-			
-			if ($customerAddresses) {
-				// update Shipping Address
-				$addressData = $this->getCustomerAddressData($customerAddresses, 'shipping');
-		$this->logger->log('Customer Shipping Data');
-		$this->logger->log(print_r($addressData, true));
-		$this->logger->log('Quote ID: ' . $quote->getId());
-				$address = $quote->getShippingAddress();
-		$this->logger->log('Quote Shipping Address');
-		$this->logger->log(print_r($address, true));
-				$address->addData($addressData);
 				
-				// update Billing Address
-				$addressData = $this->getCustomerAddressData($customerAddresses, 'billing');
-		$this->logger->log('Customer Billing Data');
-		$this->logger->log(print_r($addressData, true));
-				$address = $quote->getShippingAddress();
-				$address->addData($addressData);
+				if ($customerAddresses) {
+					// update Shipping Address
+					$addressData = $this->getCustomerAddressData($customerAddresses, 'shipping');
+			$this->logger->log('Customer Shipping Data');
+			$this->logger->log(print_r($addressData, true));
+			$this->logger->log('Quote ID: ' . $quote->getId());
+					$address = $quote->getShippingAddress();
+			$this->logger->log('Quote Shipping Address');
+			$this->logger->log(print_r($address, true));
+					$address->addData($addressData);
+					
+					// update Billing Address
+					$addressData = $this->getCustomerAddressData($customerAddresses, 'billing');
+			$this->logger->log('Customer Billing Data');
+			$this->logger->log(print_r($addressData, true));
+					$address = $quote->getShippingAddress();
+					$address->addData($addressData);
+				}
 			}
 		}
 		
