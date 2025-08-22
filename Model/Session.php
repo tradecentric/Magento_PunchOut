@@ -191,7 +191,8 @@ class Session extends SessionManager implements SessionInterface
         /** save magento quote */
         $this->checkoutSession->clearStorage();
         $quote = $this->initQuote()->setTotalsCollectedFlag(false)->collectTotals();
-		
+	$this->logger->log('Quote ID: ' . $quote->getId());
+	
 		/** get customer addresses **/
 		if ($this->helper->isAddressToCart()) {
 			
@@ -204,25 +205,31 @@ class Session extends SessionManager implements SessionInterface
 			if ($customerId) {
 				$customerAddresses = $customerRepository->getById($customerId)->getAddresses();
 		$this->logger->log('Customer Id: ' . $customerId);
-		$this->logger->log(print_r($customerAddresses, true));
-				
+
 				if ($customerAddresses) {
 					// update Shipping Address
 					$addressData = $this->getCustomerAddressData($customerAddresses, 'shipping');
 			$this->logger->log('Customer Shipping Data');
 			$this->logger->log(print_r($addressData, true));
-			$this->logger->log('Quote ID: ' . $quote->getId());
-					$address = $quote->getShippingAddress();
+
+					if (isArray($addressData)) {
+						$address = $quote->getShippingAddress();
 			$this->logger->log('Quote Shipping Address');
 			$this->logger->log(print_r($address, true));
-					$address->addData($addressData);
+						$address->addData($addressData);
+					}
 					
 					// update Billing Address
 					$addressData = $this->getCustomerAddressData($customerAddresses, 'billing');
 			$this->logger->log('Customer Billing Data');
 			$this->logger->log(print_r($addressData, true));
-					$address = $quote->getShippingAddress();
-					$address->addData($addressData);
+			
+					if (isArray($addressData)) {
+						$address = $quote->getBillingAddress();
+			$this->logger->log('Quote Billing Address');
+			$this->logger->log(print_r($address, true));						
+						$address->addData($addressData);
+					}
 				}
 			}
 		}
