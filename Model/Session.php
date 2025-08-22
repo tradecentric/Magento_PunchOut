@@ -212,7 +212,7 @@ class Session extends SessionManager implements SessionInterface
 			$this->logger->log('Customer Shipping Data');
 			$this->logger->log(print_r($addressData, true));
 
-					if (isArray($addressData)) {
+					if (is_array($addressData)) {
 						$address = $quote->getShippingAddress();
 			$this->logger->log('Quote Shipping Address');
 			$this->logger->log(print_r($address, true));
@@ -224,7 +224,7 @@ class Session extends SessionManager implements SessionInterface
 			$this->logger->log('Customer Billing Data');
 			$this->logger->log(print_r($addressData, true));
 			
-					if (isArray($addressData)) {
+					if (is_array($addressData)) {
 						$address = $quote->getBillingAddress();
 			$this->logger->log('Quote Billing Address');
 			$this->logger->log(print_r($address, true));						
