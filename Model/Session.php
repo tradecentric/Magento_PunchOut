@@ -202,7 +202,7 @@ class Session extends SessionManager implements SessionInterface
 			$this->logger->log('Get Customer Addresses');	
 			$customerId = $this->customerSession->getCustomerId();
 			if ($customerId) {
-				$customerAddresses = customerRepository->getById($customerId)->getAddresses();
+				$customerAddresses = $customerRepository->getById($customerId)->getAddresses();
 		$this->logger->log('Customer Id: ' . $customerId);
 		$this->logger->log(print_r($customerAddresses, true));
 				
