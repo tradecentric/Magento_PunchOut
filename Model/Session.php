@@ -196,21 +196,24 @@ class Session extends SessionManager implements SessionInterface
 		if ($this->helper->isAddressToCart()) {
 			
 			$this->logger->log('Get Customer Addresses');			
-			$customer = $this->customerSession->getCustomer();
-			$this->logger->log('Customer Data');
-			$this->logger->log(print_r(var_dump($customer), true));			
-			
-			$customerAddresses = $customer->
+			$customerAddresses = $this->customerSession->getCustomer();
 			$this->logger->log(print_r($customerAddresses, true));
 			
 			if ($customerAddresses) {
 				// update Shipping Address
-				$addressData = $this->getCustomerAddressData($customerAddresses, 'shipping');	
+				$addressData = $this->getCustomerAddressData($customerAddresses, 'shipping');
+		$this->logger->log('Customer Shipping Data');
+		$this->logger->log(print_r($addressData, true));
+		$this->logger->log('Quote ID: ' . $quote->getId());
 				$address = $quote->getShippingAddress();
+		$this->logger->log('Quote Shipping Address');
+		$this->logger->log(print_r($address, true));
 				$address->addData($addressData);
 				
 				// update Billing Address
-				$addressData = $this->getCustomerAddressData($customerAddresses, 'billing');	
+				$addressData = $this->getCustomerAddressData($customerAddresses, 'billing');
+		$this->logger->log('Customer Billing Data');
+		$this->logger->log(print_r($addressData, true));
 				$address = $quote->getShippingAddress();
 				$address->addData($addressData);
 			}
