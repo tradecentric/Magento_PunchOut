@@ -144,7 +144,7 @@ class Session extends SessionManager implements SessionInterface
         CartRepositoryInterface $cartRepository,
         Session\SessionEditStatus $editStatus,
         PunchoutQuoteRepositoryInterface $punchoutQuoteRepository,
-		CustomerRepository $customerRepository
+		CustomerRepository $customerRepository,
         PunchoutQuoteInterfaceFactory $punchoutQuoteInterfaceFactory,
         ?SessionStartChecker $sessionStartChecker = null
     ) {
