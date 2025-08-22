@@ -149,7 +149,7 @@ class Session extends SessionManager implements SessionInterface
         $this->cartRepository = $cartRepository;
         $this->editStatus = $editStatus;
         $this->punchoutQuoteRepository = $punchoutQuoteRepository;
-        $this->punchoutQuoteInterfaceFactory = $punchoutQuoteInterfaceFactory
+        $this->punchoutQuoteInterfaceFactory = $punchoutQuoteInterfaceFactory;
         parent::__construct(
             $request,
             $sidResolver,
