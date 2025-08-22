@@ -196,7 +196,7 @@ class Session extends SessionManager implements SessionInterface
 		if ($this->helper->isAddressToCart()) {
 			
 			$this->logger->log('Get Customer Addresses');			
-			$customerAddresses = $this->customerSession->getCustomer();
+			$customerAddresses = $this->customerSession->getCustomer()->getAddresses();
 			$this->logger->log(print_r($customerAddresses, true));
 			
 			if ($customerAddresses) {
