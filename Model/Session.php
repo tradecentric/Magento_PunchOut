@@ -192,50 +192,35 @@ class Session extends SessionManager implements SessionInterface
         $this->checkoutSession->clearStorage();
         $quote = $this->initQuote()->setTotalsCollectedFlag(false)->collectTotals();
     
-        /** get customer addresses 
-   //     if ($this->helper->isMageAddressToCart()) {
-            
-            // Get customer repository
-    //      $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-    //      $customerRepository = $objectManager->get(\Magento\Customer\Api\CustomerRepositoryInterface::class);
+        /** get customer addresses **/
+        if ($this->helper->isMageAddressToCart()) {           
             
             $this->logger->log('Get Customer Addresses');   
             $customerId = $this->customerSession->getCustomerId();
-   //         if ($customerId) {
-   //             $customerAddresses = $customerRepository->getById($customerId)->getAddresses();
-        $this->logger->log('Customer Id: ' . $customerId);
-
- //               if ($customerAddresses) {
- //                   // update Shipping Address
- //                   $addressData = $this->getCustomerAddressData($customerAddresses, 'shipping');
- //           $this->logger->log('Customer Shipping Data');
- //           $this->logger->log(print_r($addressData, true));
-
-  //                  if (is_array($addressData)) {
-  //                      $address = $quote->getShippingAddress();
-  //          $this->logger->log('Quote Shipping Address');
-  //          $this->logger->log(print_r($addressData, true));
-  //                      $address->addData($addressData);
-  //                  }
-                    
-                    // update Billing Address
-  //                  $addressData = $this->getCustomerAddressData($customerAddresses, 'billing');
-  //          $this->logger->log('Customer Billing Data');
-  //          $this->logger->log(print_r($addressData, true));
-            
-  //                  if (is_array($addressData)) {
-  //                      $address = $quote->getBillingAddress();
-  //          $this->logger->log('Quote Billing Address');
-  //          $this->logger->log(print_r($address, true));                        
-  //                      $address->addData($addressData);
-  //                  }
-  //              }
-  //          }
-  //      }**/
+	$this->logger->log('Customer Id: ' . $customerId);
+            if ($customerId) {
+	            // Get customer repository
+				$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+				$customerRepository = $objectManager->get(\Magento\Customer\Api\CustomerRepositoryInterface::class);
+                $customerAddresses = $customerRepository->getById($customerId)->getAddresses();
+        
+				foreach ($customerAddresses as $customerAddress) {
+					if ($customerAddress->isDefaultShipping() && $type === 'shipping') {
+						$this->logger->log('Customer Shipping Addresses'); 
+						$this->updateQuoteAddressFromCustomerAddress($quote, $customerId, $customerAddress->getId());
+					}
+				
+					if ($customerAddress->isDefaultShipping() && $type === 'shipping') {
+						$this->logger->log('Customer Billing Addresses'); 
+						$this->updateQuoteAddressFromCustomerAddress($quote, $customerId, $customerAddress->getId(), 'billing');
+					}
+				}
+			}   
+  
+        }
     
     
         $container->setQuote($quote);
-    $this->logger->log('session.quote->getId() before: '. $quote->getId());
         
         $this->cartRepository->save($quote);
     $this->logger->log('session.quote->getId() after: '. $quote->getId());
