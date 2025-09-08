@@ -458,7 +458,6 @@ class Session extends SessionManager implements SessionInterface
 
         $quote->collectTotals()->save();
     }
-}
 
     /**
      * clear quote
