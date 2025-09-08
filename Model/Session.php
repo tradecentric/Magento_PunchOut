@@ -272,11 +272,12 @@ class Session extends SessionManager implements SessionInterface
             $quote->setIsActive(false);
             $this->cartRepository->save($quote);
             $this->checkoutSession->clearStorage();
-            return $this->initQuote();
 	$this->logger->log('initQuote - Quote ID: ' . $quote->getId());
+            return $this->initQuote();
         }
 
         $quote->setIsActive(true);
+	$this->logger->log('initQuote2 - Quote ID: ' . $quote->getId());
         return $quote;
     }
 
