@@ -232,12 +232,13 @@ class Session extends SessionManager implements SessionInterface
 				}
 			}
 		}**/
-		
+	$this->logger->log('session.quote->getId() before: '. $quote->getId());
+	
         $container->setQuote($quote);
         $this->cartRepository->save($quote);
 
         /** save punchout quote */
-	$this->logger->log('session.quote->getId(): '. $quote->getId());
+	$this->logger->log('session.quote->getId() after: '. $quote->getId());
         $punchoutQuote = $container->getSession()->setQuoteId((int)$quote->getId());
         $this->punchoutQuoteRepository->save($punchoutQuote);
         $this->logger->log('Collect Totals, cart save Complete');
@@ -273,12 +274,9 @@ class Session extends SessionManager implements SessionInterface
             $quote->setIsActive(false);
             $this->cartRepository->save($quote);
             $this->checkoutSession->clearStorage();
-	$this->logger->log('session.initQuote - Quote ID: ' . $quote->getQuoteId());
             return $this->initQuote();
         }
-
         $quote->setIsActive(true);
-	$this->logger->log('session.initQuote2 - Quote ID: ' . $quote->getQuoteId());
         return $quote;
     }
 
