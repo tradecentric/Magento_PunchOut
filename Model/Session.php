@@ -191,7 +191,6 @@ class Session extends SessionManager implements SessionInterface
         /** save magento quote */
         $this->checkoutSession->clearStorage();
         $quote = $this->initQuote()->setTotalsCollectedFlag(false)->collectTotals();
-	$this->logger->log('Quote ID: ' . $quote->getId());
 	
 		/** get customer addresses **/
 		if ($this->helper->isAddressToCart()) {
@@ -274,6 +273,7 @@ class Session extends SessionManager implements SessionInterface
             $this->cartRepository->save($quote);
             $this->checkoutSession->clearStorage();
             return $this->initQuote();
+	$this->logger->log('initQuote - Quote ID: ' . $quote->getId());
         }
 
         $quote->setIsActive(true);
