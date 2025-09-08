@@ -93,6 +93,7 @@ class QuoteHandler implements EntityHandlerInterface
             }
             $object->getQuote()->addProduct($product, $infoBuyRequest);
         }
+		$this->logger->log(sprintf("handle() - quote data quite_id %s : customer_id %s ", $object->getQuote()->getId(), $object->getCustomer()->getId()));
         $this->logger->log('Quote Setup Complete');
     }
 
