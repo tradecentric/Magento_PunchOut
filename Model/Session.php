@@ -193,7 +193,7 @@ class Session extends SessionManager implements SessionInterface
         $quote = $this->initQuote()->setTotalsCollectedFlag(false)->collectTotals();
     
         /** get customer addresses 
-        if ($this->helper->isMageAddressToCart()) {
+   //     if ($this->helper->isMageAddressToCart()) {
             
             // Get customer repository
     //      $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
@@ -201,37 +201,37 @@ class Session extends SessionManager implements SessionInterface
             
             $this->logger->log('Get Customer Addresses');   
             $customerId = $this->customerSession->getCustomerId();
-            if ($customerId) {
-                $customerAddresses = $customerRepository->getById($customerId)->getAddresses();
+   //         if ($customerId) {
+   //             $customerAddresses = $customerRepository->getById($customerId)->getAddresses();
         $this->logger->log('Customer Id: ' . $customerId);
 
-                if ($customerAddresses) {
-                    // update Shipping Address
-                    $addressData = $this->getCustomerAddressData($customerAddresses, 'shipping');
-            $this->logger->log('Customer Shipping Data');
-            $this->logger->log(print_r($addressData, true));
+ //               if ($customerAddresses) {
+ //                   // update Shipping Address
+ //                   $addressData = $this->getCustomerAddressData($customerAddresses, 'shipping');
+ //           $this->logger->log('Customer Shipping Data');
+ //           $this->logger->log(print_r($addressData, true));
 
-                    if (is_array($addressData)) {
-                        $address = $quote->getShippingAddress();
-            $this->logger->log('Quote Shipping Address');
-            $this->logger->log(print_r($address, true));
-                        $address->addData($addressData);
-                    }
+  //                  if (is_array($addressData)) {
+  //                      $address = $quote->getShippingAddress();
+  //          $this->logger->log('Quote Shipping Address');
+  //          $this->logger->log(print_r($addressData, true));
+  //                      $address->addData($addressData);
+  //                  }
                     
                     // update Billing Address
-                    $addressData = $this->getCustomerAddressData($customerAddresses, 'billing');
-            $this->logger->log('Customer Billing Data');
-            $this->logger->log(print_r($addressData, true));
+  //                  $addressData = $this->getCustomerAddressData($customerAddresses, 'billing');
+  //          $this->logger->log('Customer Billing Data');
+  //          $this->logger->log(print_r($addressData, true));
             
-                    if (is_array($addressData)) {
-                        $address = $quote->getBillingAddress();
-            $this->logger->log('Quote Billing Address');
-            $this->logger->log(print_r($address, true));                        
-                        $address->addData($addressData);
-                    }
-                }
-            }
-        }**/
+  //                  if (is_array($addressData)) {
+  //                      $address = $quote->getBillingAddress();
+  //          $this->logger->log('Quote Billing Address');
+  //          $this->logger->log(print_r($address, true));                        
+  //                      $address->addData($addressData);
+  //                  }
+  //              }
+  //          }
+  //      }**/
     
     
         $container->setQuote($quote);
