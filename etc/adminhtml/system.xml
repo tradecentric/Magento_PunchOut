@@ -128,6 +128,13 @@
                     <label>Attach ShipTo to Cart</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="mage_allow_customer_update" translate="label" type="select" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Assign Magento Customer to Cart</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="address_to_cart">0</field>
+                    </depends>
+                </field>
                 <field id="preinsert_customer_attribute_map" translate="label" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="0">
                     <label>Map New Customer Values</label>
                     <frontend_model>Punchout2Go\Punchout\Block\Adminhtml\Form\Field\Keyvalue</frontend_model>
