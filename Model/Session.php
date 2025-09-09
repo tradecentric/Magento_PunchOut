@@ -428,7 +428,7 @@ class Session extends SessionManager implements SessionInterface
             ? $quote->getBillingAddress()
             : $quote->getShippingAddress();
 
-        $this->customerAddressConverter->importCustomerAddressData($quoteAddress, $customerAddress);
+        $this->customerAddressConverter->importCustomerAddressData($customerAddress);
 
         if ($type === 'shipping') {
             $quoteAddress->setCollectShippingRates(true);
