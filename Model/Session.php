@@ -373,7 +373,7 @@ class Session extends SessionManager implements SessionInterface
      * @param string $type 'shipping' or 'billing'
      * @return int|null
      */
-    private function getDefaultCustomerAddressId(string $type = 'shipping'): ?int
+    private function getDefaultCustomerAddressId(string $type = 'shipping')
     {
         $customer = $this->customerSession->getCustomer();
         if (!$customer || !$customer->getId()) {
