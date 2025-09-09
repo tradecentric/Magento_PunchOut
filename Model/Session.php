@@ -411,7 +411,7 @@ class Session extends SessionManager implements SessionInterface
 				$quoteAddress->setCollectShippingRates(true);
 			}
 
-			$quote->assignAddress($customerAddress, false);
+	//		$quoteAddress->assignAddress($customerAddress, false);
 			$quote->collectTotals()->save();
 		}
     }
