@@ -208,19 +208,44 @@ class Session extends SessionManager implements SessionInterface
         if ($this->helper->isAddressToCart() && $this->helper->isMageAddressToCart()) {
             $this->logger->log('Get Customer Addresses');  
             
-            $shippingAddress = $this->getDefaultCustomerAddressId('shipping');
-            $billingAddress = $this->getDefaultCustomerAddressId('billing');
-            $customerId = $this->customerSession->getCustomerId();  
-	$this->logger->log('Customer Id: ' . $customerId);
+//            $shippingAddress = $this->getDefaultCustomerAddressId('shipping');
+//            $billingAddress = $this->getDefaultCustomerAddressId('billing');
+//            $customerId = $this->customerSession->getCustomerId(); 
+			$customer = $this->customerSession->getCustomer();
+
+			$defaultShippingAddress = $this->addressRepository->getById($customer->getDefaultShipping());
+			$defaultBillingAddress = $this->addressRepository->getById($customer->getDefaultBilling());
 	
-            if ($shippingAddress) {
-                $this->logger->log('Customer Shipping Address');
-                $this->updateQuoteAddressFromCustomerAddress($quote, $customerId, $shippingAddress, 'shipping');
+            if ($defaultShippingAddress) {
+                $this->logger->log('Customer Default Shipping Address' . $defaultShippingAddress->getCity());
+  //             $this->updateQuoteAddressFromCustomerAddress($quote, $defaultshippingAddress, 'shipping');
+			}
+   
+		   if ($defaultBillingAddress) {
+               $this->logger->log('Customer Billing Address' .  . $defaultBillingAddress->getCity());
+  //             $this->updateQuoteAddressFromCustomerAddress($quote, $defaultBillingAddress, 'billing');
+            }
+			
+  // 		if ($customerAddress) {
+//			$quoteAddress = ($type === 'billing')
+//				? $quote->getBillingAddress()
+//				: $quote->getShippingAddress();
+
+//			$this->customerAddressConverter->importCustomerAddressData($customerAddress);
+
+//			if ($type === 'shipping') {
+//				$quoteAddress->setCollectShippingRates(true);
+//			}
+
+			$quote->collectTotals()->save();
+		}
+
+   
             }
 
             if ($billingAddress) {
                 $this->logger->log('Customer Billing Address');
-                $this->updateQuoteAddressFromCustomerAddress($quote, $customerId, $billingAddress, 'billing');
+   //             $this->updateQuoteAddressFromCustomerAddress($quote, $billingAddress, 'billing');
             }
         }
     
@@ -373,7 +398,7 @@ class Session extends SessionManager implements SessionInterface
      *
      * @param string $type 'shipping' or 'billing'
      * @return int|null
-     */
+    
     private function getDefaultCustomerAddressId(string $type = 'shipping')
     {
         $customer = $this->customerSession->getCustomer();
@@ -383,7 +408,7 @@ class Session extends SessionManager implements SessionInterface
 
 		if ($type === 'shipping') {
 			$defaultShippingAddress = $this->addressRepository->getById($customer->getDefaultShipping());
-//	$this->logger->log($defaultShippingAddress, true);
+	$this->logger->log($defaultShippingAddress);
 			return $defaultShippingAddress;
 		} else if ($type === 'billing') {
 			$defaultBillingAddress = $this->addressRepository->getById($customer->getDefaultBilling());
@@ -402,7 +427,7 @@ class Session extends SessionManager implements SessionInterface
    //     }
 
         return null;
-    }
+    } */
 
     /**
      * Update quote address from a given customer address
@@ -414,27 +439,26 @@ class Session extends SessionManager implements SessionInterface
      * @return void
      * @throws LocalizedException
      */
-    public function updateQuoteAddressFromCustomerAddress(CartInterface $quote, $customerId, $customerAddress, $type = 'shipping')
+    public function updateQuoteAddressFromCustomerAddress(CartInterface $quote, $customerAddress, $type = 'shipping')
     {
- //       $quote = $this->checkoutSession->getQuote();
 
- //       $customerAddress = $this->addressRepository->getById($addressId);
-		
- //       if ($customerAddress->getCustomerId() != $customerId) {
- //           throw new LocalizedException(__('Invalid address.'));
- //       }
+		if ($customerAddress) {
+			$quoteAddress = ($type === 'billing')
+				? $quote->getBillingAddress()
+				: $quote->getShippingAddress();
 
-        $quoteAddress = ($type === 'billing')
-            ? $quote->getBillingAddress()
-            : $quote->getShippingAddress();
+	//		$this->customerAddressConverter->importCustomerAddressData($customerAddress);
+			$quoteAddress->importCustomerAddressData($customerAddress);
 
-        $this->customerAddressConverter->importCustomerAddressData($customerAddress);
+			if ($type === 'shipping') {
+				$quoteAddress->setCollectShippingRates(true);
+			} else {
+				$quoteAddress->assignAddress($billingAddress);
+			}
 
-        if ($type === 'shipping') {
-            $quoteAddress->setCollectShippingRates(true);
-        }
-
-        $quote->collectTotals()->save();
+			$quoteAddress->assignAddress($billingAddress);
+			$quote->collectTotals()->save();
+		}
     }
 
     /**
