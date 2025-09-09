@@ -222,7 +222,7 @@ class Session extends SessionManager implements SessionInterface
 			}
    
 		   if ($defaultBillingAddress) {
-               $this->logger->log('Customer Billing Address' .  . $defaultBillingAddress->getCity());
+               $this->logger->log('Customer Billing Address' . $defaultBillingAddress->getCity());
   //             $this->updateQuoteAddressFromCustomerAddress($quote, $defaultBillingAddress, 'billing');
             }
 			
