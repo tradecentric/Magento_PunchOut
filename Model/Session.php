@@ -239,15 +239,6 @@ class Session extends SessionManager implements SessionInterface
 
 			$quote->collectTotals()->save();
 		}
-
-   
-            }
-
-            if ($billingAddress) {
-                $this->logger->log('Customer Billing Address');
-   //             $this->updateQuoteAddressFromCustomerAddress($quote, $billingAddress, 'billing');
-            }
-        }
     
         $container->setQuote($quote);
         $this->cartRepository->save($quote);
