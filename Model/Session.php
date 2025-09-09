@@ -387,42 +387,6 @@ class Session extends SessionManager implements SessionInterface
     }
 
     /**
-     * Get default customer address ID
-     *
-     * @param string $type 'shipping' or 'billing'
-     * @return int|null
-    
-    private function getDefaultCustomerAddressId(string $type = 'shipping')
-    {
-        $customer = $this->customerSession->getCustomer();
-        if (!$customer || !$customer->getId()) {
-            return null;
-        }
-
-		if ($type === 'shipping') {
-			$defaultShippingAddress = $this->addressRepository->getById($customer->getDefaultShipping());
-	$this->logger->log($defaultShippingAddress);
-			return $defaultShippingAddress;
-		} else if ($type === 'billing') {
-			$defaultBillingAddress = $this->addressRepository->getById($customer->getDefaultBilling());
-//	$this->logger->log($defaultShippingAddress, true);
-			return $defaultBillingAddress;
-		}
-		
-    //    foreach ($customer->getAddresses() as $address) {
-//	$this->logger->log(print_r($address, true));
-   //         if ($type === 'shipping' && $address->isDefaultShipping()) {
-                return (int)$address->getId();
-   //         }
-   //         if ($type === 'billing' && $address->isDefaultBilling()) {
-   //             return (int)$address->getId();
-   //         }
-   //     }
-
-        return null;
-    } */
-
-    /**
      * Update quote address from a given customer address
      *
      * @param CartInterface $quote
@@ -440,16 +404,14 @@ class Session extends SessionManager implements SessionInterface
 				? $quote->getBillingAddress()
 				: $quote->getShippingAddress();
 
-	//		$this->customerAddressConverter->importCustomerAddressData($customerAddress);
-	//		$quoteAddress->importCustomerAddressData($customerAddress);
+			$this->customerAddressConverter->importCustomerAddressData($customerAddress);
+			$quoteAddress->importCustomerAddressData($customerAddress);
 
 			if ($type === 'shipping') {
 				$quoteAddress->setCollectShippingRates(true);
-			} else {
-				$quoteAddress->assignAddress($billingAddress);
 			}
 
-			$quoteAddress->assignAddress($billingAddress);
+			$quote->assignAddress($customerAddress, false);
 			$quote->collectTotals()->save();
 		}
     }
