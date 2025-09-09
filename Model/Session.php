@@ -119,6 +119,8 @@ class Session extends SessionManager implements SessionInterface
      * @param SessionContainerInterfaceFactory $containerFactory
      * @param CartRepositoryInterface $cartRepository
      * @param Session\SessionEditStatus $editStatus
+	 * @param AddressRepositoryInterface $addressRepository
+	 * @param CustomerAddressConverter $customerAddressConverter
      * @param PunchoutQuoteRepositoryInterface $punchoutQuoteRepository
      * @param PunchoutQuoteInterfaceFactory $punchoutQuoteInterfaceFactory
      * @param SessionStartChecker|null $sessionStartCheckerclear
