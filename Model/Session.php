@@ -383,13 +383,16 @@ $this->logger->log('Customer billing Addresse: ' . $billingAddressId );
             return null;
         }
 
+		$defaultShippingAddress = $this->addressRepository->getById($customer->getDefaultShipping());
+		
         foreach ($customer->getAddresses() as $address) {
-            if ($type === 'shipping' && $address->isDefaultShipping()) {
-                return (int)$address->getId();
-            }
-            if ($type === 'billing' && $address->isDefaultBilling()) {
-                return (int)$address->getId();
-            }
+	$this->logger->log(print_r($address, true));
+   //         if ($type === 'shipping' && $address->isDefaultShipping()) {
+   //             return (int)$address->getId();
+   //         }
+   //         if ($type === 'billing' && $address->isDefaultBilling()) {
+   //             return (int)$address->getId();
+   //         }
         }
 
         return null;
@@ -410,6 +413,7 @@ $this->logger->log('Customer billing Addresse: ' . $billingAddressId );
  //       $quote = $this->checkoutSession->getQuote();
 
         $customerAddress = $this->addressRepository->getById($addressId);
+		
         if ($customerAddress->getCustomerId() != $customerId) {
             throw new LocalizedException(__('Invalid address.'));
         }
