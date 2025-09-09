@@ -386,9 +386,9 @@ $this->logger->log('Customer billing Addresse: ' . $billingAddressId );
 		$defaultShippingAddress = $this->addressRepository->getById($customer->getDefaultShipping());
 		
         foreach ($customer->getAddresses() as $address) {
-	$this->logger->log(print_r($address, true));
+//	$this->logger->log(print_r($address, true));
    //         if ($type === 'shipping' && $address->isDefaultShipping()) {
-   //             return (int)$address->getId();
+                return (int)$address->getId();
    //         }
    //         if ($type === 'billing' && $address->isDefaultBilling()) {
    //             return (int)$address->getId();
