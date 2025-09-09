@@ -211,10 +211,11 @@ class Session extends SessionManager implements SessionInterface
             $shippingAddress = $this->getDefaultCustomerAddressId('shipping');
             $billingAddress = $this->getDefaultCustomerAddressId('billing');
             $customerId = $this->customerSession->getCustomerId();  
-
+	$this->logger->log('Customer Id: ' . $customerId);
+	
             if ($shippingAddress) {
                 $this->logger->log('Customer Shipping Address');
-                $this->updateQuoteAddressFromCustomerAddress($quote, $customerId, $shippingAddress);
+                $this->updateQuoteAddressFromCustomerAddress($quote, $customerId, $shippingAddress, 'shipping');
             }
 
             if ($billingAddress) {
@@ -413,15 +414,15 @@ class Session extends SessionManager implements SessionInterface
      * @return void
      * @throws LocalizedException
      */
-    public function updateQuoteAddressFromCustomerAddress(CartInterface $quote, $customerId, $addressId, $type = 'shipping')
+    public function updateQuoteAddressFromCustomerAddress(CartInterface $quote, $customerId, $customerAddress, $type = 'shipping')
     {
  //       $quote = $this->checkoutSession->getQuote();
 
-        $customerAddress = $this->addressRepository->getById($addressId);
+ //       $customerAddress = $this->addressRepository->getById($addressId);
 		
-        if ($customerAddress->getCustomerId() != $customerId) {
-            throw new LocalizedException(__('Invalid address.'));
-        }
+ //       if ($customerAddress->getCustomerId() != $customerId) {
+ //           throw new LocalizedException(__('Invalid address.'));
+ //       }
 
         $quoteAddress = ($type === 'billing')
             ? $quote->getBillingAddress()
