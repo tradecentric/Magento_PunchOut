@@ -205,12 +205,12 @@ class Session extends SessionManager implements SessionInterface
                 $customerAddresses = $customerRepository->getById($customerId)->getAddresses();
         
 				foreach ($customerAddresses as $customerAddress) {
-					if ($customerAddress->isDefaultShipping() && $type === 'shipping') {
+					if ($customerAddress->isDefaultShipping()) {
 						$this->logger->log('Customer Shipping Addresses'); 
 						$this->updateQuoteAddressFromCustomerAddress($quote, $customerId, $customerAddress->getId());
 					}
 				
-					if ($customerAddress->isDefaultShipping() && $type === 'shipping') {
+					if ($customerAddress->isDefaultBilling()) {
 						$this->logger->log('Customer Billing Addresses'); 
 						$this->updateQuoteAddressFromCustomerAddress($quote, $customerId, $customerAddress->getId(), 'billing');
 					}
