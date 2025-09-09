@@ -220,7 +220,7 @@ class Session extends SessionManager implements SessionInterface
 	
             if ($defaultShippingAddress) {
                 $this->logger->log('Customer Default Shipping Address' . $defaultShippingAddress->getCity());
-               $this->updateQuoteAddressFromCustomerAddress($quote, $defaultshippingAddress, 'shipping');
+               $this->updateQuoteAddressFromCustomerAddress($quote, $defaultShippingAddress, 'shipping');
 			}
    
 		   if ($defaultBillingAddress) {
