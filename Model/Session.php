@@ -18,6 +18,8 @@ use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
+use Magento\Customer\Api\AddressRepositoryInterface;
+use Magento\Quote\Model\Customer\Address as CustomerAddressConverter;
 use Punchout2Go\Punchout\Api\Data\PunchoutQuoteInterface;
 use Punchout2Go\Punchout\Api\Data\PunchoutQuoteInterfaceFactory;
 use Punchout2Go\Punchout\Api\PunchoutQuoteRepositoryInterface;
@@ -70,6 +72,12 @@ class Session extends SessionManager implements SessionInterface
      * @var CartRepositoryInterface
      */
     protected $cartRepository;
+	
+    /** @var AddressRepositoryInterface */
+    protected $addressRepository;
+
+    /** @var CustomerAddressConverter */
+    protected $customerAddressConverter;	
 
     /**
      * @var PunchoutQuoteRepositoryInterface
@@ -135,6 +143,8 @@ class Session extends SessionManager implements SessionInterface
         SessionContainerInterfaceFactory $containerFactory,
         CartRepositoryInterface $cartRepository,
         Session\SessionEditStatus $editStatus,
+		AddressRepositoryInterface $addressRepository,
+        CustomerAddressConverter $customerAddressConverter,
         PunchoutQuoteRepositoryInterface $punchoutQuoteRepository,
         PunchoutQuoteInterfaceFactory $punchoutQuoteInterfaceFactory,
         ?SessionStartChecker $sessionStartChecker = null
@@ -148,6 +158,8 @@ class Session extends SessionManager implements SessionInterface
         $this->containerFactory = $containerFactory;
         $this->cartRepository = $cartRepository;
         $this->editStatus = $editStatus;
+		$this->addressRepository = $addressRepository;
+        $this->customerAddressConverter = $customerAddressConverter;
         $this->punchoutQuoteRepository = $punchoutQuoteRepository;
         $this->punchoutQuoteInterfaceFactory = $punchoutQuoteInterfaceFactory;
         parent::__construct(
@@ -192,36 +204,28 @@ class Session extends SessionManager implements SessionInterface
         $this->checkoutSession->clearStorage();
         $quote = $this->initQuote()->setTotalsCollectedFlag(false)->collectTotals();
     
-        /** get customer addresses **/
-        if ($this->helper->isMageAddressToCart()) {           
-            
-            $this->logger->log('Get Customer Addresses');   
-            $customerId = $this->customerSession->getCustomerId();
-	$this->logger->log('Customer Id: ' . $customerId);
-            if ($customerId) {
-	            // Get customer repository
-				$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-				$customerRepository = $objectManager->get(\Magento\Customer\Api\CustomerRepositoryInterface::class);
-                $customerAddresses = $customerRepository->getById($customerId)->getAddresses();
-        
-				foreach ($customerAddresses as $customerAddress) {
-					if ($customerAddress->isDefaultShipping()) {
-						$this->logger->log('Customer Shipping Addresses'); 
-						$this->updateQuoteAddressFromCustomerAddress($quote, $customerId, $customerAddress->getId());
-					}
-				
-					if ($customerAddress->isDefaultBilling()) {
-						$this->logger->log('Customer Billing Addresses'); 
-						$this->updateQuoteAddressFromCustomerAddress($quote, $customerId, $customerAddress->getId(), 'billing');
-					}
-				}
-			}   
-  
-        }
-    
+		/** get customer addresses **/
+		if ($this->helper->isMageAddressToCart()) {
+			$this->logger->log('Get Customer Addresses');  
+			$shippingAddressId = $this->getDefaultCustomerAddressId('shipping');
+			$billingAddressId = $this->getDefaultCustomerAddressId('billing');
+			$customerId = $this->customerSession->getCustomerId();
+			
+$this->logger->log('Customer shipping Addresse: ' . $shippingAddressId);  
+$this->logger->log('Customer billing Addresse: ' . $billingAddressId );  
+
+			if ($shippingAddressId) {
+				$this->logger->log('Customer Shipping Address');
+				$this->updateQuoteAddressFromCustomerAddress($quote, $customerId, $shippingAddressId);
+			}
+
+			if ($billingAddressId) {
+				$this->logger->log('Customer Billing Address');
+				$this->updateQuoteAddressFromCustomerAddress($quote, $customerId, $billingAddressId, 'billing');
+			}
+		}
     
         $container->setQuote($quote);
-        
         $this->cartRepository->save($quote);
     $this->logger->log('session.quote->getId() after: '. $quote->getId());
 
@@ -365,52 +369,30 @@ class Session extends SessionManager implements SessionInterface
         }
     }
 
-    /**
-     * @param array $cuatomerId
-     * @param string $type 
-     * return $addressData array     
-     
-    private function getCustomerAddressData($customerAddresses, $type = 'shipping')
-    {
-        $addressData = "";
-        // get Customer Shipping Address Data
-        foreach ($customerAddresses as $customerAddress) {
-            if ($customerAddress->isDefaultShipping() && $type === 'shipping') {            
-                // Get Customer Shipping Address data
-                $addressData = [
-                    'addtress_type' => 'shipping',
-                    'same_as_billing' => 0,
-                    'address_id'=> $customerAddress->getId(),
-                    'firstname' => $customerAddress->getFirstName(),
-                    'middlename'=> $customerAddress->getMiddleName(),
-                    'lastname'  => $customerAddress->getLastname(),
-                    'prefix'    => $customerAddress->getPrefix(),
-                    'suffix'    => $customerAddress->getSuffix(),
-                    'company'   => $customerAddress->getCompany(),
-                    'street'    => $customerAddress->getStreet(),
-                    'city'      => $customerAddress->getCity(),
-                    'telephone' => $customerAddress->getTelephone()
-                ];
-            } else if ($customerAddress->isDefaultBilling() && $type === 'billing') {
-                // Get Customer Billing Address data
-                $addressData = [
-                    'addtress_type' => 'billing',
-                    'address_id'=> $customerAddress->getId(),
-                    'firstname' => $customerAddress->getFirstName(),
-                    'middlename'=> $customerAddress->getMiddleName(),
-                    'lastname'  => $customerAddress->getLastname(),
-                    'prefix'    => $customerAddress->getPrefix(),
-                    'suffix'    => $customerAddress->getSuffix(),
-                    'company'   => $customerAddress->getCompany(),
-                    'street'    => $customerAddress->getStreet(),
-                    'city'      => $customerAddress->getCity(),
-                    'telephone' => $customerAddress->getTelephone()
-                ];
-            }
-        }   
-        
-        return $addressData;
-    }*/
+	/**
+	 * Get default customer address ID
+	 *
+	 * @param string $type 'shipping' or 'billing'
+	 * @return int|null
+	 */
+	private function getDefaultCustomerAddressId(string $type): ?int
+	{
+		$customer = $this->customerSession->getCustomer();
+		if (!$customer || !$customer->getId()) {
+			return null;
+		}
+
+		foreach ($customer->getAddresses() as $address) {
+			if ($type === 'shipping' && $address->isDefaultShipping()) {
+				return (int)$address->getId();
+			}
+			if ($type === 'billing' && $address->isDefaultBilling()) {
+				return (int)$address->getId();
+			}
+		}
+
+		return null;
+	}
 
     /**
      * Update quote address from a given customer address
