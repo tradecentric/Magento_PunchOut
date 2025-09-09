@@ -220,12 +220,12 @@ class Session extends SessionManager implements SessionInterface
 	
             if ($defaultShippingAddress) {
                 $this->logger->log('Customer Default Shipping Address' . $defaultShippingAddress->getCity());
-  //             $this->updateQuoteAddressFromCustomerAddress($quote, $defaultshippingAddress, 'shipping');
+               $this->updateQuoteAddressFromCustomerAddress($quote, $defaultshippingAddress, 'shipping');
 			}
    
 		   if ($defaultBillingAddress) {
                $this->logger->log('Customer Billing Address' . $defaultBillingAddress->getCity());
-  //             $this->updateQuoteAddressFromCustomerAddress($quote, $defaultBillingAddress, 'billing');
+               $this->updateQuoteAddressFromCustomerAddress($quote, $defaultBillingAddress, 'billing');
             }
 			
   // 		if ($customerAddress) {
@@ -441,7 +441,7 @@ class Session extends SessionManager implements SessionInterface
 				: $quote->getShippingAddress();
 
 	//		$this->customerAddressConverter->importCustomerAddressData($customerAddress);
-			$quoteAddress->importCustomerAddressData($customerAddress);
+	//		$quoteAddress->importCustomerAddressData($customerAddress);
 
 			if ($type === 'shipping') {
 				$quoteAddress->setCollectShippingRates(true);
