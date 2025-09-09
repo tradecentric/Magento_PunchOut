@@ -19,7 +19,7 @@ use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Customer\Api\AddressRepositoryInterface;
-use Magento\Quote\Model\Customer\Address as CustomerAddressConverter;
+use Magento\Quote\Model\Quote\Address; as CustomerAddressConverter;
 use Punchout2Go\Punchout\Api\Data\PunchoutQuoteInterface;
 use Punchout2Go\Punchout\Api\Data\PunchoutQuoteInterfaceFactory;
 use Punchout2Go\Punchout\Api\PunchoutQuoteRepositoryInterface;
@@ -207,6 +207,7 @@ class Session extends SessionManager implements SessionInterface
 		/** get customer addresses **/
 		if ($this->helper->isMageAddressToCart()) {
 			$this->logger->log('Get Customer Addresses');  
+			
 			$shippingAddressId = $this->getDefaultCustomerAddressId('shipping');
 			$billingAddressId = $this->getDefaultCustomerAddressId('billing');
 			$customerId = $this->customerSession->getCustomerId();
@@ -417,13 +418,13 @@ $this->logger->log('Customer billing Addresse: ' . $billingAddressId );
             ? $quote->getBillingAddress()
             : $quote->getShippingAddress();
 
-        $this->customerAddressConverter->importCustomerAddressData($quoteAddress, $customerAddress);
+ //       $this->customerAddressConverter->importCustomerAddressData($quoteAddress, $customerAddress);
 
-        if ($type === 'shipping') {
-            $quoteAddress->setCollectShippingRates(true);
-        }
+ //       if ($type === 'shipping') {
+ //           $quoteAddress->setCollectShippingRates(true);
+ //       }
 
-        $quote->collectTotals()->save();
+ //       $quote->collectTotals()->save();
     }
 
     /**
