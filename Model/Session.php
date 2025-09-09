@@ -382,11 +382,11 @@ class Session extends SessionManager implements SessionInterface
 
 		if ($type === 'shipping') {
 			$defaultShippingAddress = $this->addressRepository->getById($customer->getDefaultShipping());
-	$this->logger->log(print_r($defaultShippingAddress, true));
+//	$this->logger->log($defaultShippingAddress, true);
 			return $defaultShippingAddress;
 		} else if ($type === 'billing') {
 			$defaultBillingAddress = $this->addressRepository->getById($customer->getDefaultBilling());
-	$this->logger->log(print_r($defaultShippingAddress, true));
+//	$this->logger->log($defaultShippingAddress, true);
 			return $defaultBillingAddress;
 		}
 		
