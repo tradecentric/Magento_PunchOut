@@ -208,21 +208,18 @@ class Session extends SessionManager implements SessionInterface
         if ($this->helper->isAddressToCart() && $this->helper->isMageAddressToCart()) {
             $this->logger->log('Get Customer Addresses');  
             
-            $shippingAddressId = $this->getDefaultCustomerAddressId('shipping');
-            $billingAddressId = $this->getDefaultCustomerAddressId('billing');
-            $customerId = $this->customerSession->getCustomerId();
-            
-$this->logger->log('Customer shipping Addresse: ' . $shippingAddressId);  
-$this->logger->log('Customer billing Addresse: ' . $billingAddressId );  
+            $shippingAddress = $this->getDefaultCustomerAddressId('shipping');
+            $billingAddress = $this->getDefaultCustomerAddressId('billing');
+            $customerId = $this->customerSession->getCustomerId();  
 
-            if ($shippingAddressId) {
+            if ($shippingAddress) {
                 $this->logger->log('Customer Shipping Address');
-                $this->updateQuoteAddressFromCustomerAddress($quote, $customerId, $shippingAddressId);
+                $this->updateQuoteAddressFromCustomerAddress($quote, $customerId, $shippingAddress);
             }
 
-            if ($billingAddressId) {
+            if ($billingAddress) {
                 $this->logger->log('Customer Billing Address');
-                $this->updateQuoteAddressFromCustomerAddress($quote, $customerId, $billingAddressId, 'billing');
+                $this->updateQuoteAddressFromCustomerAddress($quote, $customerId, $billingAddress, 'billing');
             }
         }
     
@@ -376,16 +373,24 @@ $this->logger->log('Customer billing Addresse: ' . $billingAddressId );
      * @param string $type 'shipping' or 'billing'
      * @return int|null
      */
-    private function getDefaultCustomerAddressId(string $type): ?int
+    private function getDefaultCustomerAddressId(string $type = 'shipping'): ?int
     {
         $customer = $this->customerSession->getCustomer();
         if (!$customer || !$customer->getId()) {
             return null;
         }
 
-		$defaultShippingAddress = $this->addressRepository->getById($customer->getDefaultShipping());
+		if ($type === 'shipping') {
+			$defaultShippingAddress = $this->addressRepository->getById($customer->getDefaultShipping());
+	$this->logger->log(print_r($defaultShippingAddress, true));
+			return $defaultShippingAddress;
+		} else if ($type === 'billing') {
+			$defaultBillingAddress = $this->addressRepository->getById($customer->getDefaultBilling());
+	$this->logger->log(print_r($defaultShippingAddress, true));
+			return $defaultBillingAddress;
+		}
 		
-        foreach ($customer->getAddresses() as $address) {
+    //    foreach ($customer->getAddresses() as $address) {
 //	$this->logger->log(print_r($address, true));
    //         if ($type === 'shipping' && $address->isDefaultShipping()) {
                 return (int)$address->getId();
@@ -393,7 +398,7 @@ $this->logger->log('Customer billing Addresse: ' . $billingAddressId );
    //         if ($type === 'billing' && $address->isDefaultBilling()) {
    //             return (int)$address->getId();
    //         }
-        }
+   //     }
 
         return null;
     }
