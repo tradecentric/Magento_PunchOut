@@ -49,10 +49,11 @@ class QuoteAddressHandler implements EntityHandlerInterface
     public function handle(SessionContainerInterface $object)
     {
         $this->logger->log('Quote Address Setup Begin');
-        if (!$this->helper->isAddressToCart()) {
+        if (!$this->helper->isAddressToCart() || $this->helper->isMageAddressToCart()) {
             $this->logger->log('Create address disabled');
             return;
         }
+
         $addressData = $this->dataExtractor->extract($object->getSession()->getParams());
         $address = $object->getQuote()->getShippingAddress();
         $address->setSameAsBilling(0);
