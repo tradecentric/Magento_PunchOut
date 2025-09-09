@@ -210,9 +210,6 @@ class Session extends SessionManager implements SessionInterface
         if ($this->helper->isAddressToCart() && $this->helper->isMageAddressToCart()) {
             $this->logger->log('Get Customer Addresses');  
             
-//            $shippingAddress = $this->getDefaultCustomerAddressId('shipping');
-//            $billingAddress = $this->getDefaultCustomerAddressId('billing');
-//            $customerId = $this->customerSession->getCustomerId(); 
 			$customer = $this->customerSession->getCustomer();
 
 			$defaultShippingAddress = $this->addressRepository->getById($customer->getDefaultShipping());
@@ -227,24 +224,12 @@ class Session extends SessionManager implements SessionInterface
                $this->logger->log('Customer Billing Address' . $defaultBillingAddress->getCity());
                $this->updateQuoteAddressFromCustomerAddress($quote, $defaultBillingAddress, 'billing');
             }
-			
-  // 		if ($customerAddress) {
-//			$quoteAddress = ($type === 'billing')
-//				? $quote->getBillingAddress()
-//				: $quote->getShippingAddress();
 
-//			$this->customerAddressConverter->importCustomerAddressData($customerAddress);
-
-//			if ($type === 'shipping') {
-//				$quoteAddress->setCollectShippingRates(true);
-//			}
-
-			$quote->collectTotals()->save();
+//			$quote->collectTotals()->save();
 		}
     
         $container->setQuote($quote);
         $this->cartRepository->save($quote);
-    $this->logger->log('session.quote->getId() after: '. $quote->getId());
 
         /** save punchout quote */
         $punchoutQuote = $container->getSession()->setQuoteId((int)$quote->getId());
@@ -411,7 +396,6 @@ class Session extends SessionManager implements SessionInterface
 				$quoteAddress->setCollectShippingRates(true);
 			}
 
-	//		$quoteAddress->assignAddress($customerAddress, false);
 			$quote->collectTotals()->save();
 		}
     }

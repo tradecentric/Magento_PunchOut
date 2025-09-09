@@ -129,7 +129,7 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="mage_address_to_cart" translate="label" type="select" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Assign Magento Customer to Cart</label>
+                    <label>Assign Magento Customer Address to Cart</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
                         <field id="address_to_cart">1</field>
