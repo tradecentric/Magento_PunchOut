@@ -55,6 +55,10 @@ class QuoteAddressHandler implements EntityHandlerInterface
             $this->logger->log('Create address disabled');
             return;
         }
+		if ($this->helper->isMageAddressToCart()) {
+            $this->logger->log('Create from Mage address enabled');
+            return;
+        }
 
         $addressData = $this->dataExtractor->extract($object->getSession()->getParams());
         $address = $object->getQuote()->getShippingAddress();
