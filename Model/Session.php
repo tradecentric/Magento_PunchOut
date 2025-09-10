@@ -119,8 +119,8 @@ class Session extends SessionManager implements SessionInterface
      * @param SessionContainerInterfaceFactory $containerFactory
      * @param CartRepositoryInterface $cartRepository
      * @param Session\SessionEditStatus $editStatus
-	 * @param AddressRepositoryInterface $addressRepository
-	 * @param CustomerAddressConverter $customerAddressConverter
+     * @param AddressRepositoryInterface $addressRepository
+     * @param CustomerAddressConverter $customerAddressConverter
      * @param PunchoutQuoteRepositoryInterface $punchoutQuoteRepository
      * @param PunchoutQuoteInterfaceFactory $punchoutQuoteInterfaceFactory
      * @param SessionStartChecker|null $sessionStartCheckerclear
@@ -210,23 +210,23 @@ class Session extends SessionManager implements SessionInterface
         if ($this->helper->isMageAddressToCart()) {
             $this->logger->log('Get Customer Addresses');  
             
-			$customer = $this->customerSession->getCustomer();
+            $customer = $this->customerSession->getCustomer();
 
-			$defaultShippingAddress = $this->addressRepository->getById($customer->getDefaultShipping());
-			$defaultBillingAddress = $this->addressRepository->getById($customer->getDefaultBilling());
-	
+            $defaultShippingAddress = $this->addressRepository->getById($customer->getDefaultShipping());
+            $defaultBillingAddress = $this->addressRepository->getById($customer->getDefaultBilling());
+    
             if ($defaultShippingAddress) {
                 $this->logger->log('Customer Default Shipping Address' . $defaultShippingAddress->getCity());
                $this->updateQuoteAddressFromCustomerAddress($quote, $defaultShippingAddress, 'shipping');
-			}
+            }
    
-		   if ($defaultBillingAddress) {
-               $this->logger->log('Customer Billing Address' . $defaultBillingAddress->getCity());
+           if ($defaultBillingAddress) {
+               $this->logger->log('Customer Default Billing Address' . $defaultBillingAddress->getCity());
                $this->updateQuoteAddressFromCustomerAddress($quote, $defaultBillingAddress, 'billing');
             }
 
-//			$quote->collectTotals()->save();
-		}
+//          $quote->collectTotals()->save();
+        }
     
         $container->setQuote($quote);
         $this->cartRepository->save($quote);
@@ -384,20 +384,20 @@ class Session extends SessionManager implements SessionInterface
     public function updateQuoteAddressFromCustomerAddress(CartInterface $quote, $customerAddress, $type = 'shipping')
     {
 
-		if ($customerAddress) {
-			$quoteAddress = ($type === 'billing')
-				? $quote->getBillingAddress()
-				: $quote->getShippingAddress();
+        if ($customerAddress) {
+            $quoteAddress = ($type === 'billing')
+                ? $quote->getBillingAddress()
+                : $quote->getShippingAddress();
 
-			$this->customerAddressConverter->importCustomerAddressData($customerAddress);
-			$quoteAddress->importCustomerAddressData($customerAddress);
+            $this->customerAddressConverter->importCustomerAddressData($customerAddress);
+            $quoteAddress->importCustomerAddressData($customerAddress);
 
-			if ($type === 'shipping') {
-				$quoteAddress->setCollectShippingRates(true);
-			}
+            if ($type === 'shipping') {
+                $quoteAddress->setCollectShippingRates(true);
+            }
 
-			$quote->collectTotals()->save();
-		}
+            $quote->collectTotals()->save();
+        }
     }
 
     /**
