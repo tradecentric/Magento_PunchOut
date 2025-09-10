@@ -207,7 +207,7 @@ class Session extends SessionManager implements SessionInterface
         $quote = $this->initQuote()->setTotalsCollectedFlag(false)->collectTotals();
     
         /** get customer addresses **/
-        if ($this->helper->isAddressToCart() !== null && $this->helper->isMageAddressToCart() !== null) {
+        if ($this->helper->isMageAddressToCart()) {
             $this->logger->log('Get Customer Addresses');  
             
 			$customer = $this->customerSession->getCustomer();
