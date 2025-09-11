@@ -209,19 +209,28 @@ class Session extends SessionManager implements SessionInterface
         /** get customer addresses **/
         if ($this->helper->isMageAddressToCart()) {
             $this->logger->log('Get Customer Addresses');  
+            $defaultShippingAddress = null;
+            $defaultBillingAddress = null;
             
             $customer = $this->customerSession->getCustomer();
 
-            $defaultShippingAddress = $this->addressRepository->getById($customer->getDefaultShipping());
-            $defaultBillingAddress = $this->addressRepository->getById($customer->getDefaultBilling());
+            // get DefaultShipping 
+            if ($customer->getDefaultShipping()) {
+                $defaultShippingAddress = $this->addressRepository->getById($customer->getDefaultShipping());
+            }
+            
+            if ($customer->getDefaultBilling()) {
+                $defaultBillingAddress = $this->addressRepository->getById($customer->getDefaultBilling());
+            }
     
+            // get DefaultShipping 
             if ($defaultShippingAddress) {
-                $this->logger->log('Customer Default Shipping Address' . $defaultShippingAddress->getCity());
+               $this->logger->log('Customer Default Shipping Address ' . $defaultShippingAddress->getAddressId());
                $this->updateQuoteAddressFromCustomerAddress($quote, $defaultShippingAddress, 'shipping');
             }
    
            if ($defaultBillingAddress) {
-               $this->logger->log('Customer Default Billing Address' . $defaultBillingAddress->getCity());
+               $this->logger->log('Customer Default Billing Address ' . $defaultBillingAddress->getAddressId());
                $this->updateQuoteAddressFromCustomerAddress($quote, $defaultBillingAddress, 'billing');
             }
 
@@ -383,9 +392,7 @@ class Session extends SessionManager implements SessionInterface
      */
     public function updateQuoteAddressFromCustomerAddress(CartInterface $quote, $customerAddress, $type = 'shipping')
     {
-
-$this->logger->log('Session.updateQuoteAddressFromCustomerAddress() customerAddress->getAddressId(): .' $customerAddress->getAddressId());
-        if ($customerAddress && $customerAddress->getAddressId()) {
+        if ($customerAddress) {
             $quoteAddress = ($type === 'billing')
                 ? $quote->getBillingAddress()
                 : $quote->getShippingAddress();
