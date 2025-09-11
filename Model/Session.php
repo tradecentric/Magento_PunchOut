@@ -384,7 +384,8 @@ class Session extends SessionManager implements SessionInterface
     public function updateQuoteAddressFromCustomerAddress(CartInterface $quote, $customerAddress, $type = 'shipping')
     {
 
-        if ($customerAddress) {
+$this->logger->log('Session.updateQuoteAddressFromCustomerAddress() customerAddress->getAddressId(): .' $customerAddress->getAddressId());
+        if ($customerAddress && $customerAddress->getAddressId()) {
             $quoteAddress = ($type === 'billing')
                 ? $quote->getBillingAddress()
                 : $quote->getShippingAddress();

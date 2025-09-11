@@ -1,7 +1,10 @@
 TradeCentric - PunchOut
 ===========
-### 3.1.10 (2025-09-15)
+### 3.1.12 (2025-09-15)
 * PBR-2422: Added Assign Magento Customer Address to Cart option
+
+### 3.1.11 (2025-08-14)
+* PBR-2463 - Add Option to allow Contact/Customer Updates
 
 ### 3.1.10 (2025-02-26)
 * PBR-2329: Added ACL support for Role management
