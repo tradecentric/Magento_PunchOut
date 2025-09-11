@@ -215,22 +215,22 @@ class Session extends SessionManager implements SessionInterface
             $customer = $this->customerSession->getCustomer();
 
             // get DefaultShipping 
-            if ($customer->getDefaultShipping()) {
+            if ($customer->getDefaultShipping()->getId()) {
                 $defaultShippingAddress = $this->addressRepository->getById($customer->getDefaultShipping());
             }
             
-            if ($customer->getDefaultBilling()) {
+            if ($customer->getDefaultBilling()->getId()) {
                 $defaultBillingAddress = $this->addressRepository->getById($customer->getDefaultBilling());
             }
     
             // get DefaultShipping 
             if ($defaultShippingAddress) {
-               $this->logger->log('Customer Default Shipping Address ' . $defaultShippingAddress->getAddressId());
+               $this->logger->log('Customer Default Shipping Address');
                $this->updateQuoteAddressFromCustomerAddress($quote, $defaultShippingAddress, 'shipping');
             }
    
            if ($defaultBillingAddress) {
-               $this->logger->log('Customer Default Billing Address ' . $defaultBillingAddress->getAddressId());
+               $this->logger->log('Customer Default Billing Address');
                $this->updateQuoteAddressFromCustomerAddress($quote, $defaultBillingAddress, 'billing');
             }
 
