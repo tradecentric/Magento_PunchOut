@@ -123,7 +123,7 @@ class Session extends SessionManager implements SessionInterface
      * @param CustomerAddressConverter $customerAddressConverter
      * @param PunchoutQuoteRepositoryInterface $punchoutQuoteRepository
      * @param PunchoutQuoteInterfaceFactory $punchoutQuoteInterfaceFactory
-     * @param SessionStartChecker|null $sessionStartCheckerclear
+     * @param SessionStartChecker|null $sessionStartChecker
      * @throws \Magento\Framework\Exception\SessionException
      */
     public function __construct(
