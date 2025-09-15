@@ -22,7 +22,7 @@ class AddressMapper
     /**
      * AddressMapper constructor.
      * @param array $addressMap
-	 * @param \Punchout2Go\Punchout\Api\LoggerInterface $logger
+     * @param \Punchout2Go\Punchout\Api\LoggerInterface $logger
      */
     public function __construct(
 		\Punchout2Go\Punchout\Api\LoggerInterface $logger,
