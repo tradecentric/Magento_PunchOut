@@ -23,6 +23,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_ALLOW_CUSTOMER_UPDATE = 'punchout2go_punchout/customer/allow_customer_update';
     const XML_PATH_CUSTOMER_ATTRIBUTE_MAP = 'punchout2go_punchout/customer/preinsert_customer_attribute_map';
     const XML_PATH_CREATE_ADDRESS = 'punchout2go_punchout/customer/address_to_cart';
+    const XML_PATH_CREATE_MAGE_ADDRESS = 'punchout2go_punchout/customer/mage_address_to_cart';
     const XML_PATH_RETURN_LINK = 'punchout2go_punchout/display/return_link_enabled';
     const XML_PATH_RETURN_LINK_LABEL = 'punchout2go_punchout/display/return_link_label';
     const XML_PATH_IS_PUNCHOUT_ACTIVE = 'punchout2go_punchout/security/punchout_active';
@@ -162,6 +163,19 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         );
     }
 
+    /**
+     * @param null $store
+     * @return bool
+     */
+    public function isMageAddressToCart($store = null)
+    {
+        return $this->scopeConfig->isSetFlag(
+            static::XML_PATH_CREATE_MAGE_ADDRESS,
+            ScopeInterface::SCOPE_STORE,
+            $store
+        );
+    }
+	
     /**
      * @param null $store
      * @return bool

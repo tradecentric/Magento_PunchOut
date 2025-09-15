@@ -29,6 +29,7 @@
                 <allow_customer_update>1</allow_customer_update>
                 <preinsert_customer_attribute_map>{}</preinsert_customer_attribute_map>
                 <address_to_cart>1</address_to_cart>
+                <mage_address_to_cart>0</mage_address_to_cart>
             </customer>
             <order>
                 <classification_field>classification</classification_field>
