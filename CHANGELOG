@@ -29,7 +29,6 @@ TradeCentric - PunchOut
 * Fixed issue for return cart when customer group changes
 * Fixed issues with PunchOut Only "YES" being able to redirect non punchout users to landing page
 
-
 ### 3.1.4 (2023-05-08)
 * Added support perisiting query string paramters through the module to the storefront
 * Added toggle to maintain query string parameters that get passed in at time of PunchOut

@@ -32,8 +32,8 @@ class Keyvalue extends \Magento\Framework\App\Config\Value
         \Magento\Framework\App\Config\ScopeConfigInterface $config,
         TypeListInterface $cacheTypeList,
         \Magento\Framework\Serialize\Serializer\Json $jsonSerializer,
-        AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        ?AbstractResource $resource = null,
+        ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->jsonSerializer = $jsonSerializer;
