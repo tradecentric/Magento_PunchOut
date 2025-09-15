@@ -18,6 +18,8 @@ use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
+use Magento\Customer\Api\AddressRepositoryInterface;
+use Magento\Quote\Model\Quote\Address as CustomerAddressConverter;
 use Punchout2Go\Punchout\Api\Data\PunchoutQuoteInterface;
 use Punchout2Go\Punchout\Api\Data\PunchoutQuoteInterfaceFactory;
 use Punchout2Go\Punchout\Api\PunchoutQuoteRepositoryInterface;
@@ -70,6 +72,12 @@ class Session extends SessionManager implements SessionInterface
      * @var CartRepositoryInterface
      */
     protected $cartRepository;
+    
+    /** @var AddressRepositoryInterface */
+    protected $addressRepository;
+
+    /** @var CustomerAddressConverter */
+    protected $customerAddressConverter;    
 
     /**
      * @var PunchoutQuoteRepositoryInterface
@@ -90,7 +98,7 @@ class Session extends SessionManager implements SessionInterface
      * @var Session\SessionEditStatus
      */
     protected $editStatus;
-
+        
     /**
      * Session constructor.
      * @param \Magento\Framework\App\Request\Http $request
@@ -111,6 +119,8 @@ class Session extends SessionManager implements SessionInterface
      * @param SessionContainerInterfaceFactory $containerFactory
      * @param CartRepositoryInterface $cartRepository
      * @param Session\SessionEditStatus $editStatus
+     * @param AddressRepositoryInterface $addressRepository
+     * @param CustomerAddressConverter $customerAddressConverter
      * @param PunchoutQuoteRepositoryInterface $punchoutQuoteRepository
      * @param PunchoutQuoteInterfaceFactory $punchoutQuoteInterfaceFactory
      * @param SessionStartChecker|null $sessionStartChecker
@@ -135,6 +145,8 @@ class Session extends SessionManager implements SessionInterface
         SessionContainerInterfaceFactory $containerFactory,
         CartRepositoryInterface $cartRepository,
         Session\SessionEditStatus $editStatus,
+        AddressRepositoryInterface $addressRepository,
+        CustomerAddressConverter $customerAddressConverter,
         PunchoutQuoteRepositoryInterface $punchoutQuoteRepository,
         PunchoutQuoteInterfaceFactory $punchoutQuoteInterfaceFactory,
         ?SessionStartChecker $sessionStartChecker = null
@@ -148,6 +160,8 @@ class Session extends SessionManager implements SessionInterface
         $this->containerFactory = $containerFactory;
         $this->cartRepository = $cartRepository;
         $this->editStatus = $editStatus;
+        $this->addressRepository = $addressRepository;
+        $this->customerAddressConverter = $customerAddressConverter;
         $this->punchoutQuoteRepository = $punchoutQuoteRepository;
         $this->punchoutQuoteInterfaceFactory = $punchoutQuoteInterfaceFactory;
         parent::__construct(
@@ -185,13 +199,44 @@ class Session extends SessionManager implements SessionInterface
         $this->sessionPreStart($container);
         $this->sessionCollector->handle($container);
         $this->logger->log('Collect data complete');
-
         $this->sessionPostStart($container);
         $this->logger->log('Post start');
 
         /** save magento quote */
         $this->checkoutSession->clearStorage();
         $quote = $this->initQuote()->setTotalsCollectedFlag(false)->collectTotals();
+    
+        /** get customer addresses **/
+        if ($this->helper->isMageAddressToCart()) {
+            $this->logger->log('Get Customer Addresses');  
+            $defaultShippingAddress = null;
+            $defaultBillingAddress = null;
+            
+            $customer = $this->customerSession->getCustomer();
+
+            // get DefaultShipping 
+            if ($customer->getDefaultShipping()) {
+                $defaultShippingAddress = $this->addressRepository->getById($customer->getDefaultShipping());
+            }
+            
+            if ($customer->getDefaultBilling()) {
+                $defaultBillingAddress = $this->addressRepository->getById($customer->getDefaultBilling());
+            }
+    
+            // get DefaultShipping 
+            if ($defaultShippingAddress) {
+               $this->logger->log('Customer Default Shipping Address');
+               $this->updateQuoteAddressFromCustomerAddress($quote, $defaultShippingAddress, 'shipping');
+            }
+   
+           if ($defaultBillingAddress) {
+               $this->logger->log('Customer Default Billing Address');
+               $this->updateQuoteAddressFromCustomerAddress($quote, $defaultBillingAddress, 'billing');
+            }
+
+//          $quote->collectTotals()->save();
+        }
+    
         $container->setQuote($quote);
         $this->cartRepository->save($quote);
 
@@ -233,7 +278,6 @@ class Session extends SessionManager implements SessionInterface
             $this->checkoutSession->clearStorage();
             return $this->initQuote();
         }
-
         $quote->setIsActive(true);
         return $quote;
     }
@@ -333,6 +377,34 @@ class Session extends SessionManager implements SessionInterface
         if ($this->customerSession->isLoggedIn()) {
             $this->logger->log('Log out current customer');
             $this->customerSession->logout();
+        }
+    }
+
+    /**
+     * Update quote address from a given customer address
+     *
+     * @param CartInterface $quote
+     * @param int $customerId
+     * @param int $addressId
+     * @param string $type shipping|billing
+     * @return void
+     * @throws LocalizedException
+     */
+    public function updateQuoteAddressFromCustomerAddress(CartInterface $quote, $customerAddress, $type = 'shipping')
+    {
+        if ($customerAddress) {
+            $quoteAddress = ($type === 'billing')
+                ? $quote->getBillingAddress()
+                : $quote->getShippingAddress();
+
+            $this->customerAddressConverter->importCustomerAddressData($customerAddress);
+            $quoteAddress->importCustomerAddressData($customerAddress);
+
+            if ($type === 'shipping') {
+                $quoteAddress->setCollectShippingRates(true);
+            }
+
+            $quote->collectTotals()->save();
         }
     }
 

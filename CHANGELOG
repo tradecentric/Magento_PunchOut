@@ -1,8 +1,10 @@
 TradeCentric - PunchOut
 ===========
-### 3.1.11 (2025-08-12)
-* PBR-2419: Added support for PHP 8.4 compatibility with Magento 2.4.8
-* PBR-2463: Add Option to allow Contact/Customer Updates
+### 3.1.12 (2025-09-15)
+* PBR-2422: Added Assign Magento Customer Address to Cart option
+
+### 3.1.11 (2025-08-14)
+* PBR-2463 - Add Option to allow Contact/Customer Updates
 
 ### 3.1.10 (2025-02-26)
 * PBR-2329: Added ACL support for Role management
@@ -26,7 +28,6 @@ TradeCentric - PunchOut
 * Added support for Magento Fixed Product Taxes (FPT)
 * Fixed issue for return cart when customer group changes
 * Fixed issues with PunchOut Only "YES" being able to redirect non punchout users to landing page
-
 
 ### 3.1.4 (2023-05-08)
 * Added support perisiting query string paramters through the module to the storefront

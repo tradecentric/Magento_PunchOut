@@ -37,7 +37,7 @@ class Region implements DataExtractorInterface
             return [];
         }
         $region = $this->regionFactory->create();
-        $region->loadByCode($state, $countryId);
+        $region->loadByCode($state, $countryId);	
         return [
             'region_id' => $region->getId()
         ];
