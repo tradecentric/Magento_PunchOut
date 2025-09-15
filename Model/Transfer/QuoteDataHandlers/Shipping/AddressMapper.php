@@ -14,9 +14,8 @@ class AddressMapper
      */
     protected $addressMap;
 	
-	/**
+    /**
      * @var \Punchout2Go\Punchout\Api\LoggerInterface
-	 
      */
     protected $logger;
 
