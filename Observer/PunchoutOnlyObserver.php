@@ -46,7 +46,7 @@ class PunchoutOnlyObserver implements ObserverInterface
             return;
         }
 		
-		if ($this->punchoutsession->isValid()) {
+		if ($this->punchoutSession->isValid()) {
             return;
         }
 
