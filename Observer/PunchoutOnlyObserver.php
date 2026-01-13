@@ -42,7 +42,7 @@ class PunchoutOnlyObserver implements ObserverInterface
             return;
         }
 
-        if ($this->punchoutAccessValidator->isAllowed($controller)) {
+        if ($this->punchoutAccessValidator->isValid($controller)) {
             return;
         }
 
