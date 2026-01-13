@@ -10,24 +10,25 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Punchout2Go\Punchout\Api\PunchoutAccessValidatorInterface;
 use Punchout2Go\Punchout\Model\Config\PunchoutConfig;
+use Punchout2Go\Punchout\Model\Session as PunchoutSession;
 
 class PunchoutOnlyObserver implements ObserverInterface
 {
     private PunchoutConfig $config;
-    private PunchoutAccessValidatorInterface $punchoutAccessValidator;
+    private PunchoutSession $punchoutSession;
     private StoreManagerInterface $storeManager;
     private RequestInterface $request;
     private Escaper $escaper;
 
     public function __construct(
         PunchoutConfig $config,
-        PunchoutAccessValidatorInterface $punchoutAccessValidator,
+        PunchoutSession $punchoutSession,
         StoreManagerInterface $storeManager,
         RequestInterface $request,
         Escaper $escaper
     ) {
         $this->config = $config;
-        $this->punchoutAccessValidator = $punchoutAccessValidator;
+        $this->punchoutSession = $punchoutSession;
         $this->storeManager = $storeManager;
         $this->request = $request;
         $this->escaper = $escaper;
@@ -36,22 +37,21 @@ class PunchoutOnlyObserver implements ObserverInterface
     public function execute(Observer $observer): void
     {
         $storeId = (int)$this->storeManager->getStore()->getId();
-		$controller = $observer->getControllerAction();
 
         if (!$this->config->isPunchoutOnly($storeId)) {
-            return;
-        }
-
-        if ($this->punchoutAccessValidator->isValid($controller)) {
             return;
         }
 
         if ($this->isAllowedPath()) {
             return;
         }
+		
+		if ($this->punchoutsession->isValid()) {
+            return;
+        }
 
         /** @var \Magento\Framework\App\ActionInterface $controller */
-//        $controller = $observer->getControllerAction();
+        $controller = $observer->getControllerAction();
         $response = $controller->getResponse();
 
         $response->setHttpResponseCode($this->config->getHttpStatusCode($storeId));
