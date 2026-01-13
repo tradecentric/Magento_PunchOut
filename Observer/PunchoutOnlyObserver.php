@@ -36,12 +36,13 @@ class PunchoutOnlyObserver implements ObserverInterface
     public function execute(Observer $observer): void
     {
         $storeId = (int)$this->storeManager->getStore()->getId();
+		$controller = $observer->getControllerAction();
 
         if (!$this->config->isPunchoutOnly($storeId)) {
             return;
         }
 
-        if ($this->punchoutAccessValidator->isValid()) {
+        if ($this->punchoutAccessValidator->isAllowed($controller)) {
             return;
         }
 
@@ -50,7 +51,7 @@ class PunchoutOnlyObserver implements ObserverInterface
         }
 
         /** @var \Magento\Framework\App\ActionInterface $controller */
-        $controller = $observer->getControllerAction();
+//        $controller = $observer->getControllerAction();
         $response = $controller->getResponse();
 
         $response->setHttpResponseCode($this->config->getHttpStatusCode($storeId));
