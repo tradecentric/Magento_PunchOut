@@ -3,6 +3,6 @@
         <observer name="punchout_add_layout" instance="Punchout2Go\Punchout\Observer\LayoutObserver" />
     </event>
     <event name="controller_action_predispatch">
-        <observer name="punchout_hard_fail_observer" instance="Vendor\Punchout\Observer\PunchoutOnlyObserver"/>
+        <observer name="punchout_hard_fail_observer" instance="Punchout2Go\Punchout\Observer\PunchoutOnlyObserver"/>
     </event>
 </config>
