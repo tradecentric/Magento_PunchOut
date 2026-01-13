@@ -16,11 +16,11 @@
     <type name="Punchout2Go\Punchout\Model\AccessValidator">
         <arguments>
             <argument name="validators" xsi:type="array">
-                <item name="basic" xsi:type="object">Punchout2Go\Punchout\Model\AccessValidator\Basic</item>
-                <item name="punchout-session-start" xsi:type="object">Punchout2Go\Punchout\Model\AccessValidator\SessionStart</item>
+   <!--             <item name="basic" xsi:type="object">Punchout2Go\Punchout\Model\AccessValidator\Basic</item>  -->
+                <item name="punchout-session-start" xsi:type="object">Punchout2Go\Punchout\Model\AccessValidator\SessionStart</item>  
                 <item name="forward" xsi:type="object">Punchout2Go\Punchout\Model\AccessValidator\Forward</item>
-                <item name="punchout-redirect" xsi:type="object">Punchout2Go\Punchout\Model\AccessValidator\PunchoutRedirect</item>
-				<item name="session" xsi:type="object">Punchout2Go\Punchout\Model\Validator\SessionValidator</item>
+   <!--             <item name="punchout-redirect" xsi:type="object">Punchout2Go\Punchout\Model\AccessValidator\PunchoutRedirect</item>  -->
+   <!--				<item name="session" xsi:type="object">Punchout2Go\Punchout\Model\Validator\SessionValidator</item>  -->
             </argument>
         </arguments>
     </type>
