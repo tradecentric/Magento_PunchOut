@@ -8,7 +8,7 @@
             </argument>
         </arguments>
     </type>
-
+<!--
     <type name="Magento\Checkout\Controller\Cart">
         <plugin name="punchout_restrict_only_punchout" type="Punchout2Go\Punchout\Plugin\RestrictOnlyPunchoutPlugin"/>
     </type>
@@ -23,5 +23,5 @@
             </argument>
         </arguments>
     </type>
-
+-->
 </config>

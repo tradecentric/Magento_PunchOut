@@ -31,6 +31,7 @@
     <preference for="Punchout2Go\Punchout\Api\ProductProviderInterface"
                 type="Punchout2Go\Punchout\Model\Transfer\QuoteItemTransferData\ProductProvider"/>
     <preference for="Punchout2Go\Punchout\Api\StartUpUrlProviderInterface" type="Punchout2Go\Punchout\Model\StartUpUrlProvider"/>
+	<preference for="Punchout2Go\Punchout\Api\PunchoutAccessValidatorInterface" type="Punchout2Go\Punchout\Model\PunchoutAccessValidator"/>
 
     <virtualType name="PunchoutLogger" type="Magento\Framework\Logger\Monolog">
         <arguments>
