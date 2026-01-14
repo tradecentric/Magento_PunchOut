@@ -64,7 +64,7 @@ class PunchoutOnlyObserver implements ObserverInterface
         $response->clearBody();
         
         /** display Punchout Only Page or server 403 or 401 page */
-        if ($this->config->getpunchoutOnlyPage($storeId)) 
+        if ($this->config->isPunchoutOnlyPage($storeId)) 
         {
             $response->setBody('<h1>Access Restricted</h1><p>' . $this->escaper->escapeHtml($this->config->getPunchoutOnlyMessage($storeId)) . '</p>');
             $response->sendResponse();
