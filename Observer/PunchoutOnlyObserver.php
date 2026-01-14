@@ -20,7 +20,7 @@ class PunchoutOnlyObserver implements ObserverInterface
     private StoreManagerInterface $storeManager;
     private RequestInterface $request;
 //    private Escaper $escaper;
-	privateActionFlag $actionFlag;
+    private ActionFlag $actionFlag;
 
     public function __construct(
         PunchoutConfig $config,
@@ -28,14 +28,14 @@ class PunchoutOnlyObserver implements ObserverInterface
         StoreManagerInterface $storeManager,
         RequestInterface $request,
  //       Escaper $escaper
-		ActionFlag $actionFlag
+        ActionFlag $actionFlag
     ) {
         $this->config = $config;
         $this->punchoutSession = $punchoutSession;
         $this->storeManager = $storeManager;
         $this->request = $request;
  //       $this->escaper = $escaper;
-		$this->actionFlag = $actionFlag;
+        $this->actionFlag = $actionFlag;
     }
 
     public function execute(Observer $observer): void
@@ -49,8 +49,8 @@ class PunchoutOnlyObserver implements ObserverInterface
         if ($this->isAllowedPath()) {
             return;
         }
-		
-		if ($this->punchoutSession->isValid()) {
+        
+        if ($this->punchoutSession->isValid()) {
             return;
         }
 
@@ -60,9 +60,9 @@ class PunchoutOnlyObserver implements ObserverInterface
 
         $response->setHttpResponseCode($this->config->getHttpStatusCode($storeId));
         $response->setHeader('Cache-Control', 'no-store', true);
-		$response->clearBody();
-		
-		/**
+        $response->clearBody();
+        
+        /**
          * Hard-fail: stop dispatch immediately
          */
         $this->actionFlag->set(
@@ -70,7 +70,7 @@ class PunchoutOnlyObserver implements ObserverInterface
             ActionInterface::FLAG_NO_DISPATCH,
             true
         );
-		
+        
    //     $response->setBody(
    //         '<h1>Access Restricted</h1><p>' .
    //         $this->escaper->escapeHtml(
