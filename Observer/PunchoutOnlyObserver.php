@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 namespace Punchout2Go\Punchout\Observer;
 
+use Magento\Framework\App\ActionFlag;
 use Magento\Framework\App\RequestInterface;
-use Magento\Framework\Escaper;
+// use Magento\Framework\Escaper;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -18,20 +19,23 @@ class PunchoutOnlyObserver implements ObserverInterface
     private PunchoutSession $punchoutSession;
     private StoreManagerInterface $storeManager;
     private RequestInterface $request;
-    private Escaper $escaper;
+//    private Escaper $escaper;
+	privateActionFlag $actionFlag;
 
     public function __construct(
         PunchoutConfig $config,
         PunchoutSession $punchoutSession,
         StoreManagerInterface $storeManager,
         RequestInterface $request,
-        Escaper $escaper
+ //       Escaper $escaper
+		ActionFlag $actionFlag
     ) {
         $this->config = $config;
         $this->punchoutSession = $punchoutSession;
         $this->storeManager = $storeManager;
         $this->request = $request;
-        $this->escaper = $escaper;
+ //       $this->escaper = $escaper;
+		$this->actionFlag = $actionFlag;
     }
 
     public function execute(Observer $observer): void
