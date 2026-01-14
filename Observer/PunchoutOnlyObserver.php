@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Punchout2Go\Punchout\Observer;
 
 use Magento\Framework\App\ActionFlag;
+use Magento\Framework\App\ActionInterface;
 use Magento\Framework\App\RequestInterface;
 // use Magento\Framework\Escaper;
 use Magento\Framework\Event\Observer;
@@ -65,11 +66,7 @@ class PunchoutOnlyObserver implements ObserverInterface
         /**
          * Hard-fail: stop dispatch immediately
          */
-        $this->actionFlag->set(
-            '',
-            ActionInterface::FLAG_NO_DISPATCH,
-            true
-        );
+        $this->actionFlag->set('', ActionInterface::FLAG_NO_DISPATCH, true);
         
    //     $response->setBody(
    //         '<h1>Access Restricted</h1><p>' .
