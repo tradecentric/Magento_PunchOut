@@ -6,7 +6,7 @@ namespace Punchout2Go\Punchout\Observer;
 use Magento\Framework\App\ActionFlag;
 use Magento\Framework\App\ActionInterface;
 use Magento\Framework\App\RequestInterface;
-// use Magento\Framework\Escaper;
+use Magento\Framework\Escaper;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -20,7 +20,7 @@ class PunchoutOnlyObserver implements ObserverInterface
     private PunchoutSession $punchoutSession;
     private StoreManagerInterface $storeManager;
     private RequestInterface $request;
-//    private Escaper $escaper;
+    private Escaper $escaper;
     private ActionFlag $actionFlag;
 
     public function __construct(
@@ -28,14 +28,14 @@ class PunchoutOnlyObserver implements ObserverInterface
         PunchoutSession $punchoutSession,
         StoreManagerInterface $storeManager,
         RequestInterface $request,
- //       Escaper $escaper
+        Escaper $escaper
         ActionFlag $actionFlag
     ) {
         $this->config = $config;
         $this->punchoutSession = $punchoutSession;
         $this->storeManager = $storeManager;
         $this->request = $request;
- //       $this->escaper = $escaper;
+        $this->escaper = $escaper;
         $this->actionFlag = $actionFlag;
     }
 
@@ -63,21 +63,18 @@ class PunchoutOnlyObserver implements ObserverInterface
         $response->setHeader('Cache-Control', 'no-store', true);
         $response->clearBody();
         
-        /**
-         * Hard-fail: stop dispatch immediately
-         */
-        $this->actionFlag->set('', ActionInterface::FLAG_NO_DISPATCH, true);
-        
-   //     $response->setBody(
-   //         '<h1>Access Restricted</h1><p>' .
-   //         $this->escaper->escapeHtml(
-   //             $this->config->getPunchoutOnlyMessage($storeId)
-   //         ) .
-   //         '</p>'
-   //     );
-
-   //     $response->sendResponse();
-   //     exit;
+		/** display Punchout Only Page or server 403 or 401 page 
+		if ($this->config->getpunchoutOnlyPage($storeId)) 
+		{
+			$response->setBody('<h1>Access Restricted</h1><p>' . $this->escaper->escapeHtml($this->config->getPunchoutOnlyMessage($storeId)) . '</p>');
+			$response->sendResponse();
+			exit;
+		} else {
+			/**
+			 * Hard-fail: stop dispatch immediately
+			 */
+			$this->actionFlag->set('', ActionInterface::FLAG_NO_DISPATCH, true);
+		}
     }
 
     private function isAllowedPath(): bool

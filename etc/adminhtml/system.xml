@@ -83,20 +83,21 @@
                         <field id="punchout_only">1</field>
                     </depends>
                 </field>
-
-                <field id="punchout_only_message" translate="label comment" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="punchout_only_page" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>PunchOut Only Page</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Select "Yes" to Display Punchout Access Restriction Page or "No" to display server 401 or 403 page.</comment>
+					<depends>
+                        <field id="punchout_only">1</field>
+                    </depends>
+                </field>
+                <field id="punchout_only_message" translate="label comment" type="textarea" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Punchout Only Message</label>
                     <depends>
-                        <field id = "punchout_only">1</field>
+                        <field id = "punchout_only_page">1</field>
                     </depends>
-                    <comment>Optional Punchout Only Message to display to Non-Punchout Access attempt.</comment>
+                    <comment>Override default Punchout Only Message to display to Non-Punchout Access attempt.</comment>
                 </field>
-  <!--              
-                <field id="punchout_only_url" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Punchout Only Url</label
-                    <comment>CMS path to drop non-PunchOut session access.</comment>
-                </field>
-  -->
             </group>
             <group id="session" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                 <label>Session Behaviors</label>

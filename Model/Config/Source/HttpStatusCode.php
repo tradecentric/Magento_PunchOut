@@ -12,7 +12,6 @@ class HttpStatusCode implements OptionSourceInterface
         return [
             ['value' => 403, 'label' => __('403 – Forbidden (Recommended)')],
             ['value' => 401, 'label' => __('401 – Unauthorized')],
-            ['value' => 503, 'label' => __('503 – Service Unavailable')],
         ];
     }
 }
