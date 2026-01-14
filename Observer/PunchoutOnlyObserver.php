@@ -56,16 +56,27 @@ class PunchoutOnlyObserver implements ObserverInterface
 
         $response->setHttpResponseCode($this->config->getHttpStatusCode($storeId));
         $response->setHeader('Cache-Control', 'no-store', true);
-        $response->setBody(
-            '<h1>Access Restricted</h1><p>' .
-            $this->escaper->escapeHtml(
-                $this->config->getPunchoutOnlyMessage($storeId)
-            ) .
-            '</p>'
+		$response->clearBody();
+		
+		/**
+         * Hard-fail: stop dispatch immediately
+         */
+        $this->actionFlag->set(
+            '',
+            ActionInterface::FLAG_NO_DISPATCH,
+            true
         );
+		
+   //     $response->setBody(
+   //         '<h1>Access Restricted</h1><p>' .
+   //         $this->escaper->escapeHtml(
+   //             $this->config->getPunchoutOnlyMessage($storeId)
+   //         ) .
+   //         '</p>'
+   //     );
 
-        $response->sendResponse();
-        exit;
+   //     $response->sendResponse();
+   //     exit;
     }
 
     private function isAllowedPath(): bool
