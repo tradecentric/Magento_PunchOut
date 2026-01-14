@@ -15,8 +15,8 @@
             </security>
             <site>
                 <punchout_only>0</punchout_only>
-				<punchout_only_http_status_code>403</punchout_only_http_status_code>
-				<punchout_only_page>1</punchout_only_page>
+                <punchout_only_http_status_code>403</punchout_only_http_status_code>
+                <punchout_only_page>1</punchout_only_page>
                 <punchout_only_message></punchout_only_message>
             </site>
             <session>
