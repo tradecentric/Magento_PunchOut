@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace Punchout2Go\Punchout\Model\Config;
 
-use Magento\Framework\App\Config\ScopeConfigInterface;
+//use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 
 class PunchoutConfig
 {
     public const XML_PATH_PUNCHOUT_ONLY = 'punchout2go_punchout/site/punchout_only';
-    public const XML_PATH_HTTP_STATUS_CODE = 'punchout2go_punchout/site/punchout_only_http_status_code';
+//    public const XML_PATH_HTTP_STATUS_CODE = 'punchout2go_punchout/site/punchout_only_http_status_code';
     public const XML_PATH_PUNCHOUT_ONLY_PAGE = 'punchout2go_punchout/site/punchout_only_page';
     public const XML_PATH_PUNCHOUT_ONLY_MESSAGE = 'punchout2go_punchout/site/punchout_only_message';
 
@@ -64,15 +64,16 @@ class PunchoutConfig
             'This storefront is available only through a PunchOut session.'
         );
     }
-    public function getHttpStatusCode(?int $storeId = null): int
-    {
-        $value = (int)$this->scopeConfig->getValue(
-            self::XML_PATH_HTTP_STATUS_CODE,
-            ScopeInterface::SCOPE_STORE,
-            $storeId
-        );
-
-        return in_array($value, [401, 403, 503], true)
-            ? $value : 403;
-    }
+	
+//    public function getHttpStatusCode(?int $storeId = null): int
+//    {
+//        $value = (int)$this->scopeConfig->getValue(
+//            self::XML_PATH_HTTP_STATUS_CODE,
+//            ScopeInterface::SCOPE_STORE,
+//            $storeId
+//        );
+//
+//        return in_array($value, [401, 403, 503], true)
+//            ? $value : 403;
+//    }
 }

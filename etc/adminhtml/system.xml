@@ -75,28 +75,29 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>Require a PunchOut session to be active to view any site content.</comment>
                 </field>
-                <field id="punchout_only_http_status_code" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>PunchOut Only HTTP Status Code</label>
-                    <source_model>Punchout2Go\Punchout\Model\Config\Source\HttpStatusCode</source_model>  
-                    <comment>HTTP response code returned when PunchOut Only mode is enabled.</comment>
-                    <depends>
-                        <field id="punchout_only">1</field>
-                    </depends>
+  //              <field id="punchout_only_http_status_code" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+  //                  <label>PunchOut Only HTTP Status Code</label>
+  //                  <source_model>Punchout2Go\Punchout\Model\Config\Source\HttpStatusCode</source_model>  
+  //                  <comment>HTTP response code returned when PunchOut Only mode is enabled.</comment>
+  //                  <depends>
+  //                      <field id="punchout_only">1</field>
+  //                  </depends>
                 </field>
                 <field id="punchout_only_page" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>PunchOut Only Page</label>
+                    <label>Custom Unauthorized Page</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Select "Yes" to Display Punchout Access Restriction Page or "No" to display server 401 or 403 page.</comment>
+                    <comment>Select "Yes" to display Custom Unauthorized Access Page Page or "No" to display server 403 page.</comment>
                     <depends>
                         <field id="punchout_only">1</field>
                     </depends>
                 </field>
                 <field id="punchout_only_message" translate="label comment" type="textarea" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Punchout Only Message</label>
+                    <label>Custom Unauthorized Message</label>
                     <depends>
-                        <field id = "punchout_only_page">1</field>
+						<field id="punchout_only">1</field>
+                        <field id ="punchout_only_page">1</field>
                     </depends>
-                    <comment>Override default Punchout Only Message to display to Non-Punchout Access attempt.</comment>
+                    <comment>Add Custom Unauthorized Message to be displayed.</comment>
                 </field>
             </group>
             <group id="session" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">

@@ -59,7 +59,8 @@ class PunchoutOnlyObserver implements ObserverInterface
         $controller = $observer->getControllerAction();
         $response = $controller->getResponse();
 
-        $response->setHttpResponseCode($this->config->getHttpStatusCode($storeId));
+ //       $response->setHttpResponseCode($this->config->getHttpStatusCode($storeId));
+         $response->setHttpResponseCode(403);
         $response->setHeader('Cache-Control', 'no-store', true);
         $response->clearBody();
         
