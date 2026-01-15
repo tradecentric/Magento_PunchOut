@@ -88,7 +88,7 @@
                 <field id="punchout_only_page" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Custom Unauthorized Page</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Select "Yes" to display Custom Unauthorized Access Page Page or "No" to display server 403 page.</comment>
+                    <comment>Select "Yes" to display Custom Unauthorized Access Page or "No" to display server 403 page.</comment>
                     <depends>
                         <field id="punchout_only">1</field>
                     </depends>
@@ -99,7 +99,7 @@
 						<field id="punchout_only">1</field>
                         <field id ="punchout_only_page">1</field>
                     </depends>
-                    <comment>Add Custom Unauthorized Message to be displayed.</comment>
+                    <comment>Add Custom Unauthorized Message to be displayed or leave blank to display default message.</comment>
                 </field>
             </group>
             <group id="session" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
