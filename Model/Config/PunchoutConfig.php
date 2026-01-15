@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Punchout2Go\Punchout\Model\Config;
 
-//use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 
 class PunchoutConfig
