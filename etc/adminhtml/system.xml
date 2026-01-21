@@ -96,7 +96,7 @@
                 <field id="punchout_only_message" translate="label comment" type="textarea" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Custom Unauthorized Message</label>
                     <depends>
-						<field id="punchout_only">1</field>
+                        <field id="punchout_only">1</field>
                         <field id ="punchout_only_page">1</field>
                     </depends>
                     <comment>Add Custom Unauthorized Message to be displayed or leave blank to display default message.</comment>
