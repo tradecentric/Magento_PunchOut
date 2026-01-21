@@ -13,12 +13,17 @@
                 <punchout_validate_session>0</punchout_validate_session>
                 <punchout_validate_session_url>https://connect.punchout2go.com/gateway/link/session/id/{pos}</punchout_validate_session_url>
             </security>
+            <site>
+                <punchout_only>0</punchout_only>
+<!--                <punchout_only_http_status_code>403</punchout_only_http_status_code>  -->
+                <punchout_only_page>0</punchout_only_page>
+                <punchout_only_message></punchout_only_message>
+            </site>
             <session>
                 <start_redirect_new>/</start_redirect_new>
                 <start_redirect_edit>checkout/cart</start_redirect_edit>
                 <start_redirect_item>{item_url}</start_redirect_item>
                 <selected_item_ignore>AAA</selected_item_ignore>
-                <punchout_only>1</punchout_only>
                 <type>login</type>
                 <js_session_clean>1</js_session_clean>
                 <js_reload_sections>customer,punchout-session,cart</js_reload_sections>
