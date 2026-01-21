@@ -1,7 +1,8 @@
 TradeCentric - PunchOut
 ===========
-### 3.1.13 (2025-02-02)
+### 3.1.13 (2026-01-21)
 * PBR-2614: Refactored "Punchout Only" access to perform a hard-fail to resolve security exploits
+* PBR-2539: Refactored the window reload punchout configuration to remove double quote characters
 
 ### 3.1.12 (2025-09-15)
 * PBR-2422: Added Assign Magento Customer Address to Cart option
