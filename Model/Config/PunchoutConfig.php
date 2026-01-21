@@ -34,7 +34,8 @@ class PunchoutConfig
     }
 
     /**
-     * Determine whether PunchOut-only mode is enabled for the given store.
+     * Determine whether a custom PunchOut-only unauthorized page should be shown
+     * instead of the server's default unauthorized response for the given store.
      */
     public function isPunchoutOnlyPage(?int $storeId = null): bool
     {
