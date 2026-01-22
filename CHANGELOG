@@ -1,6 +1,6 @@
 TradeCentric - PunchOut
 ===========
-### 3.1.13 (2025-02-02)
+### 3.1.13 (2026-01-22)
 * PBR-2614: Refactored "Punchout Only" access to perform a hard-fail to resolve security exploits
 
 ### 3.1.12 (2025-09-15)
