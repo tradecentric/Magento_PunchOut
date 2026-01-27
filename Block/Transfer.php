@@ -81,7 +81,7 @@ class Transfer extends \Magento\Framework\View\Element\Template
             'return_url' => $this->punchoutSession->getReturnUrl()
         ]);
     }
-
+	
     /**
      * @return bool|string
      */
