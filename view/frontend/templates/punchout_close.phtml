@@ -3,7 +3,7 @@
 
 <?php if ($helper->isReturnEnabled()): ?>
     <li id="po2go-close">
-        <a <?php echo /* @noEscape */ $escaper->escapeJs(json_encode($block->getLinkAttributes())) ?>>
+        <a <?php echo /* @noEscape */ $escaper->escapeJs($block->getLinkAttributes()) ?>>
             <?php echo $escaper->escapeHtml($helper->getReturnLinkLabel()); ?>
         </a>
     </li>
