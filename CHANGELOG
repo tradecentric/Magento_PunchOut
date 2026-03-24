@@ -1,6 +1,6 @@
 TradeCentric - PunchOut
 ===========
-### 3.1.14 (2026-01-27)
+### 3.1.14 (2026-03-24)
 * PBR-2539: Refactored the window reload punchout configuration to remove double quote characters
 
 ### 3.1.13 (2026-01-22)
