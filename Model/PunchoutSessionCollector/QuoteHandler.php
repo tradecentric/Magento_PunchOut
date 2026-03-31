@@ -78,7 +78,6 @@ class QuoteHandler implements EntityHandlerInterface
         $this->logger->log('Quote Setup Begin');
         $object->getQuote()->setCustomer($object->getCustomer());
         $checkoutData = $this->dataExtractor->extract($object->getSession()->getParams());
-        $this->logger->log('checkoutData items: ' . json_encode($checkoutData['items']));
         foreach ($checkoutData['items'] as $item) {
             $this->logger->log(sprintf('Add item sku %s : quote_id\item_id %s', $item['sku'], $item['line_id']));
             $quoteItem = $this->getQuoteItem($item);
