@@ -121,7 +121,7 @@ class QuoteHandler implements EntityHandlerInterface
             if ((int) $productId) {
                 $product = $this->productRepository->getById((int) $productId);
             } elseif ($sku) {
-                $product = $this->productRepository->getById((string) $sku);
+                $product = $this->productRepository->get((string) $sku);
             }
         } catch (NoSuchEntityException $e) {
         }
