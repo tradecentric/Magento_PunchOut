@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 namespace Punchout2Go\Punchout\Model\PunchoutSessionCollector\QuoteHandler;
 
-use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Quote\Api\Data\CartItemInterface;
+use Magento\Quote\Model\ResourceModel\Quote\Item\CollectionFactory;
 
 /**
  * Class QuoteItemExtractor
@@ -17,35 +18,33 @@ class QuoteItemExtractor
     protected $items = [];
 
     /**
-     * @var \Magento\Quote\Api\CartItemRepositoryInterface
+     * @var CollectionFactory
      */
-    protected $cartItemRepository;
+    protected $itemCollectionFactory;
 
     /**
      * QuoteItemExtractor constructor.
-     * @param \Magento\Quote\Api\CartItemRepositoryInterface $cartItemRepository
+     * @param CollectionFactory $itemCollectionFactory
      */
-    public function __construct(\Magento\Quote\Api\CartItemRepositoryInterface $cartItemRepository)
-    {
-        $this->cartItemRepository = $cartItemRepository;
+    public function __construct(
+        CollectionFactory $itemCollectionFactory
+    ) {
+        $this->itemCollectionFactory = $itemCollectionFactory;
     }
 
     /**
      * @param $quoteId
      * @param $itemId
-     * @return \Magento\Quote\Api\Data\CartItemInterface|null
+     * @return CartItemInterface|null
      */
-    public function getQuoteItem($quoteId, $itemId): ?\Magento\Quote\Api\Data\CartItemInterface
+    public function getQuoteItem($quoteId, $itemId): ?CartItemInterface
     {
         if (isset($this->items[$quoteId][$itemId])) {
             return $this->items[$quoteId][$itemId];
         }
-        try {
-            $cartItems = $this->cartItemRepository->getList($quoteId);
-        } catch (NoSuchEntityException $e) {
-            return null;
-        }
-        foreach ($cartItems as $item) {
+        $collection = $this->itemCollectionFactory->create();
+        $collection->addFieldToFilter('quote_id', (int) $quoteId);
+        foreach ($collection as $item) {
             $this->items[$quoteId][$item->getItemId()] = $item;
         }
         return $this->items[$quoteId][$itemId] ?? null;
