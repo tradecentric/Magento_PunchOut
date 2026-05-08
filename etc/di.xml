@@ -69,7 +69,8 @@
 
     <type name="Punchout2Go\Punchout\Api\SessionInterface">
         <arguments>
-            <argument name="sessionCollector" xsi:type="object">Punchout2Go\Punchout\Model\PunchoutSessionCollector\Proxy</argument>
+            <argument name="preLoginCollector" xsi:type="object">Punchout2Go\Punchout\Model\PunchoutPreLoginCollector\Proxy</argument>
+            <argument name="postLoginCollector" xsi:type="object">Punchout2Go\Punchout\Model\PunchoutPostLoginCollector\Proxy</argument>
             <argument name="storage" xsi:type="object">PunchoutSessionStorage</argument>
         </arguments>
     </type>
@@ -137,12 +138,25 @@
         </arguments>
     </type>
 
-    <type name="Punchout2Go\Punchout\Model\PunchoutSessionCollector">
+    <type name="Punchout2Go\Punchout\Model\PunchoutPreLoginCollector">
         <arguments>
             <argument name="collectHandlers" xsi:type="array">
-                <item name="customer" xsi:type="object">Punchout2Go\Punchout\Model\PunchoutSessionCollector\CustomerHandler</item>
-                <item name="quote" xsi:type="object">Punchout2Go\Punchout\Model\PunchoutSessionCollector\QuoteHandler</item>
-                <item name="quoteAddress" xsi:type="object">Punchout2Go\Punchout\Model\PunchoutSessionCollector\QuoteAddressHandler</item>
+                <item name="customer" xsi:type="object">
+                    Punchout2Go\Punchout\Model\PunchoutSessionCollector\CustomerHandler
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Punchout2Go\Punchout\Model\PunchoutPostLoginCollector">
+        <arguments>
+            <argument name="collectHandlers" xsi:type="array">
+                <item name="quote" xsi:type="object">
+                    Punchout2Go\Punchout\Model\PunchoutSessionCollector\QuoteHandler
+                </item>
+                <item name="quoteAddress" xsi:type="object">
+                    Punchout2Go\Punchout\Model\PunchoutSessionCollector\QuoteAddressHandler
+                </item>
             </argument>
         </arguments>
     </type>

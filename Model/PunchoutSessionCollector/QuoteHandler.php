@@ -91,7 +91,16 @@ class QuoteHandler implements EntityHandlerInterface
                 $this->logger->log('No product found');
                 continue;
             }
-            $object->getQuote()->addProduct($product, $infoBuyRequest);
+
+            $result = $object->getQuote()->addProduct($product, $infoBuyRequest);
+            if (is_string($result)) {
+                $this->logger->log(sprintf(
+                    'Failed to add product to quote (sku=%s, line_id=%s): %s',
+                    $item['sku'] ?? '',
+                    $item['line_id'] ?? '',
+                    $result
+                ));
+            }
         }
         $this->logger->log('Quote Setup Complete');
     }

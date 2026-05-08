@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Punchout2Go\Punchout\Model;
 
+use Magento\Customer\Api\AddressRepositoryInterface;
 use Magento\Framework\App\State;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\LocalizedException as SessionException;
@@ -18,7 +19,6 @@ use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
-use Magento\Customer\Api\AddressRepositoryInterface;
 use Magento\Quote\Model\Quote\Address as CustomerAddressConverter;
 use Punchout2Go\Punchout\Api\Data\PunchoutQuoteInterface;
 use Punchout2Go\Punchout\Api\Data\PunchoutQuoteInterfaceFactory;
@@ -39,10 +39,11 @@ class Session extends SessionManager implements SessionInterface
      */
     protected $logger;
 
-    /**
-     * @var PunchoutSessionCollector
-     */
-    protected $sessionCollector;
+    /** @var PunchoutPreLoginCollector */
+    protected $preLoginCollector;
+
+    /** @var PunchoutPostLoginCollector */
+    protected $postLoginCollector;
     /**
      * @var \Magento\Framework\Event\ManagerInterface
      */
@@ -72,12 +73,12 @@ class Session extends SessionManager implements SessionInterface
      * @var CartRepositoryInterface
      */
     protected $cartRepository;
-    
+
     /** @var AddressRepositoryInterface */
     protected $addressRepository;
 
     /** @var CustomerAddressConverter */
-    protected $customerAddressConverter;    
+    protected $customerAddressConverter;
 
     /**
      * @var PunchoutQuoteRepositoryInterface
@@ -98,7 +99,7 @@ class Session extends SessionManager implements SessionInterface
      * @var Session\SessionEditStatus
      */
     protected $editStatus;
-        
+
     /**
      * Session constructor.
      * @param \Magento\Framework\App\Request\Http $request
@@ -111,7 +112,8 @@ class Session extends SessionManager implements SessionInterface
      * @param CookieMetadataFactory $cookieMetadataFactory
      * @param State $appState
      * @param \Punchout2Go\Punchout\Api\LoggerInterface $logger
-     * @param \Punchout2Go\Punchout\Api\EntityHandlerInterface $sessionCollector
+     * @param \Punchout2Go\Punchout\Api\EntityHandlerInterface $preLoginCollector
+     * @param \Punchout2Go\Punchout\Api\EntityHandlerInterface $postLoginCollector
      * @param \Magento\Framework\Event\ManagerInterface $eventManager
      * @param \Magento\Customer\Model\Session $customerSession
      * @param \Magento\Checkout\Model\Session $checkoutSession
@@ -137,7 +139,8 @@ class Session extends SessionManager implements SessionInterface
         CookieMetadataFactory $cookieMetadataFactory,
         State $appState,
         \Punchout2Go\Punchout\Api\LoggerInterface $logger,
-        \Punchout2Go\Punchout\Api\EntityHandlerInterface $sessionCollector,
+        \Punchout2Go\Punchout\Api\EntityHandlerInterface $preLoginCollector,
+        \Punchout2Go\Punchout\Api\EntityHandlerInterface $postLoginCollector,
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Checkout\Model\Session $checkoutSession,
@@ -152,7 +155,8 @@ class Session extends SessionManager implements SessionInterface
         ?SessionStartChecker $sessionStartChecker = null
     ) {
         $this->logger = $logger;
-        $this->sessionCollector = $sessionCollector;
+        $this->preLoginCollector = $preLoginCollector;
+        $this->postLoginCollector = $postLoginCollector;
         $this->eventManager = $eventManager;
         $this->helper = $helper;
         $this->customerSession = $customerSession;
@@ -179,72 +183,63 @@ class Session extends SessionManager implements SessionInterface
     }
 
     /**
-     * @param array $startupParams
+     * @param array $params
      * @throws SessionException
      */
-    public function startSession(array $startupParams): void
+    public function startSession(array $params): void
     {
         if (!$this->helper->isPunchoutActive()) {
             throw new LocalizedException(__('PunchOut is not active at this scope.'));
         }
-        $this->logger->log('Running PunchOut Setup', $startupParams);
-        $this->storage->setData($startupParams);
+
+        $this->storage->setData($params);
+        $this->logger->log('Running PunchOut Setup', $params);
+
         if (!$this->isValid()) {
             throw new SessionException(
                 __('PunchOut session request is invalid.')
             );
         }
-        /** @var SessionContainerInterface $container */
-        $container = $this->getContainer();
-        $this->sessionPreStart($container);
-        $this->sessionCollector->handle($container);
-        $this->logger->log('Collect data complete');
-        $this->sessionPostStart($container);
-        $this->logger->log('Post start');
 
-        /** save magento quote */
+        // Build container with placeholder quote
+        $container = $this->containerFactory->create([
+           'session' => $this->getPunchoutQuote(),
+           'quote' => $this->checkoutSession->getQuote(),
+           'customer' => $this->customerSession->getCustomer()->getDataModel(),
+        ]);
+
+        // Fire starting session event and logout customer
+        $this->sessionPreStart($container);
+
+        // Resolve the PunchOut customer, then login
+        $this->preLoginCollector->handle($container);
+        $this->loginCustomer($container->getCustomer());
+        $this->logger->log('Resolve customer and login');
+
+        //  Initialise the definitive quote, exactly once, after login.
         $this->checkoutSession->clearStorage();
-        $quote = $this->initQuote()->setTotalsCollectedFlag(false)->collectTotals();
-    
+        $quote = $this->initQuote();
+        $container->setQuote($quote);
+
+        // Add items and addresses to that quote, under the correct customer context.
+        $this->postLoginCollector->handle($container);
+
         /** get customer addresses **/
         if ($this->helper->isMageAddressToCart()) {
-            $this->logger->log('Get Customer Addresses');  
-            $defaultShippingAddress = null;
-            $defaultBillingAddress = null;
-            
-            $customer = $this->customerSession->getCustomer();
-
-            // get DefaultShipping 
-            if ($customer->getDefaultShipping()) {
-                $defaultShippingAddress = $this->addressRepository->getById($customer->getDefaultShipping());
-            }
-            
-            if ($customer->getDefaultBilling()) {
-                $defaultBillingAddress = $this->addressRepository->getById($customer->getDefaultBilling());
-            }
-    
-            // get DefaultShipping 
-            if ($defaultShippingAddress) {
-               $this->logger->log('Customer Default Shipping Address');
-               $this->updateQuoteAddressFromCustomerAddress($quote, $defaultShippingAddress, 'shipping');
-            }
-   
-           if ($defaultBillingAddress) {
-               $this->logger->log('Customer Default Billing Address');
-               $this->updateQuoteAddressFromCustomerAddress($quote, $defaultBillingAddress, 'billing');
-            }
-
-//          $quote->collectTotals()->save();
+            $this->applyCustomerAddresses($quote);
         }
-    
-        $container->setQuote($quote);
+
+        // Save and link quote
+        $quote->setTotalsCollectedFlag(false)->collectTotals();
         $this->cartRepository->save($quote);
+        $this->checkoutSession->setQuoteId((int) $quote->getId());
 
         /** save punchout quote */
         $punchoutQuote = $container->getSession()->setQuoteId((int)$quote->getId());
         $this->punchoutQuoteRepository->save($punchoutQuote);
         $this->logger->log('Collect Totals, cart save Complete');
 
+        $this->sessionPostStart($container);
         $this->logger->log('Session start completed');
     }
 
@@ -264,15 +259,10 @@ class Session extends SessionManager implements SessionInterface
         );
     }
 
-    private function initQuote(): CartInterface {
-        $isEdit = false;
-        if (
-            !empty($this->storage->getData()['params']['operation']) &&
-            $this->storage->getData()['params']['operation'] === 'edit'
-        ) $isEdit = true;
-
+    private function initQuote(): CartInterface
+    {
         $quote = $this->checkoutSession->getQuote();
-        if (!$quote->isObjectNew() && !$isEdit) {
+        if (!$quote->isObjectNew()) {
             $quote->setIsActive(false);
             $this->cartRepository->save($quote);
             $this->checkoutSession->clearStorage();
@@ -318,13 +308,8 @@ class Session extends SessionManager implements SessionInterface
      * @param SessionContainerInterface $container
      * @throws SessionException
      */
-    protected function sessionPostStart(SessionContainerInterface $container)
+    protected function sessionPostStart(SessionContainerInterface $container): void
     {
-        $this->eventManager->dispatch('punchout_session_ready', ['session' => $container]);
-        if ($this->helper->getCustomerSessionType() == Login::LOGIN_LOGGED_IN) {
-            $this->loginCustomer($container->getCustomer());
-        }
-
         $metadata = $this->cookieMetadataFactory
             ->createPublicCookieMetadata()
             ->setDuration(86400)
@@ -332,13 +317,20 @@ class Session extends SessionManager implements SessionInterface
             ->setPath($this->getCookiePath() ?? '/')
             ->setDomain($this->getCookieDomain() ?? '/')
             ->setSecure(true);
-        $this->cookieManager->setPublicCookie('punchout_session_key', $container->getSession()->getPunchoutSessionId(), $metadata);
+
+        $this->cookieManager->setPublicCookie(
+            'punchout_session_key',
+            $container->getSession()->getPunchoutSessionId(),
+            $metadata
+        );
+
+        $this->eventManager->dispatch('punchout_session_ready', ['session' => $container]);
     }
 
     /**
      * pre start actions
      */
-    protected function sessionPreStart(SessionContainerInterface $container)
+    protected function sessionPreStart(SessionContainerInterface $container): void
     {
         $this->eventManager->dispatch('punchout_session_starting', ['session' => $container]);
         $this->checkLock();
@@ -411,10 +403,10 @@ class Session extends SessionManager implements SessionInterface
     /**
      * clear quote
      */
-    protected function prepareQuote()
+    protected function prepareQuote(): void
     {
         $quoteId = $this->checkoutSession->getQuoteId();
-        if ($quoteId != $this->getSessionId()) {
+        if ($quoteId !== (int)$this->getSessionId()) {
             $this->checkoutSession->clearQuote();
         }
     }
@@ -511,5 +503,34 @@ class Session extends SessionManager implements SessionInterface
         });
         $item = current($items);
         return $item['primaryId'] ?? '';
+    }
+
+    protected function applyCustomerAddresses(CartInterface $quote): void
+    {
+        $this->logger->log('Get Customer Addresses');
+        $defaultShippingAddress = null;
+        $defaultBillingAddress = null;
+
+        $customer = $this->customerSession->getCustomer();
+
+        // get DefaultShipping
+        if ($customer->getDefaultShipping()) {
+            $defaultShippingAddress = $this->addressRepository->getById($customer->getDefaultShipping());
+        }
+
+        if ($customer->getDefaultBilling()) {
+            $defaultBillingAddress = $this->addressRepository->getById($customer->getDefaultBilling());
+        }
+
+        // get DefaultShipping
+        if ($defaultShippingAddress) {
+            $this->logger->log('Customer Default Shipping Address');
+            $this->updateQuoteAddressFromCustomerAddress($quote, $defaultShippingAddress, 'shipping');
+        }
+
+        if ($defaultBillingAddress) {
+            $this->logger->log('Customer Default Billing Address');
+            $this->updateQuoteAddressFromCustomerAddress($quote, $defaultBillingAddress, 'billing');
+        }
     }
 }
