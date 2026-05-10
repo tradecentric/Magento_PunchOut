@@ -218,15 +218,26 @@ class Session extends SessionManager implements SessionInterface
 
         //  Initialise the definitive quote, exactly once, after login.
         $this->checkoutSession->clearStorage();
-        $quote = $this->initQuote();
-        $container->setQuote($quote);
 
-        // Add items and addresses to that quote, under the correct customer context.
-        $this->postLoginCollector->handle($container);
+        if (($this->getParams()['operation'] ?? '') === 'inspect') {
+            // Inspect is read-only: the procurement system is snapshotting the cart it
+            // already has. Reuse the customer's existing active quote untouched so the
+            // supplierauxid values on the round-trip stay identical and procurement
+            // doesn't treat the transfer as new line items.
+            $this->logger->log('Inspect session: reusing existing quote without rebuild');
+            $quote = $this->checkoutSession->getQuote();
+            $container->setQuote($quote);
+        } else {
+            $quote = $this->initQuote();
+            $container->setQuote($quote);
 
-        /** get customer addresses **/
-        if ($this->helper->isMageAddressToCart()) {
-            $this->applyCustomerAddresses($quote);
+            // Add items and addresses to that quote, under the correct customer context.
+            $this->postLoginCollector->handle($container);
+
+            /** get customer addresses **/
+            if ($this->helper->isMageAddressToCart()) {
+                $this->applyCustomerAddresses($quote);
+            }
         }
 
         // Save and link quote
