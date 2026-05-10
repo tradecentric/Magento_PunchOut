@@ -5,7 +5,7 @@ namespace Punchout2Go\Punchout\Model\PunchoutSessionCollector\QuoteHandler;
 
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Api\CartRepositoryInterface;
-use Punchout2Go\Punchout\Api\LoggerInterface;
+use Magento\Quote\Model\Quote;
 
 /**
  * Class QuoteItemExtractor
@@ -24,19 +24,12 @@ class QuoteItemExtractor
     protected $cartRepository;
 
     /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
      * QuoteItemExtractor constructor.
      * @param CartRepositoryInterface $cartRepository
-     * @param LoggerInterface $logger
      */
-    public function __construct(CartRepositoryInterface $cartRepository, LoggerInterface $logger)
+    public function __construct(CartRepositoryInterface $cartRepository)
     {
         $this->cartRepository = $cartRepository;
-        $this->logger = $logger;
     }
 
     /**
@@ -49,22 +42,17 @@ class QuoteItemExtractor
         if (isset($this->items[$quoteId][$itemId])) {
             return $this->items[$quoteId][$itemId];
         }
-        $this->logger->log(sprintf('QuoteItemExtractor: looking up quote_id=%s item_id=%s', $quoteId, $itemId));
         try {
             $quote = $this->cartRepository->get((int) $quoteId);
         } catch (NoSuchEntityException $e) {
-            $this->logger->log(sprintf('QuoteItemExtractor: quote %s not found (NoSuchEntityException: %s)', $quoteId, $e->getMessage()));
             return null;
         }
-        $allItems = (array) $quote->getItems();
-        $this->logger->log(sprintf(
-            'QuoteItemExtractor: quote %s loaded (is_active=%s, customer_id=%s, items_count=%d, item_ids=[%s])',
-            $quoteId,
-            var_export($quote->getIsActive(), true),
-            (string) $quote->getCustomerId(),
-            count($allItems),
-            implode(',', array_map(static fn($i) => (string) $i->getItemId(), $allItems))
-        ));
+        
+        // Read items via getAllVisibleItems() / getItemsCollection() rather than getItems():
+        // QuoteRepository\LoadHandler::load() short-circuits for inactive quotes and never
+        // populates the KEY_ITEMS data key, so getItems() returns null. The collection-based
+        // accessors hit the items table directly and work regardless of active state.
+        $allItems = $quote instanceof Quote ? $quote->getAllVisibleItems() : (array) $quote->getItems();
         foreach ($allItems as $item) {
             $this->items[$quoteId][$item->getItemId()] = $item;
         }
