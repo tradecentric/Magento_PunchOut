@@ -264,15 +264,25 @@ class Session extends SessionManager implements SessionInterface
 
     private function initQuote(): CartInterface
     {
+        // CREATE is the protocol-level signal that a new procurement cycle is starting.
+        // Deactivate the customer's prior active quote (preserving it in the DB so any
+        // outstanding POs from earlier cycles can still resolve their supplierauxid
+        // references) and mint a fresh quote for this new cycle.
+        if ($this->getOperation() === 'create') {
+            $existing = $this->checkoutSession->getQuote();
+            if (!$existing->isObjectNew()) {
+                $existing->setIsActive(false);
+                $this->cartRepository->save($existing);
+                $this->checkoutSession->clearStorage();
+            }
+        }
+
+        // For EDIT and INSPECT (and the recursive fall-through from CREATE), reuse the
+        // customer's active quote so quote_id and quote_item_id stay stable within
+        // this procurement cycle.
         $quote = $this->checkoutSession->getQuote();
         if (!$quote->getIsActive()) {
             $quote->setIsActive(true);
-        }
-
-        if ($this->getOperation() === 'create') {
-            foreach ($quote->getAllVisibleItems() as $item) {
-                $quote->removeItem($item->getItemId());
-            }
         }
 
         return $quote;
