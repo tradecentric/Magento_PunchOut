@@ -66,9 +66,8 @@ class StartUpUrlProvider implements StartUpUrlProviderInterface
     {
         $query = $this->getRedirectQueryParams($session);
         $startUrl = $this->sessionHelper->getSessionStartupUrl();
-        $operation = $session->getOperation();
 
-        if ($session->isEdit()  || $operation === 'inspect') {
+        if ($session->isEdit()) {
             $startUrl = $this->sessionHelper->getSessionStartupEditUrl();
         }
         $productUrl = $this->getProductUrl($session);
