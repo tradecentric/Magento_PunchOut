@@ -21,4 +21,21 @@
             }
         }
     }
+
+    // Inspect session is read-only per protocol: lock cart-modification controls
+    // that live inside Magento_Checkout's core cart template
+    body.is-punchout-inspect {
+        .cart.table-wrapper {
+            .qty input {
+                pointer-events: none;
+                opacity: 0.5;
+            }
+            .action-delete {
+                display: none;
+            }
+        }
+        button[name="update_cart_action"] {
+            display: none;
+        }
+    }
 }

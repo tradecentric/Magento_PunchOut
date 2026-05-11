@@ -471,7 +471,7 @@ class Session extends SessionManager implements SessionInterface
     /**
      * @return string
      */
-    private function getOperation(): string
+    public function getOperation(): string
     {
         return (string) ($this->getParams()['operation'] ?? '');
     }

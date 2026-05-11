@@ -59,6 +59,10 @@ class LayoutObserver implements ObserverInterface
                 $layoutUpdate->addHandle('punchout_checkout_cart_index');
             }
 
+            if ($this->session->getOperation() === 'inspect') {
+                $this->pageConfig->addBodyClass('is-punchout-inspect');
+            }
+
             $this->pageConfig->addBodyClass('is-punchout-session');
         }
     }

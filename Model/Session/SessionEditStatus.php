@@ -15,7 +15,7 @@ class SessionEditStatus
     /**
      * @var array|string[]
      */
-    protected $editableOperations = ['edit', 'inspect'];
+    protected $editableOperations = ['edit'];
 
     /**
      * SessionEditStatus constructor.

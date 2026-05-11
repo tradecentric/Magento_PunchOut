@@ -5,4 +5,9 @@
     <event name="controller_action_predispatch">
         <observer name="punchout_hard_fail_observer" instance="Punchout2Go\Punchout\Observer\PunchoutOnlyObserver"/>
     </event>
+
+    <!-- Suppress the Transfer Cart button on inspect-type sessions across all storefronts. -->
+    <event name="layout_generate_blocks_after">
+        <observer name="punchout_inspect_transfer_button_gate" instance="Punchout2Go\Punchout\Observer\InspectTransferButtonGate" />
+    </event>
 </config>
