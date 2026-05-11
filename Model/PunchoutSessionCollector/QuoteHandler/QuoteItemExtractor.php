@@ -47,7 +47,7 @@ class QuoteItemExtractor
         } catch (NoSuchEntityException $e) {
             return null;
         }
-        
+
         // Read items via getAllVisibleItems() / getItemsCollection() rather than getItems():
         // QuoteRepository\LoadHandler::load() short-circuits for inactive quotes and never
         // populates the KEY_ITEMS data key, so getItems() returns null. The collection-based

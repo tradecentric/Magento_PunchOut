@@ -216,28 +216,20 @@ class Session extends SessionManager implements SessionInterface
         $this->loginCustomer($container->getCustomer());
         $this->logger->log('Resolve customer and login');
 
-        //  Initialise the definitive quote, exactly once, after login.
+        // Reuse the customer's existing quote across create/edit/inspect
         $this->checkoutSession->clearStorage();
+        $quote = $this->initQuote();
+        $container->setQuote($quote);
 
-        if (($this->getParams()['operation'] ?? '') === 'inspect') {
-            // Inspect is read-only: the procurement system is snapshotting the cart it
-            // already has. Reuse the customer's existing active quote untouched so the
-            // supplierauxid values on the round-trip stay identical and procurement
-            // doesn't treat the transfer as new line items.
-            $this->logger->log('Inspect session: reusing existing quote without rebuild');
-            $quote = $this->checkoutSession->getQuote();
-            $container->setQuote($quote);
-        } else {
-            $quote = $this->initQuote();
-            $container->setQuote($quote);
-
-            // Add items and addresses to that quote, under the correct customer context.
+        if ($this->getOperation() !== 'inspect') {
             $this->postLoginCollector->handle($container);
 
             /** get customer addresses **/
             if ($this->helper->isMageAddressToCart()) {
                 $this->applyCustomerAddresses($quote);
             }
+        } else {
+            $this->logger->log('Inspect session: read-only, skipping item/address reconciliation');
         }
 
         // Save and link quote
@@ -273,13 +265,16 @@ class Session extends SessionManager implements SessionInterface
     private function initQuote(): CartInterface
     {
         $quote = $this->checkoutSession->getQuote();
-        if (!$quote->isObjectNew()) {
-            $quote->setIsActive(false);
-            $this->cartRepository->save($quote);
-            $this->checkoutSession->clearStorage();
-            return $this->initQuote();
+        if (!$quote->getIsActive()) {
+            $quote->setIsActive(true);
         }
-        $quote->setIsActive(true);
+
+        if ($this->getOperation() === 'create') {
+            foreach ($quote->getAllVisibleItems() as $item) {
+                $quote->removeItem($item->getItemId());
+            }
+        }
+
         return $quote;
     }
 
@@ -461,6 +456,14 @@ class Session extends SessionManager implements SessionInterface
     public function getParams(): array
     {
         return (array) $this->storage->getData(static::PARAMS);
+    }
+
+    /**
+     * @return string
+     */
+    private function getOperation(): string
+    {
+        return (string) ($this->getParams()['operation'] ?? '');
     }
 
     /**
