@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Punchout2Go\Punchout\Model\PunchoutSessionCollector;
 
+use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\Exception\LocalizedException as SessionException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Api\Data\CartInterface;
@@ -171,16 +172,16 @@ class QuoteHandler implements EntityHandlerInterface
     /**
      * @param $productId
      * @param $sku
-     * @return \Magento\Catalog\Api\Data\ProductInterface|null
+     * @return ProductInterface|null
      */
-    protected function getProduct($productId, $sku)
+    protected function getProduct($productId, $sku): ?ProductInterface
     {
         try {
             $product = null;
             if ((int) $productId) {
                 $product = $this->productRepository->getById((int) $productId);
             } elseif ($sku) {
-                $product = $this->productRepository->getById((string) $sku);
+                $product = $this->productRepository->get((string) $sku);
             }
         } catch (NoSuchEntityException $e) {
         }
