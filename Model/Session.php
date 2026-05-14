@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Punchout2Go\Punchout\Model;
 
 use Magento\Customer\Api\AddressRepositoryInterface;
+use Magento\Customer\Api\Data\CustomerInterfaceFactory;
 use Magento\Framework\App\State;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\LocalizedException;
@@ -85,6 +86,9 @@ class Session extends SessionManager implements SessionInterface
     /** @var CustomerAddressConverter */
     protected $customerAddressConverter;
 
+    /** @var CustomerInterfaceFactory */
+    protected $customerDataFactory;
+
     /**
      * @var PunchoutQuoteRepositoryInterface
      */
@@ -157,6 +161,7 @@ class Session extends SessionManager implements SessionInterface
         Session\SessionEditStatus $editStatus,
         AddressRepositoryInterface $addressRepository,
         CustomerAddressConverter $customerAddressConverter,
+        CustomerInterfaceFactory $customerDataFactory,
         PunchoutQuoteRepositoryInterface $punchoutQuoteRepository,
         PunchoutQuoteInterfaceFactory $punchoutQuoteInterfaceFactory,
         ?SessionStartChecker $sessionStartChecker = null
@@ -174,6 +179,7 @@ class Session extends SessionManager implements SessionInterface
         $this->editStatus = $editStatus;
         $this->addressRepository = $addressRepository;
         $this->customerAddressConverter = $customerAddressConverter;
+        $this->customerDataFactory = $customerDataFactory;
         $this->punchoutQuoteRepository = $punchoutQuoteRepository;
         $this->punchoutQuoteInterfaceFactory = $punchoutQuoteInterfaceFactory;
         parent::__construct(
@@ -209,20 +215,26 @@ class Session extends SessionManager implements SessionInterface
             );
         }
 
-        // Build container with placeholder quote
+        // Build container with a fresh customer DataModel.
         $container = $this->containerFactory->create([
            'session' => $this->getPunchoutQuote(),
            'quote' => $this->checkoutSession->getQuote(),
-           'customer' => $this->customerSession->getCustomer()->getDataModel(),
+           'customer' => $this->customerDataFactory->create(),
         ]);
 
         // Fire starting session event and logout customer
         $this->sessionPreStart($container);
 
-        // Resolve the PunchOut customer, then login
+        // Resolve the PunchOut customer; login only in LOGIN_LOGGED_IN mode.
+        // Anonymous merchants ship a first-class config option (Login::LOGIN_ANONYMOUS)
+        // and must not be silently re-logged-in as the prior storefront visitor.
         $this->preLoginCollector->handle($container);
-        $this->loginCustomer($container->getCustomer());
-        $this->logger->log('Resolve customer and login');
+        if ($this->helper->getCustomerSessionType() === Login::LOGIN_LOGGED_IN) {
+            $this->loginCustomer($container->getCustomer());
+            $this->logger->log('Resolve customer and login');
+        } else {
+            $this->logger->log('Anonymous session: skipping customer login');
+        }
 
         // Resolve THIS sid's quote from punchout_quote.quote_id, not from checkoutSession.
         $quote = $this->initQuote();
@@ -231,8 +243,8 @@ class Session extends SessionManager implements SessionInterface
         if ($this->getOperation() !== 'inspect') {
             $this->postLoginCollector->handle($container);
 
-            // get customer addresses
-            if ($this->helper->isMageAddressToCart()) {
+            // Default-address copy only applies when there's a logged-in customer
+            if (!$this->isAnonymousSession() && $this->helper->isMageAddressToCart()) {
                 $this->applyCustomerAddresses($quote);
             }
         } else {
@@ -289,7 +301,13 @@ class Session extends SessionManager implements SessionInterface
         $punchoutQuote = $this->getPunchoutQuote();
         $boundQuoteId  = (int) $punchoutQuote->getQuoteId();
         $operation     = $this->getOperation();
-        $customerId    = (int) $this->customerSession->getCustomerId();
+
+        // Anonymous sessions follow the same model but without customer scoping.
+        if ($this->isAnonymousSession()) {
+            return $this->initAnonymousQuote($boundQuoteId, $operation);
+        }
+
+        $customerId = (int) $this->customerSession->getCustomerId();
 
         if ($operation === 'create') {
             if ($boundQuoteId) {
@@ -315,6 +333,64 @@ class Session extends SessionManager implements SessionInterface
         $quote = $this->loadAndActivate($boundQuoteId, $customerId);
         if ((int) $quote->getCustomerId() !== $customerId) {
             throw new SessionException(__('Edit/inspect target quote does not belong to this customer.'));
+        }
+        return $quote;
+    }
+
+    private function isAnonymousSession(): bool
+    {
+        return $this->helper->getCustomerSessionType() === Login::LOGIN_ANONYMOUS;
+    }
+
+    /**
+     * @throws NoSuchEntityException
+     * @throws SessionException
+     */
+    private function initAnonymousQuote(int $boundQuoteId, string $operation): CartInterface
+    {
+        if ($operation === 'create') {
+            if ($boundQuoteId) {
+                $this->logger->log(sprintf('anonymous create for already-bound sid; reusing guest quote %d', $boundQuoteId));
+                return $this->loadGuestQuote($boundQuoteId);
+            }
+            return $this->mintFreshGuestQuote();
+        }
+
+        if (!$boundQuoteId) {
+            $boundQuoteId = $this->extractTargetQuoteIdFromPayload();
+            if (!$boundQuoteId) {
+                throw new SessionException(__(
+                    'Anonymous edit/inspect arrived with no resolvable target quote (no secondaryId on inbound items).'
+                ));
+            }
+        }
+        $quote = $this->loadGuestQuote($boundQuoteId);
+        // Inverse tenancy check: an anonymous sid must not be allowed to claim
+        // a login-mode customer's quote via a crafted secondaryId.
+        if ((int) $quote->getCustomerId() !== 0) {
+            throw new SessionException(__('Anonymous session cannot target a customer-bound quote.'));
+        }
+        return $quote;
+    }
+
+    /**
+     * @throws CouldNotSaveException
+     * @throws NoSuchEntityException
+     */
+    private function mintFreshGuestQuote(): CartInterface
+    {
+        $newQuoteId = (int) $this->cartManagement->createEmptyCart();
+        return $this->cartRepository->get($newQuoteId);
+    }
+
+    /**
+     * @throws NoSuchEntityException
+     */
+    private function loadGuestQuote(int $quoteId): CartInterface
+    {
+        $quote = $this->cartRepository->get($quoteId); // works on inactive quotes
+        if (!$quote->getIsActive()) {
+            $quote->setIsActive(true);
         }
         return $quote;
     }

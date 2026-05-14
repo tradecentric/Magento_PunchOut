@@ -21,11 +21,12 @@ class ItemData implements DataExtractorInterface
             return [];
         }
         $result = ['items' => []];
+
         foreach ((array) $params["body"]['items'] as $item) {
             if (!isset($item['primaryId'])) {
                 continue;
             }
-            $result['items'][$item['primaryId']] = [
+            $result['items'][] = [
                 'sku' => $item['primaryId'],
                 'line_id' =>  $item['secondaryId'] ?? '',
                 'qty' => $item['quantity'] ?? 1

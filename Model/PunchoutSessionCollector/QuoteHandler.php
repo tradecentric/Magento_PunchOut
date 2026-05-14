@@ -85,12 +85,13 @@ class QuoteHandler implements EntityHandlerInterface
 
         // Index current cart items twice:
         //  - by item_id for stable supplierauxid matching (post-stable-IDs steady state)
-        //  - by SKU for fallback matching
+        //  - by SKU as a list per SKU. to avoid the last-indexed item
+        //    silently win the fallback and have the wrong line updated or removed
         $byItemId = [];
         $bySku    = [];
         foreach ($quote->getAllVisibleItems() as $existing) {
             $byItemId[(int) $existing->getItemId()] = $existing;
-            $bySku[(string) $existing->getSku()]    = $existing;
+            $bySku[(string) $existing->getSku()][]  = $existing;
         }
 
         $checkoutData = $this->dataExtractor->extract($object->getSession()->getParams());
@@ -150,19 +151,6 @@ class QuoteHandler implements EntityHandlerInterface
     }
 
     /**
-     * @param array $item
-     * @return null
-     */
-    protected function getQuoteItem(array $item)
-    {
-        if (!$item['line_id']) {
-            return null;
-        }
-        [$quoteId, $itemId] = $this->helper->getQuoteItemIdInfo($item['line_id']);
-        return $this->quoteItemExtractor->getQuoteItem($quoteId, $itemId);
-    }
-
-    /**
      * @param $productId
      * @param $sku
      * @return ProductInterface|null
@@ -209,7 +197,12 @@ class QuoteHandler implements EntityHandlerInterface
      * the quote_id portion equals the customer's current quote, and the item_id
      * portion identifies the row directly.
      *
-     * Fallback match: by SKU.
+     * Fallback match: by SKU, but only when exactly one existing visible item
+     * carries that SKU. The inbound payload has no option data (super_attribute /
+     * bundle_option / custom options), so we cannot disambiguate when multiple
+     * visible items share a SKU. Returning null in the ambiguous case lets the
+     * caller route the row through addProduct() and the cleanup pass drop any
+     * un-kept duplicates — preferable to silently mutating the wrong line.
      *
      * @param array         $item
      * @param CartInterface $quote
@@ -238,13 +231,26 @@ class QuoteHandler implements EntityHandlerInterface
         }
 
         $sku = (string) ($item['sku'] ?? '');
-        if ($sku !== '' && isset($bySku[$sku])) {
-            $skuMatchItemId = (int) $bySku[$sku]->getItemId();
-            if (!isset($kept[$skuMatchItemId])) {
-                return $bySku[$sku];
-            }
+        if ($sku === '' || empty($bySku[$sku])) {
+            return null;
         }
 
+        $candidates = [];
+        foreach ($bySku[$sku] as $existing) {
+            if (!isset($kept[(int) $existing->getItemId()])) {
+                $candidates[] = $existing;
+            }
+        }
+        if (count($candidates) === 1) {
+            return $candidates[0];
+        }
+        if (count($candidates) > 1) {
+            $this->logger->log(sprintf(
+                'SKU fallback declined: %d unmatched visible items share sku=%s; routing inbound row as new',
+                count($candidates),
+                $sku
+            ));
+        }
         return null;
     }
 }
