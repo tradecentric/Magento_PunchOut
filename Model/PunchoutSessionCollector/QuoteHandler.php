@@ -85,9 +85,7 @@ class QuoteHandler implements EntityHandlerInterface
 
         // Index current cart items twice:
         //  - by item_id for stable supplierauxid matching (post-stable-IDs steady state)
-        //  - by SKU for fallback matching (transition period before procurement has
-        //    learned the stable IDs, or procurement systems that don't echo our
-        //    supplierauxid back faithfully).
+        //  - by SKU for fallback matching
         $byItemId = [];
         $bySku    = [];
         foreach ($quote->getAllVisibleItems() as $existing) {
@@ -115,9 +113,6 @@ class QuoteHandler implements EntityHandlerInterface
                 continue;
             }
 
-            // No match in current cart — procurement is sending us an item we don't have.
-            // Possible in transition state (legacy supplierauxid), or if procurement adds
-            // items on its side.
             $this->logger->log(sprintf(
                 'New item from procurement (sku=%s, line_id=%s)',
                 $item['sku'],
@@ -140,8 +135,6 @@ class QuoteHandler implements EntityHandlerInterface
             }
         }
 
-        // Items still in our cart that didn't appear in the inbound payload =
-        // procurement removed them. Remove them on our side too.
         foreach ($byItemId as $itemId => $existing) {
             if (!isset($kept[$itemId])) {
                 $quote->removeItem($itemId);
@@ -216,10 +209,7 @@ class QuoteHandler implements EntityHandlerInterface
      * the quote_id portion equals the customer's current quote, and the item_id
      * portion identifies the row directly.
      *
-     * Fallback match: by SKU. Two scenarios need this:
-     *   1) Transition period — procurement still holds supplierauxid values from
-     *      before stable IDs shipped, so the quote_id portion won't match.
-     *   2) Procurement systems that don't echo our supplierauxid back faithfully.
+     * Fallback match: by SKU.
      *
      * @param array         $item
      * @param CartInterface $quote

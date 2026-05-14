@@ -49,9 +49,7 @@ class QuoteItemExtractor
         }
 
         // Read items via getAllVisibleItems() / getItemsCollection() rather than getItems():
-        // QuoteRepository\LoadHandler::load() short-circuits for inactive quotes and never
-        // populates the KEY_ITEMS data key, so getItems() returns null. The collection-based
-        // accessors hit the items table directly and work regardless of active state.
+        // The collection-based accessors hit the items table directly and work regardless of active state.
         $allItems = $quote instanceof Quote ? $quote->getAllVisibleItems() : (array) $quote->getItems();
         foreach ($allItems as $item) {
             $this->items[$quoteId][$item->getItemId()] = $item;

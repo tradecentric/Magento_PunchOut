@@ -231,7 +231,7 @@ class Session extends SessionManager implements SessionInterface
         if ($this->getOperation() !== 'inspect') {
             $this->postLoginCollector->handle($container);
 
-            /** get customer addresses **/
+            // get customer addresses
             if ($this->helper->isMageAddressToCart()) {
                 $this->applyCustomerAddresses($quote);
             }
@@ -244,7 +244,7 @@ class Session extends SessionManager implements SessionInterface
         $this->cartRepository->save($quote);
         $this->checkoutSession->setQuoteId((int) $quote->getId());
 
-        /** save punchout quote — only bind on first save; never overwrite a bound sid */
+        // save punchout quote — only bind on first save; never overwrite a bound sid
         $punchoutQuote = $container->getSession();
         $existingBound = (int) $punchoutQuote->getQuoteId();
         if (!$existingBound) {
@@ -293,7 +293,6 @@ class Session extends SessionManager implements SessionInterface
 
         if ($operation === 'create') {
             if ($boundQuoteId) {
-                // duplicate/retry of create POST for the same sid — reuse, don't double-mint
                 $this->logger->log(sprintf('create for already-bound sid; reusing quote %d', $boundQuoteId));
                 return $this->loadAndActivate($boundQuoteId, $customerId);
             }
@@ -352,10 +351,8 @@ class Session extends SessionManager implements SessionInterface
         if (!$customerId) {
             throw new SessionException(__('Cannot mint a quote without a logged-in customer.'));
         }
-        // Magento allows only one active quote per customer. Park whichever quote
-        // is currently active so createEmptyCartForCustomer's uniqueness check
-        // passes and the new quote becomes the customer's sole active cart. The
-        // parked quote stays in the DB and remains addressable by id — an
+
+        // Magento allows only one active quote per customer.
         // edit/inspect for the prior sid will reactivate it via loadAndActivate().
         $this->deactivateOtherActiveQuotes($customerId, 0);
         $newQuoteId = (int) $this->cartManagement->createEmptyCartForCustomer($customerId);
