@@ -5,6 +5,7 @@ namespace Punchout2Go\Punchout\Model;
 
 use Magento\Customer\Api\AddressRepositoryInterface;
 use Magento\Framework\App\State;
+use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\LocalizedException as SessionException;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -310,7 +311,12 @@ class Session extends SessionManager implements SessionInterface
         return $this->loadAndActivate($boundQuoteId);
     }
 
-    private function mintFreshQuoteForCustomer(int $customerId): CartInterface
+    /**
+     * @throws NoSuchEntityException
+     * @throws CouldNotSaveException
+     * @throws SessionException
+     */
+    private function mintFreshQuoteForCustomer(): CartInterface
     {
         $customerId = (int) $this->customerSession->getCustomerId();
         if (!$customerId) {
