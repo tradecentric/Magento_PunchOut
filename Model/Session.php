@@ -277,22 +277,6 @@ class Session extends SessionManager implements SessionInterface
     }
 
     /**
-     * @return mixed
-     * @throws SessionException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     */
-    protected function getContainer()
-    {
-        return $this->containerFactory->create(
-            [
-                'session' => $this->getPunchoutQuote(),
-                'quote' => $this->initQuote(),
-                'customer' => $this->customerSession->getCustomer()->getDataModel()
-            ]
-        );
-    }
-
-    /**
      * @throws NoSuchEntityException
      * @throws SessionException
      */
@@ -301,6 +285,10 @@ class Session extends SessionManager implements SessionInterface
         $punchoutQuote = $this->getPunchoutQuote();
         $boundQuoteId  = (int) $punchoutQuote->getQuoteId();
         $operation     = $this->getOperation();
+
+        if (!in_array($operation, ['edit', 'inspect'], true)) {
+            $operation = 'create';
+        }
 
         // Anonymous sessions follow the same model but without customer scoping.
         if ($this->isAnonymousSession()) {
@@ -312,14 +300,7 @@ class Session extends SessionManager implements SessionInterface
         if ($operation === 'create') {
             if ($boundQuoteId) {
                 $this->logger->log(sprintf('create for already-bound sid; reusing quote %d', $boundQuoteId));
-                $quote = $this->loadAndActivate($boundQuoteId, $customerId);
-                // Tenancy check on retry-create:
-                if ((int) $quote->getCustomerId() !== $customerId) {
-                    throw new SessionException(__(
-                        'Create target quote does not belong to this customer.'
-                    ));
-                }
-                return $quote;
+                return $this->loadAndActivate($boundQuoteId, $customerId);
             }
             return $this->mintFreshQuoteForCustomer($customerId);
         }
@@ -337,11 +318,7 @@ class Session extends SessionManager implements SessionInterface
                 ));
             }
         }
-        $quote = $this->loadAndActivate($boundQuoteId, $customerId);
-        if ((int) $quote->getCustomerId() !== $customerId) {
-            throw new SessionException(__('Edit/inspect target quote does not belong to this customer.'));
-        }
-        return $quote;
+        return $this->loadAndActivate($boundQuoteId, $customerId);
     }
 
     private function isAnonymousSession(): bool
@@ -358,13 +335,7 @@ class Session extends SessionManager implements SessionInterface
         if ($operation === 'create') {
             if ($boundQuoteId) {
                 $this->logger->log(sprintf('anonymous create for already-bound sid; reusing guest quote %d', $boundQuoteId));
-                $quote = $this->loadGuestQuote($boundQuoteId);
-
-                // Inverse tenancy check on retry-create:
-                if ((int) $quote->getCustomerId() !== 0) {
-                    throw new SessionException(__('Anonymous session cannot target a customer-bound quote.'));
-                }
-                return $quote;
+                return $this->loadGuestQuote($boundQuoteId);
             }
             return $this->mintFreshGuestQuote();
         }
@@ -377,13 +348,7 @@ class Session extends SessionManager implements SessionInterface
                 ));
             }
         }
-        $quote = $this->loadGuestQuote($boundQuoteId);
-        // Inverse tenancy check: an anonymous sid must not be allowed to claim
-        // a login-mode customer's quote via a crafted secondaryId.
-        if ((int) $quote->getCustomerId() !== 0) {
-            throw new SessionException(__('Anonymous session cannot target a customer-bound quote.'));
-        }
-        return $quote;
+        return $this->loadGuestQuote($boundQuoteId);
     }
 
     /**
@@ -398,10 +363,18 @@ class Session extends SessionManager implements SessionInterface
 
     /**
      * @throws NoSuchEntityException
+     * @throws SessionException
      */
     private function loadGuestQuote(int $quoteId): CartInterface
     {
+        // Symmetric with loadAndActivate(): validate ownership before activation.
         $quote = $this->cartRepository->get($quoteId); // works on inactive quotes
+        if ((int) $quote->getCustomerId() !== 0) {
+            throw new SessionException(__(
+                'Anonymous session cannot target customer-bound quote %1.',
+                $quoteId
+            ));
+        }
         if (!$quote->getIsActive()) {
             $quote->setIsActive(true);
         }
@@ -450,10 +423,16 @@ class Session extends SessionManager implements SessionInterface
 
     private function loadAndActivate(int $quoteId, int $customerId): CartInterface
     {
-        // Make this sid's quote the customer's sole active cart. Park whichever
-        // quote is currently active (if it isn't already this one).
-        $this->deactivateOtherActiveQuotes($customerId, $quoteId);
+        // Load and validate ownership before any persisted state changes.
         $quote = $this->cartRepository->get($quoteId); // works on inactive quotes
+        if ((int) $quote->getCustomerId() !== $customerId) {
+            throw new SessionException(__(
+                'Target quote %1 does not belong to customer %2.',
+                $quoteId,
+                $customerId
+            ));
+        }
+        $this->deactivateOtherActiveQuotes($customerId, $quoteId);
         if (!$quote->getIsActive()) {
             $quote->setIsActive(true);
         }
