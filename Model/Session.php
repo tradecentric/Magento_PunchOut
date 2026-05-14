@@ -19,6 +19,7 @@ use Magento\Framework\Session\StorageInterface;
 use Magento\Framework\Session\ValidatorInterface;
 use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
 use Magento\Framework\Stdlib\CookieManagerInterface;
+use Magento\Quote\Api\CartManagementInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\Quote\Address as CustomerAddressConverter;
@@ -29,7 +30,6 @@ use Punchout2Go\Punchout\Api\SessionContainerInterface;
 use Punchout2Go\Punchout\Api\SessionContainerInterfaceFactory;
 use Punchout2Go\Punchout\Api\SessionInterface;
 use Punchout2Go\Punchout\Model\System\Config\Source\Login;
-use Magento\Quote\Api\CartManagementInterface;
 
 /**
  * Class Session
@@ -312,7 +312,14 @@ class Session extends SessionManager implements SessionInterface
         if ($operation === 'create') {
             if ($boundQuoteId) {
                 $this->logger->log(sprintf('create for already-bound sid; reusing quote %d', $boundQuoteId));
-                return $this->loadAndActivate($boundQuoteId, $customerId);
+                $quote = $this->loadAndActivate($boundQuoteId, $customerId);
+                // Tenancy check on retry-create:
+                if ((int) $quote->getCustomerId() !== $customerId) {
+                    throw new SessionException(__(
+                        'Create target quote does not belong to this customer.'
+                    ));
+                }
+                return $quote;
             }
             return $this->mintFreshQuoteForCustomer($customerId);
         }
@@ -351,7 +358,13 @@ class Session extends SessionManager implements SessionInterface
         if ($operation === 'create') {
             if ($boundQuoteId) {
                 $this->logger->log(sprintf('anonymous create for already-bound sid; reusing guest quote %d', $boundQuoteId));
-                return $this->loadGuestQuote($boundQuoteId);
+                $quote = $this->loadGuestQuote($boundQuoteId);
+
+                // Inverse tenancy check on retry-create:
+                if ((int) $quote->getCustomerId() !== 0) {
+                    throw new SessionException(__('Anonymous session cannot target a customer-bound quote.'));
+                }
+                return $quote;
             }
             return $this->mintFreshGuestQuote();
         }
@@ -463,7 +476,6 @@ class Session extends SessionManager implements SessionInterface
         $active->setIsActive(false);
         $this->cartRepository->save($active);
     }
-
 
     /**
      * @return PunchoutQuoteInterface

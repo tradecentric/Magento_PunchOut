@@ -170,27 +170,6 @@ class QuoteHandler implements EntityHandlerInterface
     }
 
     /**
-     * @param \Magento\Quote\Api\Data\CartItemInterface $quoteItem
-     * @param array $item
-     * @return \Magento\Framework\DataObject|mixed
-     */
-    protected function getInfoByRequest(\Magento\Quote\Api\Data\CartItemInterface $quoteItem, array $item)
-    {
-        $infoBuyRequest = $quoteItem->getBuyRequest();
-        if (!$infoBuyRequest) {
-            return $item['qty'];
-        }
-        if (isset($infoBuyRequest['uenc'])) {
-            unset($infoBuyRequest['uenc']);
-        }
-        if (!isset($infoBuyRequest['product'])) {
-            $infoBuyRequest['product'] = $quoteItem->getProductId();
-        }
-        $infoBuyRequest['qty'] = $item['qty'];
-        return $infoBuyRequest;
-    }
-
-    /**
      * Resolve which existing cart item, if any, an inbound payload row corresponds to.
      *
      * Primary match: inbound secondaryId is "{quote_id}/{item_id}". With stable IDs,
