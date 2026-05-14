@@ -300,11 +300,46 @@ class Session extends SessionManager implements SessionInterface
             return $this->mintFreshQuoteForCustomer($customerId);
         }
 
-        // edit / inspect: sid must already be bound
+        // edit / inspect: every setuprequest carries its own pos/sid, so the
+        // bound-quote lookup above only hits on a retry of the same edit. On
+        // the first edit, derive the target quote_id from the inbound items'
+        // secondaryId ("{quote_id}/{item_id}"). The back-write gate in
+        // startSession() then binds this new sid → that quote_id for retries.
         if (!$boundQuoteId) {
-            throw new SessionException(__('Edit/inspect arrived for an unbound punchout session.'));
+            $boundQuoteId = $this->extractTargetQuoteIdFromPayload();
+            if (!$boundQuoteId) {
+                throw new SessionException(__(
+                    'Edit/inspect arrived with no resolvable target quote (no secondaryId on inbound items).'
+                ));
+            }
         }
-        return $this->loadAndActivate($boundQuoteId, $customerId);
+        $quote = $this->loadAndActivate($boundQuoteId, $customerId);
+        if ((int) $quote->getCustomerId() !== $customerId) {
+            throw new SessionException(__('Edit/inspect target quote does not belong to this customer.'));
+        }
+        return $quote;
+    }
+
+    /**
+     * Inspect the inbound payload's items and return the first quote_id
+     * referenced via secondaryId ("{quote_id}/{item_id}"). Returns 0 if no
+     * item carries a parseable secondaryId.
+     */
+    private function extractTargetQuoteIdFromPayload(): int
+    {
+        $items = (array) $this->storage->getData('params/body/items');
+        foreach ($items as $item) {
+            $secondaryId = (string) ($item['secondaryId'] ?? '');
+            if ($secondaryId === '') {
+                continue;
+            }
+            $parts = $this->helper->getQuoteItemIdInfo($secondaryId);
+            $quoteId = isset($parts[0]) ? (int) $parts[0] : 0;
+            if ($quoteId > 0) {
+                return $quoteId;
+            }
+        }
+        return 0;
     }
 
     /**
