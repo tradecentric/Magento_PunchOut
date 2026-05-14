@@ -289,26 +289,22 @@ class Session extends SessionManager implements SessionInterface
         $punchoutQuote = $this->getPunchoutQuote();
         $boundQuoteId  = (int) $punchoutQuote->getQuoteId();
         $operation     = $this->getOperation();
+        $customerId    = (int) $this->customerSession->getCustomerId();
 
         if ($operation === 'create') {
             if ($boundQuoteId) {
-                // sid already bound (duplicate create POST, retry, etc.) — reuse it
-                $this->logger->log(sprintf(
-                    'create for already-bound sid; reusing quote %d',
-                    $boundQuoteId
-                ));
-                return $this->loadAndActivate($boundQuoteId);
+                // duplicate/retry of create POST for the same sid — reuse, don't double-mint
+                $this->logger->log(sprintf('create for already-bound sid; reusing quote %d', $boundQuoteId));
+                return $this->loadAndActivate($boundQuoteId, $customerId);
             }
-            return $this->mintFreshQuoteForCustomer();
+            return $this->mintFreshQuoteForCustomer($customerId);
         }
 
-        // edit / inspect: must already be bound
+        // edit / inspect: sid must already be bound
         if (!$boundQuoteId) {
-            throw new SessionException(
-                __('Edit/inspect arrived for an unbound punchout session.')
-            );
+            throw new SessionException(__('Edit/inspect arrived for an unbound punchout session.'));
         }
-        return $this->loadAndActivate($boundQuoteId);
+        return $this->loadAndActivate($boundQuoteId, $customerId);
     }
 
     /**
@@ -316,23 +312,48 @@ class Session extends SessionManager implements SessionInterface
      * @throws CouldNotSaveException
      * @throws SessionException
      */
-    private function mintFreshQuoteForCustomer(): CartInterface
+    private function mintFreshQuoteForCustomer(int $customerId): CartInterface
     {
-        $customerId = (int) $this->customerSession->getCustomerId();
         if (!$customerId) {
             throw new SessionException(__('Cannot mint a quote without a logged-in customer.'));
         }
+        // Magento allows only one active quote per customer. Park whichever quote
+        // is currently active so createEmptyCartForCustomer's uniqueness check
+        // passes and the new quote becomes the customer's sole active cart. The
+        // parked quote stays in the DB and remains addressable by id — an
+        // edit/inspect for the prior sid will reactivate it via loadAndActivate().
+        $this->deactivateOtherActiveQuotes($customerId, 0);
         $newQuoteId = (int) $this->cartManagement->createEmptyCartForCustomer($customerId);
         return $this->cartRepository->get($newQuoteId);
     }
 
-    private function loadAndActivate(int $quoteId): CartInterface
+    private function loadAndActivate(int $quoteId, int $customerId): CartInterface
     {
+        // Make this sid's quote the customer's sole active cart. Park whichever
+        // quote is currently active (if it isn't already this one).
+        $this->deactivateOtherActiveQuotes($customerId, $quoteId);
         $quote = $this->cartRepository->get($quoteId); // works on inactive quotes
         if (!$quote->getIsActive()) {
             $quote->setIsActive(true);
         }
         return $quote;
+    }
+
+    private function deactivateOtherActiveQuotes(int $customerId, int $keepQuoteId): void
+    {
+        if (!$customerId) {
+            return;
+        }
+        try {
+            $active = $this->cartRepository->getActiveForCustomer($customerId);
+        } catch (NoSuchEntityException $e) {
+            return; // no active quote — nothing to park
+        }
+        if ((int) $active->getId() === $keepQuoteId) {
+            return;
+        }
+        $active->setIsActive(false);
+        $this->cartRepository->save($active);
     }
 
 
