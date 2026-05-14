@@ -27,6 +27,7 @@ use Punchout2Go\Punchout\Api\SessionContainerInterface;
 use Punchout2Go\Punchout\Api\SessionContainerInterfaceFactory;
 use Punchout2Go\Punchout\Api\SessionInterface;
 use Punchout2Go\Punchout\Model\System\Config\Source\Login;
+use Magento\Quote\Api\CartManagementInterface;
 
 /**
  * Class Session
@@ -74,6 +75,9 @@ class Session extends SessionManager implements SessionInterface
      */
     protected $cartRepository;
 
+    /** @var CartManagementInterface */
+    protected $cartManagement;
+
     /** @var AddressRepositoryInterface */
     protected $addressRepository;
 
@@ -120,6 +124,7 @@ class Session extends SessionManager implements SessionInterface
      * @param \Punchout2Go\Punchout\Helper\Data $helper
      * @param SessionContainerInterfaceFactory $containerFactory
      * @param CartRepositoryInterface $cartRepository
+     * @param CartManagementInterface $cartManagement
      * @param Session\SessionEditStatus $editStatus
      * @param AddressRepositoryInterface $addressRepository
      * @param CustomerAddressConverter $customerAddressConverter
@@ -147,6 +152,7 @@ class Session extends SessionManager implements SessionInterface
         \Punchout2Go\Punchout\Helper\Data $helper,
         SessionContainerInterfaceFactory $containerFactory,
         CartRepositoryInterface $cartRepository,
+        CartManagementInterface $cartManagement,
         Session\SessionEditStatus $editStatus,
         AddressRepositoryInterface $addressRepository,
         CustomerAddressConverter $customerAddressConverter,
@@ -163,6 +169,7 @@ class Session extends SessionManager implements SessionInterface
         $this->checkoutSession = $checkoutSession;
         $this->containerFactory = $containerFactory;
         $this->cartRepository = $cartRepository;
+        $this->cartManagement = $cartManagement;
         $this->editStatus = $editStatus;
         $this->addressRepository = $addressRepository;
         $this->customerAddressConverter = $customerAddressConverter;
@@ -216,8 +223,7 @@ class Session extends SessionManager implements SessionInterface
         $this->loginCustomer($container->getCustomer());
         $this->logger->log('Resolve customer and login');
 
-        // Reuse the customer's existing quote across create/edit/inspect
-        $this->checkoutSession->clearStorage();
+        // Resolve THIS sid's quote from punchout_quote.quote_id, not from checkoutSession.
         $quote = $this->initQuote();
         $container->setQuote($quote);
 
@@ -237,8 +243,19 @@ class Session extends SessionManager implements SessionInterface
         $this->cartRepository->save($quote);
         $this->checkoutSession->setQuoteId((int) $quote->getId());
 
-        /** save punchout quote */
-        $punchoutQuote = $container->getSession()->setQuoteId((int)$quote->getId());
+        /** save punchout quote — only bind on first save; never overwrite a bound sid */
+        $punchoutQuote = $container->getSession();
+        $existingBound = (int) $punchoutQuote->getQuoteId();
+        if (!$existingBound) {
+            $punchoutQuote->setQuoteId((int) $quote->getId());
+        } elseif ($existingBound !== (int) $quote->getId()) {
+            throw new SessionException(__(
+                'Punchout session %1 is bound to quote %2 but tried to switch to quote %3',
+                $punchoutQuote->getPunchoutSessionId(),
+                $existingBound,
+                $quote->getId()
+            ));
+        }
         $this->punchoutQuoteRepository->save($punchoutQuote);
         $this->logger->log('Collect Totals, cart save Complete');
 
@@ -262,31 +279,56 @@ class Session extends SessionManager implements SessionInterface
         );
     }
 
+    /**
+     * @throws NoSuchEntityException
+     * @throws SessionException
+     */
     private function initQuote(): CartInterface
     {
-        // CREATE is the protocol-level signal that a new procurement cycle is starting.
-        // Deactivate the customer's prior active quote (preserving it in the DB so any
-        // outstanding POs from earlier cycles can still resolve their supplierauxid
-        // references) and mint a fresh quote for this new cycle.
-        if ($this->getOperation() === 'create') {
-            $existing = $this->checkoutSession->getQuote();
-            if (!$existing->isObjectNew()) {
-                $existing->setIsActive(false);
-                $this->cartRepository->save($existing);
-                $this->checkoutSession->clearStorage();
+        $punchoutQuote = $this->getPunchoutQuote();
+        $boundQuoteId  = (int) $punchoutQuote->getQuoteId();
+        $operation     = $this->getOperation();
+
+        if ($operation === 'create') {
+            if ($boundQuoteId) {
+                // sid already bound (duplicate create POST, retry, etc.) — reuse it
+                $this->logger->log(sprintf(
+                    'create for already-bound sid; reusing quote %d',
+                    $boundQuoteId
+                ));
+                return $this->loadAndActivate($boundQuoteId);
             }
+            return $this->mintFreshQuoteForCustomer();
         }
 
-        // For EDIT and INSPECT (and the recursive fall-through from CREATE), reuse the
-        // customer's active quote so quote_id and quote_item_id stay stable within
-        // this procurement cycle.
-        $quote = $this->checkoutSession->getQuote();
+        // edit / inspect: must already be bound
+        if (!$boundQuoteId) {
+            throw new SessionException(
+                __('Edit/inspect arrived for an unbound punchout session.')
+            );
+        }
+        return $this->loadAndActivate($boundQuoteId);
+    }
+
+    private function mintFreshQuoteForCustomer(int $customerId): CartInterface
+    {
+        $customerId = (int) $this->customerSession->getCustomerId();
+        if (!$customerId) {
+            throw new SessionException(__('Cannot mint a quote without a logged-in customer.'));
+        }
+        $newQuoteId = (int) $this->cartManagement->createEmptyCartForCustomer($customerId);
+        return $this->cartRepository->get($newQuoteId);
+    }
+
+    private function loadAndActivate(int $quoteId): CartInterface
+    {
+        $quote = $this->cartRepository->get($quoteId); // works on inactive quotes
         if (!$quote->getIsActive()) {
             $quote->setIsActive(true);
         }
-
         return $quote;
     }
+
 
     /**
      * @return PunchoutQuoteInterface
