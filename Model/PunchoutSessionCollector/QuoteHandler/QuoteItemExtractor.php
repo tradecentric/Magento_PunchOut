@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Punchout2Go\Punchout\Model\PunchoutSessionCollector\QuoteHandler;
 
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Quote\Model\Quote;
 
 /**
  * Class QuoteItemExtractor
@@ -17,17 +19,17 @@ class QuoteItemExtractor
     protected $items = [];
 
     /**
-     * @var \Magento\Quote\Api\CartItemRepositoryInterface
+     * @var CartRepositoryInterface
      */
-    protected $cartItemRepository;
+    protected $cartRepository;
 
     /**
      * QuoteItemExtractor constructor.
-     * @param \Magento\Quote\Api\CartItemRepositoryInterface $cartItemRepository
+     * @param CartRepositoryInterface $cartRepository
      */
-    public function __construct(\Magento\Quote\Api\CartItemRepositoryInterface $cartItemRepository)
+    public function __construct(CartRepositoryInterface $cartRepository)
     {
-        $this->cartItemRepository = $cartItemRepository;
+        $this->cartRepository = $cartRepository;
     }
 
     /**
@@ -41,11 +43,15 @@ class QuoteItemExtractor
             return $this->items[$quoteId][$itemId];
         }
         try {
-            $cartItems = $this->cartItemRepository->getList($quoteId);
+            $quote = $this->cartRepository->get((int) $quoteId);
         } catch (NoSuchEntityException $e) {
             return null;
         }
-        foreach ($cartItems as $item) {
+
+        // Read items via getAllVisibleItems() / getItemsCollection() rather than getItems():
+        // The collection-based accessors hit the items table directly and work regardless of active state.
+        $allItems = $quote instanceof Quote ? $quote->getAllVisibleItems() : (array) $quote->getItems();
+        foreach ($allItems as $item) {
             $this->items[$quoteId][$item->getItemId()] = $item;
         }
         return $this->items[$quoteId][$itemId] ?? null;

@@ -38,6 +38,11 @@ interface SessionInterface
     public function getParams(): array;
 
     /**
+     * @return string
+     */
+    public function getOperation(): string;
+
+    /**
      * @return bool
      */
     public function isEdit(): bool;

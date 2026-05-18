@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 namespace Punchout2Go\Punchout\Model;
 
+use Magento\Customer\Api\AddressRepositoryInterface;
+use Magento\Customer\Api\Data\CustomerInterfaceFactory;
 use Magento\Framework\App\State;
+use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\LocalizedException as SessionException;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -16,9 +19,9 @@ use Magento\Framework\Session\StorageInterface;
 use Magento\Framework\Session\ValidatorInterface;
 use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
 use Magento\Framework\Stdlib\CookieManagerInterface;
+use Magento\Quote\Api\CartManagementInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
-use Magento\Customer\Api\AddressRepositoryInterface;
 use Magento\Quote\Model\Quote\Address as CustomerAddressConverter;
 use Punchout2Go\Punchout\Api\Data\PunchoutQuoteInterface;
 use Punchout2Go\Punchout\Api\Data\PunchoutQuoteInterfaceFactory;
@@ -39,10 +42,11 @@ class Session extends SessionManager implements SessionInterface
      */
     protected $logger;
 
-    /**
-     * @var PunchoutSessionCollector
-     */
-    protected $sessionCollector;
+    /** @var PunchoutPreLoginCollector */
+    protected $preLoginCollector;
+
+    /** @var PunchoutPostLoginCollector */
+    protected $postLoginCollector;
     /**
      * @var \Magento\Framework\Event\ManagerInterface
      */
@@ -72,12 +76,18 @@ class Session extends SessionManager implements SessionInterface
      * @var CartRepositoryInterface
      */
     protected $cartRepository;
-    
+
+    /** @var CartManagementInterface */
+    protected $cartManagement;
+
     /** @var AddressRepositoryInterface */
     protected $addressRepository;
 
     /** @var CustomerAddressConverter */
-    protected $customerAddressConverter;    
+    protected $customerAddressConverter;
+
+    /** @var CustomerInterfaceFactory */
+    protected $customerDataFactory;
 
     /**
      * @var PunchoutQuoteRepositoryInterface
@@ -98,7 +108,7 @@ class Session extends SessionManager implements SessionInterface
      * @var Session\SessionEditStatus
      */
     protected $editStatus;
-        
+
     /**
      * Session constructor.
      * @param \Magento\Framework\App\Request\Http $request
@@ -111,13 +121,15 @@ class Session extends SessionManager implements SessionInterface
      * @param CookieMetadataFactory $cookieMetadataFactory
      * @param State $appState
      * @param \Punchout2Go\Punchout\Api\LoggerInterface $logger
-     * @param \Punchout2Go\Punchout\Api\EntityHandlerInterface $sessionCollector
+     * @param \Punchout2Go\Punchout\Api\EntityHandlerInterface $preLoginCollector
+     * @param \Punchout2Go\Punchout\Api\EntityHandlerInterface $postLoginCollector
      * @param \Magento\Framework\Event\ManagerInterface $eventManager
      * @param \Magento\Customer\Model\Session $customerSession
      * @param \Magento\Checkout\Model\Session $checkoutSession
      * @param \Punchout2Go\Punchout\Helper\Data $helper
      * @param SessionContainerInterfaceFactory $containerFactory
      * @param CartRepositoryInterface $cartRepository
+     * @param CartManagementInterface $cartManagement
      * @param Session\SessionEditStatus $editStatus
      * @param AddressRepositoryInterface $addressRepository
      * @param CustomerAddressConverter $customerAddressConverter
@@ -137,31 +149,37 @@ class Session extends SessionManager implements SessionInterface
         CookieMetadataFactory $cookieMetadataFactory,
         State $appState,
         \Punchout2Go\Punchout\Api\LoggerInterface $logger,
-        \Punchout2Go\Punchout\Api\EntityHandlerInterface $sessionCollector,
+        \Punchout2Go\Punchout\Api\EntityHandlerInterface $preLoginCollector,
+        \Punchout2Go\Punchout\Api\EntityHandlerInterface $postLoginCollector,
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Punchout2Go\Punchout\Helper\Data $helper,
         SessionContainerInterfaceFactory $containerFactory,
         CartRepositoryInterface $cartRepository,
+        CartManagementInterface $cartManagement,
         Session\SessionEditStatus $editStatus,
         AddressRepositoryInterface $addressRepository,
         CustomerAddressConverter $customerAddressConverter,
+        CustomerInterfaceFactory $customerDataFactory,
         PunchoutQuoteRepositoryInterface $punchoutQuoteRepository,
         PunchoutQuoteInterfaceFactory $punchoutQuoteInterfaceFactory,
         ?SessionStartChecker $sessionStartChecker = null
     ) {
         $this->logger = $logger;
-        $this->sessionCollector = $sessionCollector;
+        $this->preLoginCollector = $preLoginCollector;
+        $this->postLoginCollector = $postLoginCollector;
         $this->eventManager = $eventManager;
         $this->helper = $helper;
         $this->customerSession = $customerSession;
         $this->checkoutSession = $checkoutSession;
         $this->containerFactory = $containerFactory;
         $this->cartRepository = $cartRepository;
+        $this->cartManagement = $cartManagement;
         $this->editStatus = $editStatus;
         $this->addressRepository = $addressRepository;
         $this->customerAddressConverter = $customerAddressConverter;
+        $this->customerDataFactory = $customerDataFactory;
         $this->punchoutQuoteRepository = $punchoutQuoteRepository;
         $this->punchoutQuoteInterfaceFactory = $punchoutQuoteInterfaceFactory;
         parent::__construct(
@@ -179,107 +197,263 @@ class Session extends SessionManager implements SessionInterface
     }
 
     /**
-     * @param array $startupParams
+     * @param array $params
      * @throws SessionException
      */
-    public function startSession(array $startupParams): void
+    public function startSession(array $params): void
     {
         if (!$this->helper->isPunchoutActive()) {
             throw new LocalizedException(__('PunchOut is not active at this scope.'));
         }
-        $this->logger->log('Running PunchOut Setup', $startupParams);
-        $this->storage->setData($startupParams);
+
+        $this->storage->setData($params);
+        $this->logger->log('Running PunchOut Setup', $params);
+
         if (!$this->isValid()) {
             throw new SessionException(
                 __('PunchOut session request is invalid.')
             );
         }
-        /** @var SessionContainerInterface $container */
-        $container = $this->getContainer();
+
+        // Build container with a fresh customer DataModel.
+        $container = $this->containerFactory->create([
+           'session' => $this->getPunchoutQuote(),
+           'quote' => $this->checkoutSession->getQuote(),
+           'customer' => $this->customerDataFactory->create(),
+        ]);
+
+        // Fire starting session event and logout customer
         $this->sessionPreStart($container);
-        $this->sessionCollector->handle($container);
-        $this->logger->log('Collect data complete');
-        $this->sessionPostStart($container);
-        $this->logger->log('Post start');
 
-        /** save magento quote */
-        $this->checkoutSession->clearStorage();
-        $quote = $this->initQuote()->setTotalsCollectedFlag(false)->collectTotals();
-    
-        /** get customer addresses **/
-        if ($this->helper->isMageAddressToCart()) {
-            $this->logger->log('Get Customer Addresses');  
-            $defaultShippingAddress = null;
-            $defaultBillingAddress = null;
-            
-            $customer = $this->customerSession->getCustomer();
-
-            // get DefaultShipping 
-            if ($customer->getDefaultShipping()) {
-                $defaultShippingAddress = $this->addressRepository->getById($customer->getDefaultShipping());
-            }
-            
-            if ($customer->getDefaultBilling()) {
-                $defaultBillingAddress = $this->addressRepository->getById($customer->getDefaultBilling());
-            }
-    
-            // get DefaultShipping 
-            if ($defaultShippingAddress) {
-               $this->logger->log('Customer Default Shipping Address');
-               $this->updateQuoteAddressFromCustomerAddress($quote, $defaultShippingAddress, 'shipping');
-            }
-   
-           if ($defaultBillingAddress) {
-               $this->logger->log('Customer Default Billing Address');
-               $this->updateQuoteAddressFromCustomerAddress($quote, $defaultBillingAddress, 'billing');
-            }
-
-//          $quote->collectTotals()->save();
+        // Resolve the PunchOut customer; login only in LOGIN_LOGGED_IN mode.
+        // Anonymous merchants ship a first-class config option (Login::LOGIN_ANONYMOUS)
+        // and must not be silently re-logged-in as the prior storefront visitor.
+        $this->preLoginCollector->handle($container);
+        if ($this->helper->getCustomerSessionType() === Login::LOGIN_LOGGED_IN) {
+            $this->loginCustomer($container->getCustomer());
+            $this->logger->log('Resolve customer and login');
+        } else {
+            $this->logger->log('Anonymous session: skipping customer login');
         }
-    
-        $container->setQuote($quote);
-        $this->cartRepository->save($quote);
 
-        /** save punchout quote */
-        $punchoutQuote = $container->getSession()->setQuoteId((int)$quote->getId());
+        // Resolve THIS sid's quote from punchout_quote.quote_id, not from checkoutSession.
+        $quote = $this->initQuote();
+        $container->setQuote($quote);
+
+        if ($this->getOperation() !== 'inspect') {
+            $this->postLoginCollector->handle($container);
+
+            // Default-address copy only applies when there's a logged-in customer
+            if (!$this->isAnonymousSession() && $this->helper->isMageAddressToCart()) {
+                $this->applyCustomerAddresses($quote);
+            }
+        } else {
+            $this->logger->log('Inspect session: read-only, skipping item/address reconciliation');
+        }
+
+        // Save and link quote
+        $quote->setTotalsCollectedFlag(false)->collectTotals();
+        $this->cartRepository->save($quote);
+        $this->checkoutSession->setQuoteId((int) $quote->getId());
+
+        // save punchout quote — only bind on first save; never overwrite a bound sid
+        $punchoutQuote = $container->getSession();
+        $existingBound = (int) $punchoutQuote->getQuoteId();
+        if (!$existingBound) {
+            $punchoutQuote->setQuoteId((int) $quote->getId());
+        } elseif ($existingBound !== (int) $quote->getId()) {
+            throw new SessionException(__(
+                'Punchout session %1 is bound to quote %2 but tried to switch to quote %3',
+                $punchoutQuote->getPunchoutSessionId(),
+                $existingBound,
+                $quote->getId()
+            ));
+        }
         $this->punchoutQuoteRepository->save($punchoutQuote);
         $this->logger->log('Collect Totals, cart save Complete');
 
+        $this->sessionPostStart($container);
         $this->logger->log('Session start completed');
     }
 
     /**
-     * @return mixed
+     * @throws NoSuchEntityException
      * @throws SessionException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    protected function getContainer()
+    private function initQuote(): CartInterface
     {
-        return $this->containerFactory->create(
-            [
-                'session' => $this->getPunchoutQuote(),
-                'quote' => $this->initQuote(),
-                'customer' => $this->customerSession->getCustomer()->getDataModel()
-            ]
-        );
+        $punchoutQuote = $this->getPunchoutQuote();
+        $boundQuoteId  = (int) $punchoutQuote->getQuoteId();
+        $operation     = $this->getOperation();
+
+        if (!in_array($operation, ['edit', 'inspect'], true)) {
+            $operation = 'create';
+        }
+
+        // Anonymous sessions follow the same model but without customer scoping.
+        if ($this->isAnonymousSession()) {
+            return $this->initAnonymousQuote($boundQuoteId, $operation);
+        }
+
+        $customerId = (int) $this->customerSession->getCustomerId();
+
+        if ($operation === 'create') {
+            if ($boundQuoteId) {
+                $this->logger->log(sprintf('create for already-bound sid; reusing quote %d', $boundQuoteId));
+                return $this->loadAndActivate($boundQuoteId, $customerId);
+            }
+            return $this->mintFreshQuoteForCustomer($customerId);
+        }
+
+        // edit / inspect: every setuprequest carries its own pos/sid, so the
+        // bound-quote lookup above only hits on a retry of the same edit. On
+        // the first edit, derive the target quote_id from the inbound items'
+        // secondaryId ("{quote_id}/{item_id}"). The back-write gate in
+        // startSession() then binds this new sid → that quote_id for retries.
+        if (!$boundQuoteId) {
+            $boundQuoteId = $this->extractTargetQuoteIdFromPayload();
+            if (!$boundQuoteId) {
+                throw new SessionException(__(
+                    'Edit/inspect arrived with no resolvable target quote (no secondaryId on inbound items).'
+                ));
+            }
+        }
+        return $this->loadAndActivate($boundQuoteId, $customerId);
     }
 
-    private function initQuote(): CartInterface {
-        $isEdit = false;
-        if (
-            !empty($this->storage->getData()['params']['operation']) &&
-            $this->storage->getData()['params']['operation'] === 'edit'
-        ) $isEdit = true;
+    private function isAnonymousSession(): bool
+    {
+        return $this->helper->getCustomerSessionType() === Login::LOGIN_ANONYMOUS;
+    }
 
-        $quote = $this->checkoutSession->getQuote();
-        if (!$quote->isObjectNew() && !$isEdit) {
-            $quote->setIsActive(false);
-            $this->cartRepository->save($quote);
-            $this->checkoutSession->clearStorage();
-            return $this->initQuote();
+    /**
+     * @throws NoSuchEntityException
+     * @throws SessionException
+     */
+    private function initAnonymousQuote(int $boundQuoteId, string $operation): CartInterface
+    {
+        if ($operation === 'create') {
+            if ($boundQuoteId) {
+                $this->logger->log(sprintf('anonymous create for already-bound sid; reusing guest quote %d', $boundQuoteId));
+                return $this->loadGuestQuote($boundQuoteId);
+            }
+            return $this->mintFreshGuestQuote();
         }
-        $quote->setIsActive(true);
+
+        if (!$boundQuoteId) {
+            $boundQuoteId = $this->extractTargetQuoteIdFromPayload();
+            if (!$boundQuoteId) {
+                throw new SessionException(__(
+                    'Anonymous edit/inspect arrived with no resolvable target quote (no secondaryId on inbound items).'
+                ));
+            }
+        }
+        return $this->loadGuestQuote($boundQuoteId);
+    }
+
+    /**
+     * @throws CouldNotSaveException
+     * @throws NoSuchEntityException
+     */
+    private function mintFreshGuestQuote(): CartInterface
+    {
+        $newQuoteId = (int) $this->cartManagement->createEmptyCart();
+        return $this->cartRepository->get($newQuoteId);
+    }
+
+    /**
+     * @throws NoSuchEntityException
+     * @throws SessionException
+     */
+    private function loadGuestQuote(int $quoteId): CartInterface
+    {
+        // Symmetric with loadAndActivate(): validate ownership before activation.
+        $quote = $this->cartRepository->get($quoteId); // works on inactive quotes
+        if ((int) $quote->getCustomerId() !== 0) {
+            throw new SessionException(__(
+                'Anonymous session cannot target customer-bound quote %1.',
+                $quoteId
+            ));
+        }
+        if (!$quote->getIsActive()) {
+            $quote->setIsActive(true);
+        }
         return $quote;
+    }
+
+    /**
+     * Inspect the inbound payload's items and return the first quote_id
+     * referenced via secondaryId ("{quote_id}/{item_id}"). Returns 0 if no
+     * item carries a parseable secondaryId.
+     */
+    private function extractTargetQuoteIdFromPayload(): int
+    {
+        $items = (array) $this->storage->getData('params/body/items');
+        foreach ($items as $item) {
+            $secondaryId = (string) ($item['secondaryId'] ?? '');
+            if ($secondaryId === '') {
+                continue;
+            }
+            $parts = $this->helper->getQuoteItemIdInfo($secondaryId);
+            $quoteId = isset($parts[0]) ? (int) $parts[0] : 0;
+            if ($quoteId > 0) {
+                return $quoteId;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * @throws NoSuchEntityException
+     * @throws CouldNotSaveException
+     * @throws SessionException
+     */
+    private function mintFreshQuoteForCustomer(int $customerId): CartInterface
+    {
+        if (!$customerId) {
+            throw new SessionException(__('Cannot mint a quote without a logged-in customer.'));
+        }
+
+        // Magento allows only one active quote per customer.
+        // edit/inspect for the prior sid will reactivate it via loadAndActivate().
+        $this->deactivateOtherActiveQuotes($customerId, 0);
+        $newQuoteId = (int) $this->cartManagement->createEmptyCartForCustomer($customerId);
+        return $this->cartRepository->get($newQuoteId);
+    }
+
+    private function loadAndActivate(int $quoteId, int $customerId): CartInterface
+    {
+        // Load and validate ownership before any persisted state changes.
+        $quote = $this->cartRepository->get($quoteId); // works on inactive quotes
+        if ((int) $quote->getCustomerId() !== $customerId) {
+            throw new SessionException(__(
+                'Target quote %1 does not belong to customer %2.',
+                $quoteId,
+                $customerId
+            ));
+        }
+        $this->deactivateOtherActiveQuotes($customerId, $quoteId);
+        if (!$quote->getIsActive()) {
+            $quote->setIsActive(true);
+        }
+        return $quote;
+    }
+
+    private function deactivateOtherActiveQuotes(int $customerId, int $keepQuoteId): void
+    {
+        if (!$customerId) {
+            return;
+        }
+        try {
+            $active = $this->cartRepository->getActiveForCustomer($customerId);
+        } catch (NoSuchEntityException $e) {
+            return; // no active quote — nothing to park
+        }
+        if ((int) $active->getId() === $keepQuoteId) {
+            return;
+        }
+        $active->setIsActive(false);
+        $this->cartRepository->save($active);
     }
 
     /**
@@ -318,13 +492,8 @@ class Session extends SessionManager implements SessionInterface
      * @param SessionContainerInterface $container
      * @throws SessionException
      */
-    protected function sessionPostStart(SessionContainerInterface $container)
+    protected function sessionPostStart(SessionContainerInterface $container): void
     {
-        $this->eventManager->dispatch('punchout_session_ready', ['session' => $container]);
-        if ($this->helper->getCustomerSessionType() == Login::LOGIN_LOGGED_IN) {
-            $this->loginCustomer($container->getCustomer());
-        }
-
         $metadata = $this->cookieMetadataFactory
             ->createPublicCookieMetadata()
             ->setDuration(86400)
@@ -332,13 +501,20 @@ class Session extends SessionManager implements SessionInterface
             ->setPath($this->getCookiePath() ?? '/')
             ->setDomain($this->getCookieDomain() ?? '/')
             ->setSecure(true);
-        $this->cookieManager->setPublicCookie('punchout_session_key', $container->getSession()->getPunchoutSessionId(), $metadata);
+
+        $this->cookieManager->setPublicCookie(
+            'punchout_session_key',
+            $container->getSession()->getPunchoutSessionId(),
+            $metadata
+        );
+
+        $this->eventManager->dispatch('punchout_session_ready', ['session' => $container]);
     }
 
     /**
      * pre start actions
      */
-    protected function sessionPreStart(SessionContainerInterface $container)
+    protected function sessionPreStart(SessionContainerInterface $container): void
     {
         $this->eventManager->dispatch('punchout_session_starting', ['session' => $container]);
         $this->checkLock();
@@ -411,10 +587,10 @@ class Session extends SessionManager implements SessionInterface
     /**
      * clear quote
      */
-    protected function prepareQuote()
+    protected function prepareQuote(): void
     {
         $quoteId = $this->checkoutSession->getQuoteId();
-        if ($quoteId != $this->getSessionId()) {
+        if ($quoteId !== (int)$this->getSessionId()) {
             $this->checkoutSession->clearQuote();
         }
     }
@@ -458,6 +634,14 @@ class Session extends SessionManager implements SessionInterface
     public function getParams(): array
     {
         return (array) $this->storage->getData(static::PARAMS);
+    }
+
+    /**
+     * @return string
+     */
+    public function getOperation(): string
+    {
+        return (string) ($this->getParams()['operation'] ?? '');
     }
 
     /**
@@ -511,5 +695,34 @@ class Session extends SessionManager implements SessionInterface
         });
         $item = current($items);
         return $item['primaryId'] ?? '';
+    }
+
+    protected function applyCustomerAddresses(CartInterface $quote): void
+    {
+        $this->logger->log('Get Customer Addresses');
+        $defaultShippingAddress = null;
+        $defaultBillingAddress = null;
+
+        $customer = $this->customerSession->getCustomer();
+
+        // get DefaultShipping
+        if ($customer->getDefaultShipping()) {
+            $defaultShippingAddress = $this->addressRepository->getById($customer->getDefaultShipping());
+        }
+
+        if ($customer->getDefaultBilling()) {
+            $defaultBillingAddress = $this->addressRepository->getById($customer->getDefaultBilling());
+        }
+
+        // get DefaultShipping
+        if ($defaultShippingAddress) {
+            $this->logger->log('Customer Default Shipping Address');
+            $this->updateQuoteAddressFromCustomerAddress($quote, $defaultShippingAddress, 'shipping');
+        }
+
+        if ($defaultBillingAddress) {
+            $this->logger->log('Customer Default Billing Address');
+            $this->updateQuoteAddressFromCustomerAddress($quote, $defaultBillingAddress, 'billing');
+        }
     }
 }
