@@ -1,8 +1,5 @@
 TradeCentric - PunchOut
 ===========
-### 3.1.15 (2026-04-02)
-* CN-1162: Fixed edit cart operation failing for products assigned to a shared catalog
-
 ### 3.1.14 (2026-03-24)
 * PBR-2539: Refactored the window reload punchout configuration to remove double quote characters
 
