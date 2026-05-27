@@ -64,17 +64,12 @@ class PunchoutOnlyObserver implements ObserverInterface
         $response->setHeader('Cache-Control', 'no-store', true);
         $response->clearBody();
         
+        $this->actionFlag->set('', ActionInterface::FLAG_NO_DISPATCH, true);
+
         /** display Punchout Only Page or server 403 or 401 page */
-        if ($this->config->isPunchoutOnlyPage($storeId)) 
-        {
+        if ($this->config->isPunchoutOnlyPage($storeId)) {
             $response->setBody('<h1>Access Restricted</h1><p>' . $this->escaper->escapeHtml($this->config->getPunchoutOnlyMessage($storeId)) . '</p>');
             $response->sendResponse();
-            exit;
-        } else {
-            /**
-             * Hard-fail: stop dispatch immediately
-             */
-            $this->actionFlag->set('', ActionInterface::FLAG_NO_DISPATCH, true);
         }
     }
 
