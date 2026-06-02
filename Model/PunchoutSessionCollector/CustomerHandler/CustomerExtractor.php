@@ -39,25 +39,33 @@ class CustomerExtractor
     protected $dataObjectHelper;
 
     /**
+     * @var \Punchout2Go\Punchout\Api\LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * CustomerExtractor constructor.
      * @param \Magento\Customer\Model\Metadata\FormFactory $formFactory
      * @param \Magento\Customer\Api\Data\CustomerInterfaceFactory $customerFactory
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param GroupManagementInterface $customerGroupManagement
      * @param \Magento\Framework\Api\DataObjectHelper $dataObjectHelper
+     * @param \Punchout2Go\Punchout\Api\LoggerInterface $logger
      */
     public function __construct(
         \Magento\Customer\Model\Metadata\FormFactory $formFactory,
         \Magento\Customer\Api\Data\CustomerInterfaceFactory $customerFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         GroupManagementInterface $customerGroupManagement,
-        \Magento\Framework\Api\DataObjectHelper $dataObjectHelper
+        \Magento\Framework\Api\DataObjectHelper $dataObjectHelper,
+        \Punchout2Go\Punchout\Api\LoggerInterface $logger
     ) {
         $this->formFactory = $formFactory;
         $this->customerFactory = $customerFactory;
         $this->storeManager = $storeManager;
         $this->customerGroupManagement = $customerGroupManagement;
         $this->dataObjectHelper = $dataObjectHelper;
+        $this->logger = $logger;
     }
 
     /**
@@ -80,7 +88,15 @@ class CustomerExtractor
             $attributeValues
         );
         $customerForm->setInvisibleIgnored(false);
-        $customerData = $customerForm->compactData($requestData);
+        $this->logger->log('CustomerExtractor requestData: ' . json_encode($requestData));
+        /**
+         * Remove false values (fields absent from punchout params) to prevent overwriting valid customer data
+         * and avoid triggering stricter DOB validation in 2.4.9+.
+         */
+        $customerData = array_filter(
+            $customerForm->compactData($requestData),
+            static function ($value) { return $value !== false; }
+        );
         foreach ($additionalAttributes as $attributeCode) {
             $customerData[$attributeCode] = $requestData[$attributeCode] ?? null;
         }
