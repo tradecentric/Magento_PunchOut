@@ -18,10 +18,11 @@
     <file>Model</file>
     <file>Observer</file>
     <file>Plugin</file>
+    <file>view</file>
     <file>registration.php</file>
+    <file>phpcs-bootstrap.php</file>
 
     <exclude-pattern>*/vendor/*</exclude-pattern>
-    <exclude-pattern>*/view/*</exclude-pattern>
 
     <rule ref="Magento2"/>
 </ruleset>

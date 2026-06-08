@@ -66,7 +66,6 @@ block the pipeline, and the correct `installed_paths` for the Magento2 standard.
     <!-- add/remove directories to match your module structure -->
 
     <exclude-pattern>*/vendor/*</exclude-pattern>
-    <exclude-pattern>*/view/*</exclude-pattern>
 
     <rule ref="Magento2"/>
 </ruleset>
