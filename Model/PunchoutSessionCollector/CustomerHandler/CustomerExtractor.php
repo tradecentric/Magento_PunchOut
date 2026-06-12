@@ -80,7 +80,14 @@ class CustomerExtractor
             $attributeValues
         );
         $customerForm->setInvisibleIgnored(false);
-        $customerData = $customerForm->compactData($requestData);
+        /**
+         * Remove false values (fields absent from punchout params) to prevent overwriting valid customer data
+         * and avoid triggering stricter DOB validation in 2.4.9+.
+         */
+        $customerData = array_filter(
+            $customerForm->compactData($requestData),
+            static function ($value) { return $value !== false; }
+        );
         foreach ($additionalAttributes as $attributeCode) {
             $customerData[$attributeCode] = $requestData[$attributeCode] ?? null;
         }
