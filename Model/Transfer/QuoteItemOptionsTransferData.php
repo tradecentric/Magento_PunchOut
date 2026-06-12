@@ -93,6 +93,9 @@ class QuoteItemOptionsTransferData implements TransferCartItemDataInterface
                 $resolver = $this->optionDataResolver->get($object);
                 $child = array_merge($child, $resolver->handle($object, $dto->getStoreId()));
             }
+            if (empty($child['supplierid'])) {
+                $child['supplierid'] = $parentItem['supplierid'] ?? '';
+            }
             $result[] = $child;
         }
         return $result;
