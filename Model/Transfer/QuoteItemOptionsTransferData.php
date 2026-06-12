@@ -93,6 +93,7 @@ class QuoteItemOptionsTransferData implements TransferCartItemDataInterface
                 $resolver = $this->optionDataResolver->get($object);
                 $child = array_merge($child, $resolver->handle($object, $dto->getStoreId()));
             }
+            // Non-required options may have no SKU configured; fall back to parent's supplierid.
             if (empty($child['supplierid'])) {
                 $child['supplierid'] = $parentItem['supplierid'] ?? '';
             }
