@@ -1,7 +1,7 @@
 TradeCentric - PunchOut
 ===========
 ### 3.1.18 (2026-06-15)
-* Update CI/CD processes to reflect code sniffer changes
+* Updated CI/CD processes to reflect code sniffer changes
 * Fixed date of birth validation error causing PunchOut login failure on Magento v2.4.9
 
 ### 3.1.17 (2026-05-27)
