@@ -12,7 +12,7 @@
 declare(strict_types=1);
 
 namespace Magento\Framework\Component {
-    if (!class_exists(\Magento\Framework\Component\ComponentRegistrar::class, false)) {
+    if (!class_exists(\Magento\Framework\Component\ComponentRegistrar::class)) {
         class ComponentRegistrar
         {
             public const MODULE   = 'Module';
