@@ -1,5 +1,8 @@
 TradeCentric - PunchOut
 ===========
+### 3.1.19 (2026-07-15)
+* PBR-2682: Fixed full SKU concatenation
+
 ### 3.1.18 (2026-06-15)
 * Updated CI/CD processes to reflect code sniffer changes
 * Fixed date of birth validation error causing PunchOut login failure on Magento v2.4.9
