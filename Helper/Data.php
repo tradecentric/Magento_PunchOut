@@ -227,7 +227,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             ScopeInterface::SCOPE_STORE,
             $store
         );
-        if (!strlen($value)) {
+        if (!strlen((string) $value)) {
             return [];
         }
         return (array) $this->jsonSerializer->unserialize($value);
@@ -239,7 +239,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getRemoteInfoUrl(string $sessionId = '')
     {
-        return preg_replace('/{pos}/', $sessionId, $this->getValidateSessionUrl());
+        return preg_replace('/{pos}/', $sessionId, (string) $this->getValidateSessionUrl());
     }
 
     /**

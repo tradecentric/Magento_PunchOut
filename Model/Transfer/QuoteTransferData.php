@@ -79,7 +79,7 @@ class QuoteTransferData extends \Magento\Framework\DataObject implements Transfe
      */
     protected function assertSessionValid()
     {
-        if (!strlen($this->getData('cart/punchout_session_id'))) {
+        if (!strlen((string) $this->getData('cart/punchout_session_id'))) {
             throw new LocalizedException(__('Punchout session is not valid'));
         }
     }
@@ -89,7 +89,7 @@ class QuoteTransferData extends \Magento\Framework\DataObject implements Transfe
      */
     protected function assertUrlValid()
     {
-        if (!strlen($this->getData('cart/punchout_return_url'))) {
+        if (!strlen((string) $this->getData('cart/punchout_return_url'))) {
             throw new LocalizedException(__('Punchout url is not valid'));
         }
         if (!filter_var($this->getData('cart/punchout_return_url'), FILTER_VALIDATE_URL)) {
