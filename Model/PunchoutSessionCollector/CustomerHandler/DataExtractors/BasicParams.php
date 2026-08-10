@@ -36,7 +36,7 @@ class BasicParams implements DataExtractorInterface
         }
         // set email for log use
         $result = [];
-        $result['email'] = trim($params['body']['contact']['email']);
+        $result['email'] = trim((string) ($params['body']['contact']['email'] ?? ''));
         $nameArray = $this->helper->getUserSplitName($params);
         $result['firstname'] = $nameArray[0];
         $result['lastname'] = $nameArray[1];

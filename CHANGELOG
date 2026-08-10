@@ -1,5 +1,8 @@
 TradeCentric - PunchOut
 ===========
+### 3.1.21 (2026-08-03)
+* CN-1348: Added support for PHP 8.5 compatibility with Magento 2.4.9
+
 ### 3.1.19 (2026-07-15)
 * PBR-2682: Fixed full SKU concatenation
 
