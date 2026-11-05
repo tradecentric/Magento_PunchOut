@@ -26,9 +26,13 @@ class ItemData implements DataExtractorInterface
             if (!isset($item['primaryId'])) {
                 continue;
             }
+            // type "in" is the procurement system's selected (Level 2 / catalog) item.
+            // Its secondaryId is the catalog's aux id, never one of our
+            // "{quote_id}/{item_id}" references, so it is not used for matching.
+            $isSelectedItem = ($item['type'] ?? '') === 'in';
             $result['items'][] = [
                 'sku' => $item['primaryId'],
-                'line_id' =>  $item['secondaryId'] ?? '',
+                'line_id' => $isSelectedItem ? '' : ($item['secondaryId'] ?? ''),
                 'qty' => $item['quantity'] ?? 1
             ];
         }

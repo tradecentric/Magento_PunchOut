@@ -390,6 +390,10 @@ class Session extends SessionManager implements SessionInterface
     {
         $items = (array) $this->storage->getData('params/body/items');
         foreach ($items as $item) {
+            // Selected (type "in") items carry the catalog's aux id, not a quote reference.
+            if (($item['type'] ?? '') === 'in') {
+                continue;
+            }
             $secondaryId = (string) ($item['secondaryId'] ?? '');
             if ($secondaryId === '') {
                 continue;

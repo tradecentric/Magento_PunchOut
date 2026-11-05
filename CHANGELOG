@@ -1,5 +1,8 @@
 TradeCentric - PunchOut
 ===========
+### 3.1.22 (unreleased)
+* CN-1545 / PBR-2775: Fixed Level 2 and Edit/Inspect sessions failing when the selected (type "in") item carries a catalog SupplierPartAuxiliaryID
+
 ### 3.1.21 (2026-08-03)
 * CN-1348: Added support for PHP 8.5 compatibility with Magento 2.4.9
 
