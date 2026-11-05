@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "00c1868f30557ca869c7cebf59f13678",
+    "content-hash": "23968592bb2754a868da3cdd365673bd",
     "packages": [
         {
             "name": "tradecentric/module-version",
