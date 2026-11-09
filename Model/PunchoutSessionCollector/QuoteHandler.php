@@ -197,7 +197,7 @@ class QuoteHandler implements EntityHandlerInterface
         array $bySku,
         array $kept
     ): ?CartItemInterface {
-        if (!empty($item['line_id'])) {
+        if (!empty($item['line_id']) && $this->helper->isQuoteItemReference((string) $item['line_id'])) {
             [$inboundQuoteId, $inboundItemId] = $this->helper->getQuoteItemIdInfo($item['line_id']);
             $itemId = (int) $inboundItemId;
             if ($itemId

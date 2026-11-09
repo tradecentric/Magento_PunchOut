@@ -391,11 +391,11 @@ class Session extends SessionManager implements SessionInterface
         $items = (array) $this->storage->getData('params/body/items');
         foreach ($items as $item) {
             // Selected (type "in") items carry the catalog's aux id, not a quote reference.
-            if (($item['type'] ?? '') === 'in') {
+            if ($this->helper->isSelectedItem($item)) {
                 continue;
             }
             $secondaryId = (string) ($item['secondaryId'] ?? '');
-            if ($secondaryId === '') {
+            if (!$this->helper->isQuoteItemReference($secondaryId)) {
                 continue;
             }
             $parts = $this->helper->getQuoteItemIdInfo($secondaryId);
@@ -695,7 +695,7 @@ class Session extends SessionManager implements SessionInterface
     {
         $items = (array) $this->storage->getData('params/body/items');
         $items = array_filter($items, function (array $item) {
-            return $item['type'] == "in";
+            return $this->helper->isSelectedItem($item);
         });
         $item = current($items);
         return $item['primaryId'] ?? '';
