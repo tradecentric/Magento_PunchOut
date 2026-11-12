@@ -1,9 +1,7 @@
 TradeCentric - PunchOut
 ===========
-### 3.1.22 (unreleased)
-* CN-1545 / PBR-2775: Fixed Level 2 and Edit/Inspect sessions failing when the selected (type "in") item carries a catalog SupplierPartAuxiliaryID
-* CN-1545: Edit/Inspect no longer adds the selected item to the cart (it only picks the landing product page)
-* CN-1545: Cart line references that are not "{quote_id}/{item_id}" are ignored instead of failing the session
+### 3.1.22 (2026-11-12)
+* PBR-2775: Fixed Ariba Level 2 and Edit/Inspect sessions failing at session start
 
 ### 3.1.21 (2026-08-03)
 * CN-1348: Added support for PHP 8.5 compatibility with Magento 2.4.9
