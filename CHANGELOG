@@ -1,5 +1,8 @@
 TradeCentric - PunchOut
 ===========
+### 3.1.22 (2026-11-12)
+* PBR-2775: Fixed Ariba Level 2 and Edit/Inspect sessions failing at session start
+
 ### 3.1.21 (2026-08-03)
 * CN-1348: Added support for PHP 8.5 compatibility with Magento 2.4.9
 

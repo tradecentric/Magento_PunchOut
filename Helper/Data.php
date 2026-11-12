@@ -309,6 +309,28 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Whether a "{quote_id}/{item_id}" cart line reference, as sent on transfer.
+     *
+     * @param string $lineId
+     * @return bool
+     */
+    public function isQuoteItemReference(string $lineId): bool
+    {
+        return (bool) preg_match('#^\d+/\d+$#', trim($lineId));
+    }
+
+    /**
+     * Whether an inbound item is the procurement system's selected (Level 2 / catalog) item.
+     *
+     * @param array $item
+     * @return bool
+     */
+    public function isSelectedItem(array $item): bool
+    {
+        return strtolower(trim((string) ($item['type'] ?? ''))) === 'in';
+    }
+
+    /**
      * @param array $source
      * @return string[]
      */
